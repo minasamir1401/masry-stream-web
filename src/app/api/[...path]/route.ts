@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 
+const HOP_BY_HOP_REQUEST = new Set(["host", "connection", "transfer-encoding", "accept-encoding", "content-length"]);
+const STRIPPED_RESPONSE = new Set(["content-encoding", "transfer-encoding", "connection", "keep-alive"]);
+
 async function proxy(request: NextRequest, { params }: { params: { path?: string[] } }) {
   const backendBase =
     process.env.INTERNAL_BACKEND_URL ||
@@ -13,11 +16,13 @@ async function proxy(request: NextRequest, { params }: { params: { path?: string
 
   const headers = new Headers();
   request.headers.forEach((value, key) => {
-    const lower = key.toLowerCase();
-    if (!["host", "connection", "transfer-encoding"].includes(lower)) {
+    if (!HOP_BY_HOP_REQUEST.has(key.toLowerCase())) {
       headers.set(key, value);
     }
   });
+  // fetch() decompresses bodies but keeps the upstream encoding headers, so the
+  // backend must answer uncompressed; the edge compresses for the browser.
+  headers.set("accept-encoding", "identity");
 
   const forwardHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
   if (forwardHost) {
@@ -40,8 +45,12 @@ async function proxy(request: NextRequest, { params }: { params: { path?: string
     const res = await fetch(targetUrl, init);
 
     const resHeaders = new Headers();
+    const encoded = (res.headers.get("content-encoding") || "identity") !== "identity";
     res.headers.forEach((val, key) => {
-      resHeaders.set(key, val);
+      const lower = key.toLowerCase();
+      if (!STRIPPED_RESPONSE.has(lower) && !(encoded && lower === "content-length")) {
+        resHeaders.append(key, val);
+      }
     });
 
     return new NextResponse(res.body, {
