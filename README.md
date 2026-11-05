@@ -44,3 +44,4 @@ npm start
 docker build -t masry-stream-web .
 docker run -p 3000:3000 -e INTERNAL_BACKEND_URL=http://backend:8000 masry-stream-web
 ```
+
