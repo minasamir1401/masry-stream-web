@@ -222,7 +222,7 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
         lastProgress = now;
       }
       // Some hosts never finish loading and emit no media error at all.
-      if (!recovering && now - lastProgress >= 15000) {
+      if (!recovering && now - lastProgress >= 8000) {
         recovering = true;
         if (!recoverPlaybackRef.current()) {
           setIsBuffering(false);
@@ -289,7 +289,12 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
       setHasError(true);
       return;
     }
-    const hls = new Hls();
+    const hls = new Hls({
+      startFragPrefetch: true,
+      maxBufferLength: 20,
+      maxMaxBufferLength: 40,
+      backBufferLength: 30,
+    });
     hls.on(Hls.Events.ERROR, (_, data) => {
       if (data.fatal) {
         console.warn("Video stream failed:", data.type, data.details, data.response?.code);
@@ -548,7 +553,12 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
                 type="button"
                 aria-pressed={activeUrl === s.url}
                 onClick={() => {
+                  if (activeUrl === s.url) return;
                   attemptedServersRef.current.clear();
+                  wantsPlaybackRef.current = true;
+                  setHasStarted(true);
+                  setIsBuffering(true);
+                  setHasError(false);
                   resumeTimeRef.current = videoRef.current?.currentTime || lastPositionRef.current;
                   setPlayerMode(s.type === "hls" ? "direct" : s.type || "embed");
                   setActiveUrl(s.url);
