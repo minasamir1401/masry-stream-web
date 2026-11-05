@@ -1,0 +1,125 @@
+/* Viewing room: a clear player, compact episode rail, minimal distractions. */
+.site-main>.watch-experience { max-width:1456px; padding:23px 40px 52px; margin:auto; }
+.watch-breadcrumb { display:flex; align-items:center; gap:9px; color:#83738f; font-size:10px; min-width:0; white-space:nowrap; margin-bottom:23px; }
+.watch-breadcrumb a { overflow:hidden; text-overflow:ellipsis; }
+.watch-breadcrumb a:hover { color:#d3a3f4; }
+.watch-breadcrumb>a:nth-last-of-type(1) { max-width:390px; }
+.watch-breadcrumb>svg { flex-shrink:0; }
+.watch-breadcrumb>span { color:#bf9fd5; flex-shrink:0; }
+.watch-heading { display:flex; align-items:center; justify-content:space-between; gap:25px; margin-bottom:24px; }
+.watch-heading>div { min-width:0; }
+.watch-eyebrow { display:flex; align-items:center; gap:7px; color:#b090c7; font-size:10px; margin-bottom:8px; }
+.watch-eyebrow>span { width:5px; height:5px; border-radius:50%; background:#b071dd; }
+.watch-heading h1 { font:750 27px/1.3 Arial,'Cairo',sans-serif; text-align:right; color:#f1eafa; letter-spacing:-.4px; text-wrap:balance; max-width:950px; }
+.watch-back { display:flex; align-items:center; gap:8px; font-size:11px; color:#b6a1c8; border:1px solid #b18ad52a; background:#171120; padding:9px 13px; border-radius:7px; flex-shrink:0; }
+.watch-back:hover { color:#e5c6fc; border-color:#ad7ada; }
+.watch-layout { display:grid; grid-template-columns:minmax(0,1fr) 284px; align-items:start; gap:24px; }
+.watch-main { min-width:0; }
+.watch-player-card { overflow:hidden; border:1px solid #aa7ac934; border-radius:14px; background:#110e1b; box-shadow:0 18px 55px #0003; }
+.watch-player-heading { display:flex; align-items:center; justify-content:space-between; padding:13px 17px; gap:15px; border-bottom:1px solid #ab7dcb1e; background:linear-gradient(90deg,#15101e,#191221); }
+.watch-player-heading>div { display:flex; align-items:center; gap:12px; }
+.watch-episode-badge { font-size:12px; color:#ecdcf9; font-weight:700; }
+.watch-caption-label { color:#9e89b0; font-size:10px; border-inline-start:1px solid #bb8fdc2b; padding-inline-start:12px; }
+.watch-theater-toggle { display:flex; align-items:center; gap:7px; color:#a493b5; font-size:10px; }
+.watch-theater-toggle:hover,.watch-theater-toggle[aria-pressed=true] { color:#dfb3ff; }
+.watch-experience .player-shell { display:flex; flex-direction:column; gap:0; }
+.watch-experience .player-shell>:not([hidden])~:not([hidden]) { margin-top:0; }
+.watch-experience .video-player { order:1; border:0; border-radius:0; box-shadow:none; background:#000; }
+.watch-experience .video-player:fullscreen { width:100vw; height:100vh; aspect-ratio:auto; }
+.watch-experience .player-sourcebar { order:2; padding:15px 17px; gap:12px; background:#15101d; border-top:1px solid #b485d51c; }
+.watch-experience .player-server-options { gap:7px; }
+.watch-experience .player-server-options>span { font-size:10px; margin-inline-end:6px; color:#9c88ae; }
+.watch-experience .player-server-button { min-height:33px; border:1px solid #a47cc62e; border-radius:6px; font-size:10px; font-weight:600; padding:6px 11px; color:#b9a2cb; background:#20162b; box-shadow:none; }
+.watch-experience .player-server-button[aria-pressed=true] { color:#f5eaff; border-color:#c07ced9c; background:#7945a3; box-shadow:inset 0 1px 0 #ffffff0c; }
+.watch-experience .player-server-button:hover { border-color:#bc7fed; color:#f2deff; }
+.watch-experience .player-sourcebar>div:last-child:not(.player-server-options) { display:none; }
+.watch-experience .player-protocol-badge,.watch-experience .player-title-overlay { display:none; }
+.watch-experience .player-play-overlay { background:linear-gradient(0deg,#0b061644,#0b061622); }
+.watch-experience .player-big-play { width:65px; height:65px; background:#aa6cdddf; border:1px solid #e4bafc80; box-shadow:0 0 0 10px #ab68d918,0 8px 30px #0b021b77; backdrop-filter:blur(8px); }
+.watch-experience .player-big-play>svg { width:27px; height:27px; margin-left:2px; }
+.watch-experience .player-time { font-family:Arial,sans-serif; font-size:11px; }
+.watch-experience .video-player>div:last-child { padding:16px 20px; }
+.watch-episode-navigation { display:flex; justify-content:space-between; align-items:center; gap:17px; margin:14px 0 22px; padding:13px 17px; border:1px solid #a67dc321; border-radius:10px; background:#12101b; }
+.watch-episode-navigation>a { display:flex; align-items:center; gap:10px; font-size:11px; color:#d3bfdf; }
+.watch-episode-navigation>a:hover { color:#e6b3ff; }
+.watch-episode-navigation>a small { display:block; color:#8b759d; font-size:8px; margin-bottom:4px; }
+.watch-episode-navigation>.watch-next { color:#d4a4f0; }
+.watch-now-label { display:flex; align-items:center; gap:7px; color:#8e749e; font-size:10px; }
+.watch-now-label svg { color:#b77ee0; }
+.watch-nav-disabled { display:flex; align-items:center; gap:7px; color:#65586f; font-size:11px; }
+.watch-about { display:flex; gap:18px; align-items:flex-start; margin-top:20px; padding:22px; background:#13101c; border:1px solid #9a70bd1e; border-radius:12px; }
+.watch-about-poster { display:block; width:76px; aspect-ratio:2/3; border-radius:7px; overflow:hidden; border:1px solid #b18bce28; flex-shrink:0; }
+.watch-about-poster img { width:100%; height:100%; object-fit:cover; }
+.watch-about-copy { flex:1; min-width:0; }
+.watch-about-top { display:flex; align-items:center; gap:15px; flex-wrap:wrap; margin-bottom:9px; }
+.watch-about-type { display:flex; align-items:center; gap:6px; font-size:9px; color:#bd91d6; }
+.watch-meta { display:flex; gap:12px; color:#a089b1; font-size:9px; align-items:center; }
+.watch-meta strong { display:flex; align-items:center; gap:4px; color:#e2d4ba; font:600 11px Arial,sans-serif; direction:ltr; }
+.watch-meta strong svg { color:#edca75; }
+.watch-meta>span { display:flex; align-items:center; gap:5px; }
+.watch-about h2 { font:700 17px/1.4 Arial,'Cairo',sans-serif; color:#e5d8ef; text-align:right; }
+.watch-about h2 a:hover { color:#dfaffc; }
+.watch-genres { display:flex; gap:12px; margin-top:10px; font-size:9px; color:#8b749b; }
+.watch-genres a:hover { color:#d2a7ed; }
+.watch-about>.secondary-action { font-size:10px; padding:8px 11px; min-height:35px; border:1px solid #aa7ec138; background:#28183755; color:#bc96d4; border-radius:7px; gap:6px; flex-shrink:0; font-weight:600; }
+.watch-about>.secondary-action svg { width:14px; height:14px; }
+.watch-about>.secondary-action.is-saved { border-color:#a762d3; color:#deb7fa; }
+.watch-synopsis { margin-top:14px; }
+.watch-synopsis summary { display:flex; align-items:center; gap:7px; cursor:pointer; font-size:10px; color:#ad8ec5; list-style:none; }
+.watch-synopsis summary::-webkit-details-marker,.watch-shortcuts summary::-webkit-details-marker { display:none; }
+.watch-synopsis[open] summary>svg:last-child,.watch-shortcuts[open] summary>svg:last-child { transform:rotate(-90deg); }
+.watch-synopsis p { font-size:11px; line-height:1.9; color:#ab99b7; padding-top:13px; white-space:pre-line; }
+.watch-shortcuts { margin-top:14px; color:#9681a6; font-size:10px; }
+.watch-shortcuts summary { display:flex; gap:8px; align-items:center; padding:11px 3px; cursor:pointer; list-style:none; }
+.watch-shortcuts>div { display:flex; flex-wrap:wrap; gap:18px; padding:12px 3px; }
+.watch-shortcuts>div>span { display:flex; align-items:center; gap:7px; color:#a28eae; font-size:9px; }
+.watch-shortcuts kbd { background:#23172d; color:#ceb3df; padding:3px 7px; border:1px solid #a977c22e; border-radius:4px; font:9px Arial,sans-serif; }
+.watch-sidebar { min-width:0; }
+.watch-episode-panel { padding:20px 17px; border:1px solid #a97dc62c; border-radius:13px; background:linear-gradient(150deg,#171020,#100e18); }
+.watch-panel-heading { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.watch-panel-heading h2 { font-size:17px; font-weight:750; color:#e9dbf4; display:flex; gap:8px; align-items:center; }
+.watch-panel-heading h2 svg { color:#b578dc; }
+.watch-panel-heading>span { font-size:9px; color:#af8ac6; border-radius:5px; background:#35203f70; padding:4px 7px; }
+.watch-panel-note { color:#887096; font-size:10px; margin-top:9px; }
+.watch-episode-search { display:flex; align-items:center; gap:8px; color:#8f729f; padding:10px 11px; background:#211529; border:1px solid #b67ed329; border-radius:7px; margin:18px 0; }
+.watch-episode-search input { width:100%; min-width:0; outline:none; background:none; color:#d6b6ec; font-size:10px; }
+.watch-episode-search input::placeholder { color:#94759f; }
+.watch-episode-search button { font-size:19px; color:#bd93d7; line-height:1; }
+.watch-episode-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:9px; max-height:470px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:#4e2d63 transparent; padding:2px; }
+.watch-episode { min-height:44px; display:flex; align-items:center; justify-content:center; gap:4px; border:1px solid #a877cb2a; border-radius:7px; background:#24162d; color:#b9a0c8; font:600 13px Arial,sans-serif; transition:border-color .2s,background .2s; }
+.watch-episode:hover { border-color:#b26cdc; color:#e0b8fb; background:#3a2149; }
+.watch-episode.current { background:linear-gradient(135deg,#a15bdb,#7d39b7); color:#fff; border-color:#c88df5; box-shadow:0 0 13px #ad58d61c; }
+.watch-episode.upcoming { flex-direction:column; gap:3px; color:#685372; background:#17101d; border-color:#a178bf14; }
+.watch-episode.upcoming small { font:8px 'Cairo',sans-serif; color:#725a7e; }
+.watch-episode-legend { display:flex; gap:17px; margin-top:19px; border-top:1px solid #a877cb20; padding-top:14px; font-size:8px; color:#9c81ae; }
+.watch-episode-legend>span { display:flex; gap:6px; align-items:center; }
+.watch-episode-legend i { width:5px; height:5px; border-radius:50%; background:#ad69dd; }
+.watch-episode-legend>span:last-child i { background:#493750; }
+.watch-episode-pages { display:flex; align-items:center; justify-content:space-between; margin-top:16px; }
+.watch-episode-pages button { width:29px; height:29px; display:grid; place-items:center; color:#c49bdc; border-radius:5px; border:1px solid #a976c333; background:#24162c; }
+.watch-episode-pages button:disabled { opacity:.25; cursor:default; }
+.watch-episode-pages>span { font:10px Arial,sans-serif; color:#a386b3; }
+.watch-episodes-loading,.watch-panel-empty { padding:25px 0; color:#a080b3; font-size:11px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:12px; }
+.watch-panel-empty button { display:flex; gap:7px; align-items:center; color:#d0a3ef; background:#2d1b3b; border:1px solid #a46aca44; border-radius:6px; padding:7px 11px; font-size:10px; }
+.watch-sidebar-tip { display:flex; align-items:flex-start; gap:10px; padding:17px 10px; color:#9771ad; }
+.watch-sidebar-tip>svg { flex-shrink:0; margin-top:2px; color:#9c6dc4; }
+.watch-sidebar-tip strong { font-size:10px; color:#b99bcd; font-weight:600; }
+.watch-sidebar-tip p { font-size:9px; line-height:1.9; margin-top:4px; color:#80648f; }
+.watch-recommendations { margin-top:34px; padding-top:28px; border-top:1px solid #a57ac31b; }
+.watch-recommendations .discovery-section-heading h2 { font-size:22px; }
+.watch-layout.watch-movie-layout,.is-theater .watch-layout { grid-template-columns:minmax(0,1fr); }
+.is-theater .watch-sidebar { display:none; }
+.is-theater .video-player { max-height:76vh; aspect-ratio:21/10; }
+@media(max-width:1200px) {
+  .site-main>.watch-experience { padding-inline:30px; }.watch-layout { grid-template-columns:minmax(0,1fr) 250px; gap:19px; }.watch-heading h1 { font-size:24px; }.watch-about { padding:18px; gap:15px; }.watch-about-poster { width:65px; }.watch-about h2 { font-size:16px; }.watch-about>.secondary-action { font-size:9px; padding-inline:9px; }.watch-episode-panel { padding:18px 15px; }.watch-episode-grid { gap:8px; }.watch-now-label { font-size:9px; }.watch-experience .player-sourcebar { padding:13px 15px; }.watch-experience .player-server-button { font-size:9px; padding-inline:9px; }
+}
+@media(max-width:980px) {
+  .watch-layout { grid-template-columns:minmax(0,1fr) 222px; gap:16px; }.watch-heading h1 { font-size:22px; }.watch-about { flex-wrap:wrap; }.watch-about-copy { min-width:140px; }.watch-about>.secondary-action { margin-inline-start:80px; }.watch-episode-navigation { padding:12px; gap:12px; }.watch-now-label { display:none; }.watch-episode-panel { padding-inline:13px; }.watch-panel-heading h2 { font-size:16px; }.watch-episode { min-height:40px; font-size:12px; }.watch-experience .player-server-options>span { width:100%; margin-bottom:3px; }.watch-experience .video-player>div:last-child { padding:12px; }.watch-experience .video-player>div:last-child>div:last-child>div { gap:7px; }.watch-breadcrumb { font-size:9px; }
+}
+@media(max-width:760px) {
+  .site-main>.watch-experience { padding:20px 22px 35px; }.watch-breadcrumb { gap:7px; margin-bottom:19px; font-size:9px; }.watch-breadcrumb>a:nth-last-of-type(1) { max-width:220px; }.watch-heading { margin-bottom:20px; gap:16px; }.watch-heading h1 { font-size:23px; }.watch-eyebrow { font-size:9px; }.watch-back { font-size:10px; padding:8px 11px; }.watch-layout { grid-template-columns:minmax(0,1fr); gap:25px; }.watch-player-heading { padding:12px 14px; }.watch-episode-badge { font-size:12px; }.watch-theater-toggle { font-size:10px; }.watch-experience .player-server-options>span { width:auto; }.watch-experience .player-sourcebar { padding:13px 14px; }.watch-experience .player-server-button { font-size:10px; }.watch-player-card { border-radius:11px; }.watch-about { padding:18px; flex-wrap:nowrap; }.watch-about-copy { min-width:0; }.watch-about>.secondary-action { margin-inline-start:0; }.watch-about h2 { font-size:17px; }.watch-meta { font-size:9px; }.watch-episode-navigation { padding:12px 14px; margin-bottom:18px; }.watch-now-label { display:flex; }.watch-episode-panel { padding:21px; }.watch-panel-heading h2 { font-size:18px; }.watch-panel-heading>span { font-size:10px; }.watch-panel-note { font-size:11px; }.watch-episode-search input { font-size:12px; }.watch-episode-grid { grid-template-columns:repeat(8,minmax(0,1fr)); gap:10px; }.watch-episode { min-height:46px; font-size:14px; }.watch-episode-legend { font-size:9px; }.watch-sidebar-tip { padding-inline:8px; }.watch-sidebar-tip p { font-size:10px; }.watch-sidebar-tip strong { font-size:11px; }.watch-recommendations { margin-top:29px; padding-top:25px; }.watch-recommendations .discovery-section-heading h2 { font-size:21px; }.is-theater .video-player { aspect-ratio:16/9; max-height:none; }
+}
+@media(max-width:480px) {
+  .site-main>.watch-experience { padding:17px 16px 30px; }.watch-breadcrumb { font-size:8px; gap:6px; margin-bottom:18px; }.watch-breadcrumb>a:nth-last-of-type(1) { max-width:150px; }.watch-breadcrumb>svg { width:9px; }.watch-heading { align-items:flex-start; gap:12px; }.watch-heading h1 { font-size:20px; line-height:1.3; }.watch-eyebrow { font-size:8px; margin-bottom:7px; }.watch-back { font-size:0; padding:9px; }.watch-back svg { width:17px; height:17px; }.watch-player-heading { padding:11px 12px; gap:10px; }.watch-episode-badge { font-size:11px; }.watch-caption-label { font-size:9px; padding-inline-start:9px; }.watch-player-heading>div { gap:9px; }.watch-theater-toggle { font-size:9px; gap:5px; }.watch-theater-toggle svg { width:14px; }.watch-experience .player-big-play { width:50px; height:50px; box-shadow:0 0 0 7px #ab68d918; }.watch-experience .player-big-play>svg { width:21px; height:21px; }.watch-experience .player-sourcebar { padding:12px; }.watch-experience .player-server-options { gap:6px; }.watch-experience .player-server-options>span { width:100%; font-size:9px; margin-bottom:4px; }.watch-experience .player-server-button { min-height:34px; font-size:9px; padding:6px 10px; }.watch-experience .video-player>div:last-child { padding:9px; gap:7px; }.watch-experience .video-player>div:last-child>div:last-child>div { gap:3px; }.watch-experience .video-player>div:last-child>div:last-child>div>button { padding:5px; }.watch-experience .player-time { font-size:9px; }.watch-experience .video-player>div:last-child button svg { width:16px; height:16px; }.watch-episode-navigation { padding:11px 12px; margin-top:12px; }.watch-episode-navigation>a { font-size:10px; gap:6px; }.watch-episode-navigation>a small { font-size:8px; }.watch-now-label { display:none; }.watch-nav-disabled { font-size:10px; }.watch-about { padding:16px; gap:13px; flex-wrap:wrap; }.watch-about-poster { width:59px; }.watch-about-copy { min-width:160px; }.watch-about h2 { font-size:15px; }.watch-about-top { gap:9px; margin-bottom:7px; }.watch-meta { gap:10px; font-size:8px; flex-wrap:wrap; }.watch-about-type { font-size:8px; }.watch-about>.secondary-action { margin-inline-start:72px; font-size:10px; }.watch-genres { font-size:9px; margin-top:8px; }.watch-synopsis p { font-size:11px; }.watch-shortcuts summary { font-size:10px; }.watch-episode-panel { padding:18px; }.watch-episode-grid { grid-template-columns:repeat(5,minmax(0,1fr)); gap:9px; }.watch-episode { min-height:45px; font-size:14px; }.watch-panel-note { font-size:10px; }.watch-episode-search { padding:11px; }.watch-episode-search input { font-size:11px; }.watch-episode-legend { font-size:9px; }.watch-recommendations .discovery-section-heading h2 { font-size:20px; }
+}
+@media(prefers-reduced-motion:reduce) { .watch-experience * { scroll-behavior:auto; } }

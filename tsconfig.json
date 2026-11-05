@@ -1,0 +1,62 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    ".next-check/types/**/*.ts",
+    ".next-production/types/**/*.ts",
+    ".next-redesign/types/**/*.ts",
+    ".next-final/types/**/*.ts",
+    ".next-reference/types/**/*.ts",
+    ".next-live/types/**/*.ts",
+    ".next-watch/types/**/*.ts",
+    ".next-details/types/**/*.ts",
+    ".next-home-polish/types/**/*.ts",
+    ".next-polished/types/**/*.ts",
+    ".next-jikan/types/**/*.ts",
+    ".next-hero-sources/types/**/*.ts",
+    ".next-hero-motion/types/**/*.ts",
+    ".next-hero-refined/types/**/*.ts",
+    ".next-clover-hero/types/**/*.ts",
+    ".next-clover-logo/types/**/*.ts",
+    ".next-stream-fix/types/**/*.ts",
+    ".next-playback-responsive/types/**/*.ts",
+    ".next-playback-recovery/types/**/*.ts",
+    ".next-playback-retry/types/**/*.ts",
+    ".next-source-diagnostics/types/**/*.ts",
+    ".next-video-gateway/types/**/*.ts",
+    ".next-admin-restored/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

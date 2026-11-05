@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 90" fill="none" role="img" aria-labelledby="title"><title id="title">Anime Clover</title>
+  <defs>
+    <linearGradient id="violet" x1="8" y1="6" x2="30" y2="30" gradientUnits="userSpaceOnUse"><stop stop-color="#E1B8FF"/><stop offset=".46" stop-color="#B76AF0"/><stop offset="1" stop-color="#7937CB"/></linearGradient>
+    <linearGradient id="word" x1="92" y1="38" x2="261" y2="73" gradientUnits="userSpaceOnUse"><stop stop-color="#F4E8FF"/><stop offset="1" stop-color="#BC7BF1"/></linearGradient>
+    <g id="leaf"><path d="M28 28 16 26 6 17 7 8 16 6 26 16Z" fill="url(#violet)"/><path d="M7 8 16 6 26 16 28 28 19 16Z" fill="#fff" fill-opacity=".18"/></g>
+  </defs>
+  <g transform="translate(0 7) scale(1.18)"><use href="#leaf"/><use href="#leaf" transform="rotate(90 32 32)"/><use href="#leaf" transform="rotate(180 32 32)"/><use href="#leaf" transform="rotate(270 32 32)"/><path d="m30 28 6 4-6 4Z" fill="#F7EFFF"/></g>
+  <text x="91" y="30" fill="#E7D8F7" font-family="Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="6">ANIME</text>
+  <text x="88" y="70" fill="url(#word)" font-family="Arial Black,Arial,sans-serif" font-size="43" font-style="italic" font-weight="900" letter-spacing="-1">CLOVER</text>
+</svg>

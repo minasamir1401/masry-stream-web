@@ -1,0 +1,14 @@
+node_modules
+.next
+.next*
+.git
+.gitignore
+*.log
+runtime.err.log
+runtime.out.log
+dev-design.log
+.env
+.env.local
+.env*.local
+README.md
+
