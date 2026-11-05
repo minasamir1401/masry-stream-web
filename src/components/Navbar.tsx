@@ -19,7 +19,6 @@ export function Navbar() {
     { href: "/series", label: "اكتشف الأنمي", icon: Compass },
     { href: "/movies", label: "الأفلام", icon: Film },
     { href: "/schedule", label: "جدول الحلقات", icon: CalendarDays },
-    { href: "/admin", label: "لوحة التحكم", icon: ShieldCheck },
   ];
   return (
     <header className="app-header">
