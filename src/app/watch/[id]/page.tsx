@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { fetchMovieById, fetchPopularSeries, fetchAnimeMovies } from "@/lib/api";
+import { fetchMediaById, fetchPopularSeries, fetchAnimeMovies } from "@/lib/api";
 import { WatchExperience } from "@/components/WatchExperience";
 import "./watch.css";
 
@@ -17,7 +17,7 @@ export async function generateMetadata({ params, searchParams }: WatchPageProps)
     return { title: "الحلقة غير متوفرة | Anime Clover" };
   }
   const episode = Number(rawEpisode);
-  const media = await fetchMovieById(params.id).catch(() => null);
+  const media = await fetchMediaById(params.id).catch(() => null);
   if (!media) return { title: "الحلقة غير متوفرة | Anime Clover" };
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.com";
@@ -83,7 +83,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
   const episode = Number(rawEpisode);
   if (!Number.isSafeInteger(episode)) notFound();
 
-  const media = await fetchMovieById(params.id).catch(() => null);
+  const media = await fetchMediaById(params.id).catch(() => null);
   if (!media) notFound();
 
   const [recommendations] = await Promise.allSettled([

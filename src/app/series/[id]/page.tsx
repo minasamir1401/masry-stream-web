@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CalendarDays, ChevronLeft, Clock3, Film, Layers3, Settings, Star, Tv } from "lucide-react";
-import { fetchAnimeById, fetchMovieById, fetchPopularSeries } from "@/lib/api";
+import { fetchMediaById, fetchPopularSeries } from "@/lib/api";
 import { genreArabic } from "@/lib/schedule";
 import { formatDuration } from "@/lib/utils";
 import { EpisodeList } from "@/components/EpisodeList";
@@ -27,7 +27,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   if (!/^\d+$/.test(params.id)) return { title: "الأنمي غير موجود | Anime Clover" };
-  const series = await fetchAnimeById(params.id).catch(() => fetchMovieById(params.id).catch(() => null));
+  const series = await fetchMediaById(params.id).catch(() => null);
   if (!series) return { title: "الأنمي غير موجود | Anime Clover" };
 
   const cleanDesc = series.description
@@ -97,7 +97,7 @@ export default async function Page({ params }: PageProps) {
   if (!/^\d+$/.test(params.id)) notFound();
 
   const [seriesResult, recommendedResult] = await Promise.allSettled([
-    fetchAnimeById(params.id).catch(() => fetchMovieById(params.id).catch(() => null)),
+    fetchMediaById(params.id),
     fetchPopularSeries(1, 7),
   ]);
 

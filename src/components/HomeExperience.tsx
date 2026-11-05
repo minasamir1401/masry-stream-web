@@ -35,6 +35,7 @@ function EpisodeCard({ item, eager }: { item: MediaItem; eager?: boolean }) {
   return (
     <article className="discovery-episode">
       <Link
+        prefetch={false}
         className="discovery-episode-art"
         href={`/watch/${item.id}?ep=${ep}`}
         aria-label={`شاهد ${item.title}، الحلقة ${ep}`}
@@ -48,7 +49,7 @@ function EpisodeCard({ item, eager }: { item: MediaItem; eager?: boolean }) {
         </span>
       </Link>
       <div className="discovery-card-heading">
-        <Link href={detailsUrl(item)} dir="auto">{item.title}</Link>
+        <Link prefetch={false} href={detailsUrl(item)} dir="auto">{item.title}</Link>
         {item.average_score ? (
           <span className="discovery-rating">
             <Star size={13} fill="currentColor" />
@@ -174,7 +175,7 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
                 <Flame size={25} />
                 الأكثر شعبية
               </h2>
-              <Link className="discovery-text-link" href="/series?sort=POPULARITY_DESC">
+              <Link prefetch={false} className="discovery-text-link" href="/series?sort=POPULARITY_DESC">
                 عرض الكل
                 <ChevronLeft size={16} />
               </Link>
@@ -187,7 +188,7 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
           </section>
         )}
 
-        <Link className="discovery-schedule" href="/schedule">
+        <Link prefetch={false} className="discovery-schedule" href="/schedule">
           <span className="schedule-promo-art" aria-hidden="true" />
           <div className="schedule-promo-copy">
             <h2>لا تفوّت حلقتك القادمة</h2>

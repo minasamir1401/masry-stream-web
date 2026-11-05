@@ -9,7 +9,7 @@ import { FavoriteButton } from "./FavoriteButton";
 export function SeriesWatchActions({item,upcoming=false}:{item:MediaItem;upcoming?:boolean}) {
   const [resume,setResume]=useState<WatchProgress|null>(null);
   useEffect(() => { const update=() => setResume(readWatchHistory().find(entry => entry.animeId === item.id) || null);update();window.addEventListener("storage",update);window.addEventListener(WATCH_HISTORY_EVENT,update);return () => {window.removeEventListener("storage",update);window.removeEventListener(WATCH_HISTORY_EVENT,update);}; },[item.id]);
-  return <div className="anime-profile-actions">{upcoming ? <span className="anime-upcoming-action">لم يبدأ العرض بعد</span> : <Link className="discovery-primary" href={`/watch/${item.id}?ep=${resume?.episode || 1}`}><Play size={18} fill="currentColor"/><span>{resume ? "أكمل المشاهدة" : "ابدأ المشاهدة"}{resume && <small>الحلقة {resume.episode}</small>}</span></Link>}<FavoriteButton item={item}/></div>;
+  return <div className="anime-profile-actions">{upcoming ? <span className="anime-upcoming-action">لم يبدأ العرض بعد</span> : <Link prefetch={false} className="discovery-primary" href={`/watch/${item.id}?ep=${resume?.episode || 1}`}><Play size={18} fill="currentColor"/><span>{resume ? "أكمل المشاهدة" : "ابدأ المشاهدة"}{resume && <small>الحلقة {resume.episode}</small>}</span></Link>}<FavoriteButton item={item}/></div>;
 }
 
 export function SeriesSynopsis({description}:{description?:string}) {

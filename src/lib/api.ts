@@ -54,7 +54,7 @@ export async function fetchMovies(params?: {
 
 export async function fetchMovieById(id: number | string): Promise<MediaItem> {
   const url = `${getBaseUrl()}/api/movies/${id}`;
-  const res = await fetch(url, { next: { revalidate: 120 } });
+  const res = await fetch(url, { next: { revalidate: 300 } });
   if (!res.ok) {
     throw new Error(`Failed to fetch media details for id ${id}`);
   }
@@ -139,11 +139,19 @@ export async function searchAnime(query: string, page = 1): Promise<PaginatedMed
 
 export async function fetchAnimeById(id: number | string): Promise<MediaItem> {
   const url = `${getBaseUrl()}/api/anime/${id}`;
-  const res = await fetch(url, { next: { revalidate: 60 } });
+  const res = await fetch(url, { next: { revalidate: 300 } });
   if (!res.ok) {
     throw new Error(`Failed to fetch anime details for id ${id}`);
   }
   return res.json();
+}
+
+export async function fetchMediaById(id: number | string): Promise<MediaItem> {
+  try {
+    return await fetchAnimeById(id);
+  } catch {
+    return await fetchMovieById(id);
+  }
 }
 
 export interface AnimeStreamResponse {
