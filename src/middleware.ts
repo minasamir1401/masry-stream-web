@@ -18,6 +18,26 @@ const BOT_PATTERNS = [
   /postmanruntime/i,
 ];
 
+const SEARCH_ENGINE_BOTS = [
+  /googlebot/i,
+  /google-inspectiontool/i,
+  /mediapartners-google/i,
+  /adsbot-google/i,
+  /bingbot/i,
+  /yandexbot/i,
+  /duckduckbot/i,
+  /baiduspider/i,
+  /twitterbot/i,
+  /facebookexternalhit/i,
+  /applebot/i,
+  /linkedinbot/i,
+];
+
+function isSearchEngineCrawler(userAgent: string): boolean {
+  if (!userAgent) return false;
+  return SEARCH_ENGINE_BOTS.some((pattern) => pattern.test(userAgent));
+}
+
 interface RateRecord {
   count: number;
   resetAt: number;
@@ -111,17 +131,27 @@ function checkRateLimit(ip: string, limit: number, windowMs: number): boolean {
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // Skip static assets
+  // Skip static assets and SEO critical endpoints
   if (
     path.startsWith("/_next") ||
     path.startsWith("/icons") ||
     path.startsWith("/brand") ||
-    path.match(/\.(png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|css|js)$/)
+    path === "/robots.txt" ||
+    path.startsWith("/sitemap") ||
+    path === "/manifest.webmanifest" ||
+    path === "/favicon.ico" ||
+    path.match(/\.(png|jpg|jpeg|gif|svg|ico|webp|woff|woff2|css|js|xml)$/)
   ) {
     return NextResponse.next();
   }
 
   const userAgent = request.headers.get("user-agent") || "";
+
+  // Always allow legitimate search engine crawlers without limits or blocks
+  if (isSearchEngineCrawler(userAgent)) {
+    return NextResponse.next();
+  }
+
   const clientIp =
     request.headers.get("cf-connecting-ip") ||
     request.headers.get("x-real-ip") ||
