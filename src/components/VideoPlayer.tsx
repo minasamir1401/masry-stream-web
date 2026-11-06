@@ -221,8 +221,8 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
         lastPosition = video.currentTime;
         lastProgress = now;
       }
-      // Some hosts never finish loading and emit no media error at all.
-      if (!recovering && now - lastProgress >= 8000) {
+      // Give enough leeway (25s) for transient buffering on slower connections before switching servers
+      if (!recovering && now - lastProgress >= 25000) {
         recovering = true;
         if (!recoverPlaybackRef.current()) {
           setIsBuffering(false);
@@ -231,9 +231,13 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
       }
     }, 1000);
     video.addEventListener("seeking", resetDeadline);
+    video.addEventListener("playing", resetDeadline);
+    video.addEventListener("canplay", resetDeadline);
     return () => {
       window.clearInterval(timer);
       video.removeEventListener("seeking", resetDeadline);
+      video.removeEventListener("playing", resetDeadline);
+      video.removeEventListener("canplay", resetDeadline);
     };
   }, [activeUrl, playerMode, hlsAttempt]);
 
@@ -291,16 +295,32 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
     }
     const hls = new Hls({
       startFragPrefetch: true,
-      maxBufferLength: 20,
-      maxMaxBufferLength: 40,
+      maxBufferLength: 60,
+      maxMaxBufferLength: 120,
+      maxBufferSize: 60 * 1000 * 1000,
       backBufferLength: 30,
+      enableWorker: true,
+      lowLatencyMode: false,
+      fragLoadingTimeOut: 20000,
+      fragLoadingMaxRetry: 4,
+      fragLoadingRetryDelay: 1000,
     });
     hls.on(Hls.Events.ERROR, (_, data) => {
       if (data.fatal) {
-        console.warn("Video stream failed:", data.type, data.details, data.response?.code);
-        if (advanceServer()) return;
-        setHasError(true);
-        setIsBuffering(false);
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            hls.startLoad();
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            hls.recoverMediaError();
+            break;
+          default:
+            if (!advanceServer()) {
+              setHasError(true);
+              setIsBuffering(false);
+            }
+            break;
+        }
       }
     });
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
