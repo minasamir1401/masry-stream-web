@@ -35,18 +35,32 @@ export async function GET() {
   ];
 
   const urlEntries = staticPages
-    .map(
-      (page) => `  <url>
-    <loc>${escapeXml(`${siteUrl}${page.path}`)}</loc>
+    .map((page) => {
+      const pageUrl = escapeXml(`${siteUrl}${page.path}`);
+      const imageBlock =
+        page.path === ""
+          ? `\n    <image:image>
+      <image:loc>${siteUrl}/og-image.png</image:loc>
+      <image:title>انمي كلوفر AnimeClover</image:title>
+    </image:image>
+    <image:image>
+      <image:loc>${siteUrl}/icons/icon-512.png</image:loc>
+      <image:title>شعار انمي كلوفر AnimeClover</image:title>
+    </image:image>`
+          : "";
+
+      return `  <url>
+    <loc>${pageUrl}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
-  </url>`
-    )
+    <priority>${page.priority}</priority>${imageBlock}
+  </url>`;
+    })
     .join("\n");
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urlEntries}
 </urlset>`;
 

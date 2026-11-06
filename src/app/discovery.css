@@ -28,7 +28,7 @@ html,body { background:var(--discovery-bg); }
 .discovery-hero-shade { position:absolute; z-index:-2; inset:0; background:linear-gradient(270deg,#090a12 3%,#090a12fa 32%,#090a12ae 48%,#090a1200 67%),linear-gradient(0deg,#090a11 0%,#090a1100 17%); }
 .discovery-hero-copy { min-height:475px; width:53%; max-width:780px; padding:40px 52px 76px; display:flex; flex-direction:column; align-items:flex-start; justify-content:center; }
 .hero-weekly { display:inline-flex; align-items:center; gap:9px; border:1px solid #c87bfa8c; border-radius:8px; background:#4a216c3b; color:#d3a8f4; font-size:12px; padding:5px 12px; margin-bottom:19px; }
-.discovery-hero h1 { font:850 italic clamp(33px,4.2vw,64px)/1.06 Arial,'Cairo',sans-serif; color:#fff; text-align:right; text-transform:uppercase; letter-spacing:-1.4px; max-width:100%; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-wrap:balance; }
+.discovery-hero h1, .discovery-hero .hero-title { font:850 italic clamp(33px,4.2vw,64px)/1.06 Arial,'Cairo',sans-serif; color:#fff; text-align:right; text-transform:uppercase; letter-spacing:-1.4px; max-width:100%; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; text-wrap:balance; }
 .hero-season { color:#bf80ed; font-size:33px; line-height:1.45; font-weight:800; margin-top:7px; }
 .hero-tagline { font-size:15px; color:#c8c2d3; margin-top:12px; }
 .discovery-hero-meta { display:flex; align-items:center; flex-wrap:wrap; gap:0; font-size:12px; color:#c6c0d3; margin-top:21px; }
@@ -477,7 +477,7 @@ html,body { background:var(--discovery-bg); }
   .hero-available-detail { display:inline; margin-inline-start:4px; font-size:9px; color:#bfa8d6; }
   .cinematic-hero .discovery-hero-copy { position:relative; inset:auto; width:100%; min-height:0; padding:8px 16px 14px; align-items:center; text-align:center; z-index:2; }
   .cinematic-hero .hero-weekly { font-size:10px; padding:4px 10px; margin-bottom:10px; margin-inline:auto; }
-  .cinematic-hero .discovery-hero-copy>h1 { font-size:clamp(22px,6vw,30px); line-height:1.25; text-align:center; max-width:100%; -webkit-line-clamp:2; margin:0 auto; }
+  .cinematic-hero .discovery-hero-copy>h1, .cinematic-hero .discovery-hero-copy>.hero-title { font-size:clamp(22px,6vw,30px); line-height:1.25; text-align:center; max-width:100%; -webkit-line-clamp:2; margin:0 auto; }
   .cinematic-hero .hero-season { font-size:18px; margin-top:4px; text-align:center; }
   .cinematic-hero .hero-tagline { font-size:11px; margin-top:6px; text-align:center; color:#b6afc3; }
   .cinematic-hero .discovery-hero-meta { margin-top:12px; font-size:11px; justify-content:center; width:100%; }
@@ -509,8 +509,23 @@ html,body { background:var(--discovery-bg); }
   .app-header-tools { gap:5px; }
   .app-icon-link { width:28px; height:28px; }
   .clover-brand-wordmark { display:none; }
-  .cinematic-hero .discovery-hero-copy>h1 { font-size:22px; }
+  .cinematic-hero .discovery-hero-copy>h1, .cinematic-hero .discovery-hero-copy>.hero-title { font-size:22px; }
   .cinematic-hero .discovery-hero-actions .discovery-primary { font-size:12px; padding-inline:12px; }
+}
+
+/* SEO Content & Semantic Foundation */
+.discovery-seo-section { margin-top:40px; margin-bottom:20px; }
+.discovery-seo-card { border:1px solid #c87bfa2b; border-radius:20px; background:radial-gradient(circle at top right,rgba(168,85,247,0.08),transparent 70%),#141024; padding:32px 36px; box-shadow:0 12px 32px #00000055; }
+.discovery-seo-title { font-size:20px; font-weight:800; color:#f3eddc; margin-bottom:12px; line-height:1.4; }
+.discovery-seo-lead { font-size:13px; line-height:1.8; color:#c6c0d3; margin-bottom:24px; }
+.discovery-seo-lead strong { color:#e1b8ff; font-weight:700; }
+.discovery-seo-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; padding-top:18px; border-top:1px solid #c87bfa1f; }
+.discovery-seo-item h3 { font-size:14px; font-weight:700; color:#fff; margin-bottom:6px; }
+.discovery-seo-item p { font-size:12px; line-height:1.6; color:#a49bb3; margin:0; }
+@media(max-width:860px) {
+  .discovery-seo-grid { grid-template-columns:1fr; gap:14px; }
+  .discovery-seo-card { padding:22px 20px; }
+  .discovery-seo-title { font-size:17px; }
 }
 
 /* Custom geometric clover: four violet petals around a play-shaped centre. */

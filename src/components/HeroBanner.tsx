@@ -40,7 +40,7 @@ export function HeroBanner({ items }: { items: MediaItem[] }) {
     const timer = setTimeout(() => setIndex(value => (value + 1) % items.length), 9000);
     return () => clearTimeout(timer);
   }, [active, items.length, paused, hovered, focused, reducedMotion, visible]);
-  if (!item) return <section className="discovery-hero hero-empty"><div className="hero-empty-copy"><span className="hero-weekly"><Zap size={16} />حكايتك القادمة هنا</span><h1>عالم من الحكايات.<br /><em>على مزاجك.</em></h1><p>اكتشف أنمي جديد، وارجع لأعمالك المفضلة.</p><Link className="discovery-primary" href="/series">استكشف الأنمي<ArrowUpLeft size={18} /></Link></div></section>;
+  if (!item) return <section className="discovery-hero hero-empty"><div className="hero-empty-copy"><span className="hero-weekly"><Zap size={16} />حكايتك القادمة هنا</span><h2 className="hero-title">عالم من الحكايات.<br /><em>على مزاجك.</em></h2><p>اكتشف أنمي جديد، وارجع لأعمالك المفضلة.</p><Link className="discovery-primary" href="/series">استكشف الأنمي<ArrowUpLeft size={18} /></Link></div></section>;
   const season = item.title.match(/\s+(?:Season\s*|S)(\d+)$/i);
   const title = season ? item.title.slice(0, season.index) : item.title;
   const ordinals: Record<string, string> = { "1":"الأول", "2":"الثاني", "3":"الثالث", "4":"الرابع", "5":"الخامس" };
@@ -60,7 +60,7 @@ export function HeroBanner({ items }: { items: MediaItem[] }) {
       </div>
       <div className="discovery-hero-copy" key={`copy-${item.id}`}>
         <span className="hero-weekly"><Zap size={15} fill="currentColor" />أحدث الحلقات<span className="hero-weekly-line"/>{item.available_episode ? `الحلقة ${String(item.available_episode).padStart(2,"0")}` : "جديد على Anime Clover"}</span>
-        <h1 dir="auto" title={item.title}>{title}</h1>
+        <h2 className="hero-title" dir="auto" title={item.title}>{title}</h2>
         {season && <h2 className="hero-season">الموسم {ordinals[season[1]] || season[1]}</h2>}
         <p className="hero-tagline">حلقة جديدة. حكايتك مستمرة.</p>
         <div className="discovery-hero-meta">

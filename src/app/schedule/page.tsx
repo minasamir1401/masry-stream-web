@@ -6,37 +6,49 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "جدول مواعيد عرض الأنمي الأسبوعي - AnimeClover",
+    absolute: "جدول مواعيد عرض الأنمي الأسبوعي | انمي كلوفر AnimeClover",
   },
   description:
-    "جدول مواعيد نزول حلقات مسلسلات الأنمي الأسبوعية المترجمة اون لاين ومواعيد البث المحدثة فور صدورها في اليابان على موقع أنمي كلوفر AnimeClover.",
+    "جدول مواعيد نزول حلقات مسلسلات الأنمي الأسبوعية المترجمة اون لاين ومواعيد البث المحدثة فور صدورها في اليابان على موقع انمي كلوفر (انمي لكوفر - AnimeClover).",
   keywords: [
+    "انمي",
+    "أنمي",
     "جدول الأنمي",
     "جدول نزول الحلقات",
     "مواعيد عرض الأنمي",
     "أنمي اليوم",
     "انمي اليوم",
-    "anime schedule",
-    "anime airing schedule",
-    "anime episodes countdown",
+    "انمي كلوفر",
+    "أنمي كلوفر",
+    "انمي لكوفر",
+    "أنمي لكوفر",
     "AnimeClover",
     "animeclover",
-    "أنمي كلوفر",
-    "انمي كلوفر",
+    "anime schedule",
+    "anime airing schedule",
   ],
   alternates: {
     canonical: "/schedule",
   },
   openGraph: {
-    title: "جدول مواعيد عرض الأنمي الأسبوعي - AnimeClover",
-    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في أنمي كلوفر AnimeClover.",
+    title: "جدول مواعيد عرض الأنمي الأسبوعي | انمي كلوفر AnimeClover",
+    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في انمي كلوفر (انمي لكوفر - AnimeClover).",
     url: "/schedule",
-    siteName: "AnimeClover",
+    siteName: "انمي كلوفر AnimeClover",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "جدول مواعيد عرض الأنمي - انمي كلوفر AnimeClover",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "جدول مواعيد عرض الأنمي الأسبوعي - AnimeClover",
-    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في أنمي كلوفر AnimeClover.",
+    title: "جدول مواعيد عرض الأنمي الأسبوعي | انمي كلوفر AnimeClover",
+    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في انمي كلوفر AnimeClover.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,

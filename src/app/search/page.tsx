@@ -6,33 +6,46 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "بحث عن أنمي - AnimeClover",
+    absolute: "بحث عن أنمي | انمي كلوفر AnimeClover",
   },
   description:
-    "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية وتصفح الحلقات والمواسم على أنمي كلوفر AnimeClover.",
+    "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية وتصفح الحلقات والمواسم على انمي كلوفر (انمي لكوفر - AnimeClover).",
   keywords: [
+    "انمي",
+    "أنمي",
     "بحث انمي",
     "search anime",
     "animeclover search",
+    "انمي كلوفر",
+    "أنمي كلوفر",
+    "انمي لكوفر",
+    "أنمي لكوفر",
     "AnimeClover",
     "animeclover",
     "animeclover.click",
-    "أنمي كلوفر",
-    "انمي كلوفر",
   ],
   alternates: {
     canonical: "/search",
   },
   openGraph: {
-    title: "بحث عن أنمي - AnimeClover",
-    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على أنمي كلوفر AnimeClover.",
+    title: "بحث عن أنمي | انمي كلوفر AnimeClover",
+    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على انمي كلوفر (انمي لكوفر - AnimeClover).",
     url: "/search",
-    siteName: "AnimeClover",
+    siteName: "انمي كلوفر AnimeClover",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "بحث عن أنمي - انمي كلوفر AnimeClover",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "بحث عن أنمي - AnimeClover",
-    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على أنمي كلوفر AnimeClover.",
+    title: "بحث عن أنمي | انمي كلوفر AnimeClover",
+    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على انمي كلوفر AnimeClover.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,

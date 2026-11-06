@@ -3,8 +3,17 @@ import Link from "next/link";
 import { CheckCircle2, Film, Heart, Shield, Sparkles, Tv, Users, Zap } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "من نحن - عن منصة AnimeClover",
-  description: "تعرف على منصة أنمي كلوفر، وجهتك لمشاهدة مسلسلات وأفلام الأنمي المترجمة بأعلى جودة وتجربة سينمائية سريعة بدون إعلانات مزعجة.",
+  title: "من نحن - عن منصة انمي كلوفر AnimeClover",
+  description:
+    "تعرف على منصة انمي كلوفر (انمي لكوفر - AnimeClover)، وجهتكم العربية لمشاهدة مسلسلات وأفلام الأنمي المترجمة بأعلى جودة وتجربة سينمائية سريعة بدون إعلانات مزعجة.",
+  openGraph: {
+    title: "من نحن - عن منصة انمي كلوفر AnimeClover",
+    description:
+      "تعرف على منصة انمي كلوفر (انمي لكوفر - AnimeClover)، وجهتكم العربية لمشاهدة مسلسلات وأفلام الأنمي المترجمة بأعلى جودة.",
+    url: "/about",
+    siteName: "انمي كلوفر AnimeClover",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "عن منصة انمي كلوفر" }],
+  },
 };
 
 export default function AboutPage() {

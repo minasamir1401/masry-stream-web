@@ -148,6 +148,34 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
             <ArrowUpLeft size={17} />
           </span>
         </Link>
+
+        <section className="discovery-section discovery-seo-section" aria-label="عن موقع انمي كلوفر">
+          <div className="discovery-seo-card">
+            <div className="discovery-seo-header">
+              <h1 className="discovery-seo-title">
+                انمي كلوفر AnimeClover | بوابتك الأولى لمشاهدة وتحميل الأنمي المترجم
+              </h1>
+              <p className="discovery-seo-lead">
+                مرحباً بكم في <strong>موقع انمي كلوفر (المعروف أيضاً باسم انمي لكوفر - AnimeClover)</strong>، وجهتكم العربية الموثوقة لمتابعة مسلسلات وأفلام الأنمي الياباني مترجمة باحترافية كاملة. نوفر لكم مكتبة ضخمة تضم آلاف الحلقات مع تحديث فوري للحلقات الأسبوعية فور صدورها، بسيرفرات سريعة وجودات متعددة من SD حتى 1080p Full HD بدون إعلانات مزعجة.
+              </p>
+            </div>
+
+            <div className="discovery-seo-grid">
+              <div className="discovery-seo-item">
+                <h3>مشاهدة أحدث حلقات الأنمي</h3>
+                <p>تغطية شاملة لجميع أنميات الموسم الحالي مع جدول مواعيد العرض الأسبوعي التفاعلي وسيرفرات مباشرة متعددة.</p>
+              </div>
+              <div className="discovery-seo-item">
+                <h3>تحميل مباشر وسيرفرات سريعة</h3>
+                <p>روابط مباشرة وسيرفرات تشغيل فائقة السرعة تدعم استكمال التحميل والمشاهدة السلسة على مختلف الأجهزة الذكية.</p>
+              </div>
+              <div className="discovery-seo-item">
+                <h3>أفلام ومسلسلات أنمي كلاسيكية وحديثة</h3>
+                <p>فهرس متكامل يضم روائع الأنمي العالمية مع الترجمة العربية الدقيقة وإمكانية حفظ سجل المشاهدة والمفضلة.</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

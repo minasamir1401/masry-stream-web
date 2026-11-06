@@ -45,6 +45,8 @@ export async function generateMetadata({ params, searchParams }: WatchPageProps)
     "animeclover.click",
     "أنمي كلوفر",
     "انمي كلوفر",
+    "انمي لكوفر",
+    "أنمي لكوفر",
   ].filter(Boolean);
 
   return {

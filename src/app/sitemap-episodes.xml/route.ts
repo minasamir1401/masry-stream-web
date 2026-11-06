@@ -40,7 +40,7 @@ export async function GET() {
       if (!seen.has(item.id)) {
         seen.add(item.id);
         const rawTitle = item.title || item.original_title || `أنمي #${item.id}`;
-        const posterUrl = item.poster_url || `${siteUrl}/icon.svg`;
+        const posterUrl = item.poster_url || `${siteUrl}/og-image.png`;
         const totalEp = item.total_episodes || (item.episodes ? item.episodes.length : 12);
         const epLimit = Math.min(Math.max(totalEp, 1), 24);
 

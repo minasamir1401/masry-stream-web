@@ -57,6 +57,8 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
       "animeclover.click",
       "أنمي كلوفر",
       "انمي كلوفر",
+      "انمي لكوفر",
+      "أنمي لكوفر",
     ].filter(Boolean),
     alternates: {
       canonical: canonicalUrl,

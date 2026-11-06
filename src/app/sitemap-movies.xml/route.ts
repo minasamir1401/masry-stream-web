@@ -31,7 +31,7 @@ export async function GET() {
       const videoTitle = escapeXml(`فيلم ${rawTitle} مترجم بجودة عالية`.slice(0, 100));
       const rawDesc = item.description || `مشاهدة وتحميل فيلم ${rawTitle} مترجم اون لاين بجودة عالية HD على انمي كلوفر`;
       const videoDesc = escapeXml(rawDesc.slice(0, 500));
-      const thumbUrl = item.poster_url || `${siteUrl}/icon.svg`;
+      const thumbUrl = item.poster_url || `${siteUrl}/og-image.png`;
       const watchUrl = `${siteUrl}/watch/${item.id}?ep=1`;
 
       urls.push(`  <url>

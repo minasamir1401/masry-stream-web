@@ -15,6 +15,11 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: ["/admin", "/api/admin/"],
       },
+      {
+        userAgent: "Googlebot-Image",
+        allow: "/",
+        disallow: ["/admin", "/api/admin/"],
+      },
     ],
     sitemap: [
       `${siteUrl}/sitemap.xml`,

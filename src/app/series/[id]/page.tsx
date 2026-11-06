@@ -56,6 +56,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     "animeclover",
     "أنمي كلوفر",
     "انمي كلوفر",
+    "انمي لكوفر",
+    "أنمي لكوفر",
   ].filter(Boolean);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
