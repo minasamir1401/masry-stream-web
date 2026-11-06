@@ -4,8 +4,9 @@ import { fetchPopularSeries, fetchTrendingAnime } from "@/lib/api";
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
-function escapeXml(unsafe: string): string {
-  return unsafe.replace(/[<>&'"]/g, (c) => {
+function escapeXml(unsafe: string | null | undefined): string {
+  if (!unsafe) return "";
+  return String(unsafe).replace(/[<>&'"]/g, (c) => {
     switch (c) {
       case "<": return "&lt;";
       case ">": return "&gt;";
@@ -38,18 +39,30 @@ export async function GET() {
     for (const item of items) {
       if (!seen.has(item.id)) {
         seen.add(item.id);
+        const title = escapeXml(item.title || item.original_title || `أنمي #${item.id}`);
+        const poster = item.poster_url ? escapeXml(item.poster_url) : "";
+
+        let imageTag = "";
+        if (poster) {
+          imageTag = `\n    <image:image>
+      <image:loc>${poster}</image:loc>
+      <image:title>${title}</image:title>
+    </image:image>`;
+        }
+
         urls.push(`  <url>
     <loc>${escapeXml(`${siteUrl}/series/${item.id}`)}</loc>
     <lastmod>${now}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
+    <priority>0.85</priority>${imageTag}
   </url>`);
       }
     }
   } catch {}
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urls.join("\n")}
 </urlset>`;
 
