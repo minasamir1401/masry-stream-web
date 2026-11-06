@@ -34,6 +34,7 @@ async function proxy(request: NextRequest, { params }: { params: { path?: string
     headers,
     cache: "no-store",
     redirect: "manual",
+    signal: request.signal,
   };
 
   if (!["GET", "HEAD"].includes(request.method)) {
@@ -53,12 +54,26 @@ async function proxy(request: NextRequest, { params }: { params: { path?: string
       }
     });
 
-    return new NextResponse(res.body, {
+    if (!res.body) {
+      return new NextResponse(null, {
+        status: res.status,
+        statusText: res.statusText,
+        headers: resHeaders,
+      });
+    }
+
+    const { readable, writable } = new TransformStream();
+    res.body.pipeTo(writable).catch(() => {});
+
+    return new NextResponse(readable, {
       status: res.status,
       statusText: res.statusText,
       headers: resHeaders,
     });
   } catch (err: any) {
+    if (request.signal.aborted || err?.name === "AbortError") {
+      return new NextResponse(null, { status: 499 });
+    }
     return NextResponse.json(
       { error: "Backend proxy error", details: err?.message || String(err) },
       { status: 502 }

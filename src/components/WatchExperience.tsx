@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, BookOpen, Check, ChevronLeft, ChevronRight, Clock3, Film, Keyboard, Maximize2, Minimize2, Play, RefreshCw, Search, Settings, Star, Tv } from "lucide-react";
+import { ArrowRight, BookOpen, Check, ChevronLeft, ChevronRight, Clock3, Film, Keyboard, Maximize2, Minimize2, Play, RefreshCw, Search, Star, Tv } from "lucide-react";
 import { MediaItem } from "@/lib/types";
 import { genreArabic } from "@/lib/schedule";
 import { formatDuration } from "@/lib/utils";
@@ -44,7 +44,7 @@ export function WatchExperience({media,episode,streamUrl,recommendations}:WatchE
     <nav className="watch-breadcrumb" aria-label="مسار المشاهدة"><Link href="/">الرئيسية</Link><ChevronLeft size={12}/><Link href={series ? "/series" : "/movies"}>{series ? "الأنمي" : "الأفلام"}</Link><ChevronLeft size={12}/><Link href={details} dir="auto">{media.title}</Link><ChevronLeft size={12}/><span>{series ? `الحلقة ${episode}` : "المشاهدة"}</span></nav>
     <div className="watch-heading"><div><div className="watch-eyebrow"><span/>{series ? "وقت حلقتك المفضلة" : "ليلتك مع فيلم جديد"}</div><h1 dir="auto">{media.title}</h1></div><Link className="watch-back" href={details}><ArrowRight size={16}/>صفحة العمل</Link></div>
     <div className={`watch-layout ${series ? "" : "watch-movie-layout"}`}><div className="watch-main">
-      <div className="watch-player-card"><div className="watch-player-heading"><div className="flex items-center gap-2"><span className="watch-episode-badge">{series ? `الحلقة ${String(episode).padStart(2,"0")}` : "الفيلم الكامل"}</span><Link href={`/admin?anime_id=${media.id}`} className="inline-flex items-center gap-1 text-[11px] text-cinema-textMuted hover:text-white px-2 py-0.5 rounded bg-cinema-elevated border border-cinema-border/60 transition-colors" title="تعديل سيرفرات هذا العمل في لوحة التحكم"><Settings size={12}/><span>لوحة التحكم</span></Link></div><button className="watch-theater-toggle" onClick={() => setTheater(value => !value)} aria-pressed={theater}>{theater ? <Minimize2 size={16}/> : <Maximize2 size={16}/>}<span>{theater ? "الوضع العادي" : "وضع السينما"}</span></button></div>
+      <div className="watch-player-card"><div className="watch-player-heading"><div className="flex items-center gap-2"><span className="watch-episode-badge">{series ? `الحلقة ${String(episode).padStart(2,"0")}` : "الفيلم الكامل"}</span></div><button className="watch-theater-toggle" onClick={() => setTheater(value => !value)} aria-pressed={theater}>{theater ? <Minimize2 size={16}/> : <Maximize2 size={16}/>}<span>{theater ? "الوضع العادي" : "وضع السينما"}</span></button></div>
         <EpisodePlayback key={`${media.id}-${episode}`} media={media} episode={episode} title={currentTitle} duration={duration} streamUrl={streamUrl} nextEpisode={next?.number}/>
       </div>
       {series && <div className="watch-episode-navigation">{previous ? <Link prefetch={false} href={watchUrl(previous.number)}><ChevronRight size={18}/><span><small>ارجع للحكاية</small>الحلقة السابقة</span></Link> : <span className="watch-nav-disabled"><ChevronRight size={18}/>الحلقة السابقة</span>}<span className="watch-now-label"><Play size={13} fill="currentColor"/>بتشاهد الحلقة {episode}</span>{next ? <Link prefetch={false} className="watch-next" href={watchUrl(next.number)}><span><small>كمّل الحكاية</small>الحلقة التالية</span><ChevronLeft size={18}/></Link> : <span className="watch-nav-disabled">الحلقة التالية<ChevronLeft size={18}/></span>}</div>}

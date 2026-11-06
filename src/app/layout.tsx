@@ -6,7 +6,7 @@ import { InstallToastNotification } from "@/components/InstallToastNotification"
 import "./globals.css";
 import "./discovery.css";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.com";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
 
 export const viewport: Viewport = {
   themeColor: "#0b0e14",
@@ -18,17 +18,17 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Anime Clover | أنمي كلوفر - عالم مسلسلات وأفلام الأنمي المترجم اون لاين",
-    template: "%s | Anime Clover",
+    default: "AnimeClover - موقع مشاهدة وتحميل الانمي مترجم اون لاين",
+    template: "%s - AnimeClover",
   },
   description:
-    "موقع Anime Clover (أنمي كلوفر) لمشاهدة وتحميل أحدث مسلسلات وأفلام الأنمي الياباني المترجمة باللغة العربية بجودة عالية Full HD ومواعيد الحلقات الأسبوعية بدون إعلانات مزعجة. Watch subbed anime series and movies online in HD on Anime Clover.",
-  applicationName: "Anime Clover",
+    "أنمي كلوفر AnimeClover موقع عربي يمكنك من خلاله تحميل ومشاهدة جميع افلام وحلقات الانمي مترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة Full HD.",
+  applicationName: "AnimeClover",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Anime Clover",
+    title: "AnimeClover",
   },
   icons: {
     icon: [
@@ -40,13 +40,17 @@ export const metadata: Metadata = {
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
-  authors: [{ name: "Anime Clover" }],
+  authors: [{ name: "AnimeClover" }],
   generator: "Next.js",
+  verification: {
+    google: "EqQAZNH4_rR23EZDbPVEPnqVl6HJ4pp128Dc6k-tgP8",
+  },
   keywords: [
-    "Anime Clover",
-    "أنمي كلوفر",
-    "anime clover",
+    "AnimeClover",
     "animeclover",
+    "animeclover.click",
+    "أنمي كلوفر",
+    "انمي كلوفر",
     "أنمي مترجم",
     "مشاهدة انمي",
     "تحميل انمي",
@@ -78,24 +82,24 @@ export const metadata: Metadata = {
     locale: "ar_AR",
     alternateLocale: ["en_US"],
     url: siteUrl,
-    siteName: "Anime Clover | أنمي كلوفر",
-    title: "Anime Clover | أنمي كلوفر - عالم الأنمي المترجم اون لاين",
+    siteName: "AnimeClover",
+    title: "AnimeClover - موقع مشاهدة وتحميل الانمي مترجم اون لاين",
     description:
-      "شاهد وحمل أحدث حلقات ومسلسلات الأنمي المترجمة بجودة عالية وفور صدورها على أنمي كلوفر Anime Clover.",
+      "أنمي كلوفر AnimeClover موقع عربي يمكنك من خلاله تحميل ومشاهدة جميع افلام وحلقات الانمي مترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة.",
     images: [
       {
         url: "/preview_full.png",
         width: 1200,
         height: 630,
-        alt: "Anime Clover - عالم مسلسلات وأفلام الأنمي",
+        alt: "AnimeClover - موقع مشاهدة وتحميل الانمي مترجم اون لاين",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Anime Clover | أنمي كلوفر - مشاهدة مسلسلات وأفلام الأنمي",
+    title: "AnimeClover - موقع مشاهدة وتحميل الانمي مترجم اون لاين",
     description:
-      "بث مباشر وفوري لأحدث حلقات الأنمي المترجمة بجودة متعددة وسيرفرات سريعة على أنمي كلوفر Anime Clover.",
+      "أنمي كلوفر AnimeClover موقع عربي يمكنك من خلاله تحميل ومشاهدة جميع افلام وحلقات الانمي مترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة.",
     images: ["/preview_full.png"],
   },
   robots: {
@@ -120,11 +124,11 @@ export default function RootLayout({
   const jsonLdWebsite = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "Anime Clover",
-    "alternateName": ["أنمي كلوفر", "AnimeClover", "Anime Clover Online"],
+    "name": "AnimeClover",
+    "alternateName": ["أنمي كلوفر", "انمي كلوفر", "Anime Clover", "AnimeClover Online"],
     "url": siteUrl,
     "description":
-      "موقع Anime Clover لمشاهدة وتحميل أحدث مسلسلات وأفلام الأنمي المترجمة باللغة العربية بجودة عالية.",
+      "موقع أنمي كلوفر AnimeClover لمشاهدة وتحميل أحدث مسلسلات وأفلام وحلقات الأنمي المترجمة باللغة العربية بجودة عالية.",
     "inLanguage": ["ar", "en", "ja"],
     "potentialAction": {
       "@type": "SearchAction",
@@ -139,15 +143,25 @@ export default function RootLayout({
   const jsonLdOrg = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Anime Clover",
+    "name": "AnimeClover",
     "url": siteUrl,
-    "logo": `${siteUrl}/preview.png`,
+    "logo": `${siteUrl}/preview_full.png`,
     "sameAs": [],
   };
 
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
+        <meta
+          name="google-site-verification"
+          content="EqQAZNH4_rR23EZDbPVEPnqVl6HJ4pp128Dc6k-tgP8"
+        />
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+        <link rel="preconnect" href="https://s4.anilist.co" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://cdn.myanimelist.net" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="//s4.anilist.co" />
+        <link rel="dns-prefetch" href="//cdn.myanimelist.net" />
+        <link rel="dns-prefetch" href="//image.tmdb.org" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}

@@ -6,26 +6,48 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "جدول مواعيد عرض الأنمي الأسبوعي | Anime Airing Schedule - Anime Clover",
+    absolute: "جدول مواعيد عرض الأنمي الأسبوعي - AnimeClover",
   },
   description:
-    "تابع جدول مواعيد نزول حلقات الأنمي الأسبوعية المترجمة بتوقيتك المحلي فور صدورها في اليابان مع العد التنازلي وروابط المشاهدة المباشرة على أنمي كلوفر Anime Clover.",
+    "جدول مواعيد نزول حلقات مسلسلات الأنمي الأسبوعية المترجمة اون لاين ومواعيد البث المحدثة فور صدورها في اليابان على موقع أنمي كلوفر AnimeClover.",
   keywords: [
     "جدول الأنمي",
     "جدول نزول الحلقات",
     "مواعيد عرض الأنمي",
     "أنمي اليوم",
+    "انمي اليوم",
     "anime schedule",
     "anime airing schedule",
     "anime episodes countdown",
-    "Anime Clover",
+    "AnimeClover",
+    "animeclover",
     "أنمي كلوفر",
+    "انمي كلوفر",
   ],
+  alternates: {
+    canonical: "/schedule",
+  },
   openGraph: {
-    title: "جدول مواعيد عرض الأنمي الأسبوعي | Anime Clover",
-    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في أنمي كلوفر.",
+    title: "جدول مواعيد عرض الأنمي الأسبوعي - AnimeClover",
+    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في أنمي كلوفر AnimeClover.",
     url: "/schedule",
-    siteName: "Anime Clover | أنمي كلوفر",
+    siteName: "AnimeClover",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "جدول مواعيد عرض الأنمي الأسبوعي - AnimeClover",
+    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في أنمي كلوفر AnimeClover.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

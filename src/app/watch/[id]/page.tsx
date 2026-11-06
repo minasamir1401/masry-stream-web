@@ -14,34 +14,37 @@ interface WatchPageProps {
 export async function generateMetadata({ params, searchParams }: WatchPageProps): Promise<Metadata> {
   const rawEpisode = searchParams?.ep || "1";
   if (!/^[1-9]\d*$/.test(rawEpisode) || !/^\d+$/.test(params.id)) {
-    return { title: "الحلقة غير متوفرة | Anime Clover" };
+    return { title: "الحلقة غير متوفرة - AnimeClover" };
   }
   const episode = Number(rawEpisode);
   const media = await fetchMediaById(params.id).catch(() => null);
-  if (!media) return { title: "الحلقة غير متوفرة | Anime Clover" };
+  if (!media) return { title: "الحلقة غير متوفرة - AnimeClover" };
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
   const canonicalUrl = `${siteUrl}/watch/${media.id}?ep=${episode}`;
   const posterImg = media.banner_url || media.poster_url || `${siteUrl}/preview_full.png`;
 
   const titleAr = media.title;
   const titleEn = media.original_title && media.original_title !== media.title ? ` (${media.original_title})` : "";
-  const pageTitle = `أنمي ${titleAr} الحلقة ${episode} مترجمة HD | Watch ${media.original_title || titleAr} Ep ${episode} Sub - Anime Clover`;
-  const pageDesc = `شاهد وحمّل الآن أنمي ${titleAr}${titleEn} الحلقة ${episode} مترجمة عربي بجودة فائقة Full HD مع سيرفرات تشغيل مباشرة وسريعة وبدون إعلانات. Watch ${media.original_title || titleAr} episode ${episode} online on Anime Clover.`;
+  const pageTitle = `انمي ${titleAr} الحلقة ${episode} مترجمة اون لاين - AnimeClover`;
+  const pageDesc = `انمي ${titleAr} الحلقة ${episode} مترجمة اون لاين تحميل ومشاهدة بجودة عالية ${titleAr}${titleEn} الحلقة ${episode} كاملة مع التحميل على موقع أنمي كلوفر AnimeClover.`;
 
   const keywords = [
     media.title,
-    `أنمي ${media.title} الحلقة ${episode}`,
-    `حلقة ${episode} ${media.title}`,
+    `انمي ${media.title} الحلقة ${episode}`,
+    `انمي ${media.title} حلقة ${episode}`,
+    `انمي ${media.title} الحلقة ${episode} مترجمة`,
+    `مشاهدة انمي ${media.title} الحلقة ${episode}`,
+    `تحميل انمي ${media.title} الحلقة ${episode}`,
     `${media.title} episode ${episode}`,
-    `مشاهدة ${media.title} حلقة ${episode}`,
-    `تحميل ${media.title} حلقة ${episode}`,
     media.original_title || "",
     `${media.original_title || media.title} ep ${episode}`,
     `watch ${media.title} episode ${episode} sub`,
-    "Anime Clover",
-    "أنمي كلوفر",
+    "AnimeClover",
     "animeclover",
+    "animeclover.click",
+    "أنمي كلوفر",
+    "انمي كلوفر",
   ].filter(Boolean);
 
   return {
@@ -55,10 +58,10 @@ export async function generateMetadata({ params, searchParams }: WatchPageProps)
     },
     openGraph: {
       type: "video.episode",
-      title: `أنمي ${titleAr} الحلقة ${episode} مترجمة اون لاين | Anime Clover`,
+      title: pageTitle,
       description: pageDesc,
       url: canonicalUrl,
-      siteName: "Anime Clover | أنمي كلوفر",
+      siteName: "AnimeClover",
       images: [
         {
           url: posterImg,
@@ -70,9 +73,20 @@ export async function generateMetadata({ params, searchParams }: WatchPageProps)
     },
     twitter: {
       card: "summary_large_image",
-      title: `أنمي ${titleAr} الحلقة ${episode} مترجمة اون لاين | Anime Clover`,
+      title: pageTitle,
       description: pageDesc,
       images: [posterImg],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -90,14 +104,14 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
     media.media_type === "SERIES" ? fetchPopularSeries(1, 7) : fetchAnimeMovies(1, 7),
   ]);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
   const posterImg = media.banner_url || media.poster_url || `${siteUrl}/preview_full.png`;
 
   // Schema: TVEpisode
   const jsonLdEpisode = {
     "@context": "https://schema.org",
     "@type": "TVEpisode",
-    "name": `${media.title} - الحلقة ${episode}`,
+    "name": `انمي ${media.title} الحلقة ${episode}`,
     "episodeNumber": episode,
     "partOfSeries": {
       "@type": "TVSeries",
@@ -105,7 +119,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
       "url": `${siteUrl}/series/${media.id}`,
     },
     "image": posterImg,
-    "description": `شاهد الحلقة ${episode} من أنمي ${media.title} مترجمة عربي بجودة Full HD على أنمي كلوفر Anime Clover.`,
+    "description": `مشاهدة وتحميل انمي ${media.title} الحلقة ${episode} مترجمة عربي اون لاين بجودة Full HD على موقع أنمي كلوفر AnimeClover.`,
     "inLanguage": ["ja", "ar"],
   };
 
@@ -113,14 +127,14 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
   const jsonLdVideo = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
-    "name": `أنمي ${media.title} الحلقة ${episode} مترجمة عربي`,
-    "description": `مشاهدة الحلقة ${episode} من أنمي ${media.title} اون لاين بجودة عالية HD على Anime Clover.`,
+    "name": `انمي ${media.title} الحلقة ${episode} مترجمة اون لاين`,
+    "description": `مشاهدة انمي ${media.title} الحلقة ${episode} اون لاين بجودة عالية HD مع روابط تحميل مباشرة على AnimeClover.`,
     "thumbnailUrl": [posterImg],
     "uploadDate": new Date().toISOString(),
     "embedUrl": `${siteUrl}/watch/${media.id}?ep=${episode}`,
     "publisher": {
       "@type": "Organization",
-      "name": "Anime Clover",
+      "name": "AnimeClover",
       "url": siteUrl,
     },
   };

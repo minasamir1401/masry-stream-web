@@ -6,17 +6,45 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "البحث عن الأنمي والحلقات | Search Anime - Anime Clover",
+    absolute: "بحث عن أنمي - AnimeClover",
   },
   description:
-    "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية وتصفح الحلقات والمواسم على أنمي كلوفر Anime Clover.",
+    "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية وتصفح الحلقات والمواسم على أنمي كلوفر AnimeClover.",
   keywords: [
     "بحث انمي",
     "search anime",
-    "Anime Clover search",
+    "animeclover search",
+    "AnimeClover",
+    "animeclover",
+    "animeclover.click",
     "أنمي كلوفر",
-    "Anime Clover",
+    "انمي كلوفر",
   ],
+  alternates: {
+    canonical: "/search",
+  },
+  openGraph: {
+    title: "بحث عن أنمي - AnimeClover",
+    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على أنمي كلوفر AnimeClover.",
+    url: "/search",
+    siteName: "AnimeClover",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "بحث عن أنمي - AnimeClover",
+    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على أنمي كلوفر AnimeClover.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default async function Page({ searchParams }: { searchParams: CatalogQuery }) {

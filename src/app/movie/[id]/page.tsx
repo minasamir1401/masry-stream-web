@@ -16,7 +16,6 @@ import {
   Radio,
   FileVideo,
   ArrowRight,
-  Settings,
 } from "lucide-react";
 
 export const revalidate = 60;
@@ -29,47 +28,63 @@ interface MovieDetailPageProps {
 
 export async function generateMetadata({ params }: MovieDetailPageProps): Promise<Metadata> {
   const movie = await fetchMovieById(params.id).catch(() => null);
-  if (!movie) return { title: "الفيلم غير متوفر | Anime Clover" };
+  if (!movie) return { title: "الفيلم غير متوفر - AnimeClover" };
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
   const canonicalUrl = `${siteUrl}/movie/${movie.id}`;
   const posterImg = movie.poster_proxy_url || movie.poster_url || `${siteUrl}/preview_full.png`;
 
   const titleAr = movie.title;
-  const titleEn = movie.original_title && movie.original_title !== movie.title ? ` (${movie.original_title})` : "";
-  const pageTitle = `فيلم ${titleAr}${titleEn} مترجم كامل HD | Watch ${movie.original_title || titleAr} Movie - Anime Clover`;
-  const pageDesc = `شاهد وحمل فيلم ${titleAr}${titleEn} بجودة فائقة Full HD على أنمي كلوفر. ${movie.description || "مشاهدة وتحميل مباشر بدون إعلانات."} Watch ${movie.original_title || titleAr} movie online on Anime Clover.`;
+  const titleEn = movie.original_title && movie.original_title !== movie.title ? ` ${movie.original_title}` : "";
+  const pageTitle = `فيلم ${titleAr}${titleEn} مترجم تحميل ومشاهدة اون لاين - AnimeClover`;
+  const pageDesc = `تحميل ومشاهدة فيلم ${titleAr}${titleEn ? ` (${movie.original_title})` : ""} مترجم اون لاين بجودة عالية Full HD مع روابط تحميل مباشرة على موقع أنمي كلوفر AnimeClover. ${movie.description || ""}`.trim();
 
   return {
-    title: pageTitle,
+    title: {
+      absolute: pageTitle,
+    },
     description: pageDesc,
     keywords: [
       movie.title,
       `فيلم ${movie.title}`,
+      `فيلم ${movie.title} مترجم`,
       `مشاهدة فيلم ${movie.title}`,
       `تحميل فيلم ${movie.title}`,
       movie.original_title || "",
       `${movie.original_title || movie.title} full movie`,
-      "Anime Clover",
-      "أنمي كلوفر",
+      "AnimeClover",
       "animeclover",
+      "animeclover.click",
+      "أنمي كلوفر",
+      "انمي كلوفر",
     ].filter(Boolean),
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
       type: "video.movie",
-      title: `فيلم ${titleAr} كامل | Anime Clover`,
+      title: pageTitle,
       description: pageDesc,
       url: canonicalUrl,
-      siteName: "Anime Clover | أنمي كلوفر",
+      siteName: "AnimeClover",
       images: [{ url: posterImg, width: 1200, height: 630, alt: movie.title }],
     },
     twitter: {
       card: "summary_large_image",
-      title: `فيلم ${titleAr} مترجم | Anime Clover`,
+      title: pageTitle,
       description: pageDesc,
       images: [posterImg],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -87,7 +102,7 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
   }
 
   const posterSrc = movie.poster_proxy_url || movie.poster_url || "/placeholder-poster.svg";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
 
   const jsonLdMovie = {
     "@context": "https://schema.org",
@@ -101,7 +116,7 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
     "inLanguage": ["ar", "ja"],
     "publisher": {
       "@type": "Organization",
-      "name": "Anime Clover",
+      "name": "AnimeClover",
       "url": siteUrl,
     },
   };
@@ -224,14 +239,6 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
               >
                 <Play className="w-5 h-5 fill-current ml-0.5" />
                 <span>شاهد الفيلم الآن</span>
-              </Link>
-              <Link
-                href={`/admin?anime_id=${movie.id}`}
-                className="flex items-center gap-2 px-5 py-4 rounded-xl bg-cinema-elevated hover:bg-cinema-hover border border-cinema-border text-cinema-textSecondary hover:text-white text-sm font-bold transition-colors"
-                title="إدارة وتعديل السيرفرات في لوحة التحكم"
-              >
-                <Settings className="w-4 h-4" />
-                <span>تعديل في لوحة التحكم</span>
               </Link>
             </div>
 

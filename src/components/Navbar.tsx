@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { CalendarDays, Compass, Film, Heart, Home, Search, ShieldCheck, X } from "lucide-react";
+import { CalendarDays, Compass, Film, Heart, Home, Search, X } from "lucide-react";
 import { Brand } from "./Brand";
 import { InstallNavButton } from "./InstallNavButton";
 
@@ -33,7 +33,6 @@ export function Navbar() {
             <input ref={searchInput} aria-label="ابحث عن أنمي" placeholder="ابحث عن أنميك المفضل..." value={query} onChange={event => setQuery(event.target.value)} />
           </form>
           <Link className={`app-icon-link ${pathname === "/favorites" ? "active" : ""}`} href="/favorites" aria-label="المفضلة"><Heart size={20} strokeWidth={1.6} /></Link>
-          <Link className={`app-icon-link ${pathname === "/admin" ? "active" : ""}`} href="/admin" aria-label="لوحة التحكم" title="لوحة التحكم"><ShieldCheck size={20} strokeWidth={1.6} /></Link>
         </div>
       </div>
     </header>

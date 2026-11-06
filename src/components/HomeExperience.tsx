@@ -21,15 +21,6 @@ const filters = [
 
 const detailsUrl = (item: MediaItem) => `/${item.media_type === "MOVIE" ? "movie" : "series"}/${item.id}`;
 
-function buildRowItems(items: MediaItem[], startIndex: number, count = 20): MediaItem[] {
-  if (!items || items.length === 0) return [];
-  const result: MediaItem[] = [];
-  for (let i = 0; i < count; i++) {
-    result.push(items[(startIndex + i) % items.length]);
-  }
-  return result;
-}
-
 function EpisodeCard({ item, eager }: { item: MediaItem; eager?: boolean }) {
   const ep = item.available_episode || 1;
   return (
@@ -70,10 +61,6 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
   const today = week?.days.find((day) => day.date === week.today);
   const popular = data.popular.length ? data.popular : data.recommended;
 
-  const row1 = buildRowItems(visible, 0, 20);
-  const row2 = buildRowItems(visible, 7, 20);
-  const row3 = buildRowItems(visible, 14, 20);
-
   return (
     <div className="home-shell discovery-home">
       <HeroBanner items={data.featured} />
@@ -109,53 +96,10 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
               </Link>
             </div>
           ) : visible.length ? (
-            <div className="discovery-marquee-viewport" aria-label="أحدث حلقات الأنمي المعروضة">
-              <div className="discovery-marquee-strip">
-                <div className="discovery-marquee-row">
-                  <div className="discovery-marquee-track discovery-marquee-track-1">
-                    <div className="discovery-marquee-group">
-                      {row1.map((item, index) => (
-                        <EpisodeCard key={`r1-g1-${item.id}-${index}`} item={item} eager={index < 4} />
-                      ))}
-                    </div>
-                    <div className="discovery-marquee-group" aria-hidden="true">
-                      {row1.map((item, index) => (
-                        <EpisodeCard key={`r1-g2-${item.id}-${index}`} item={item} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="discovery-marquee-row">
-                  <div className="discovery-marquee-track discovery-marquee-track-2">
-                    <div className="discovery-marquee-group">
-                      {row2.map((item, index) => (
-                        <EpisodeCard key={`r2-g1-${item.id}-${index}`} item={item} />
-                      ))}
-                    </div>
-                    <div className="discovery-marquee-group" aria-hidden="true">
-                      {row2.map((item, index) => (
-                        <EpisodeCard key={`r2-g2-${item.id}-${index}`} item={item} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="discovery-marquee-row">
-                  <div className="discovery-marquee-track discovery-marquee-track-3">
-                    <div className="discovery-marquee-group">
-                      {row3.map((item, index) => (
-                        <EpisodeCard key={`r3-g1-${item.id}-${index}`} item={item} />
-                      ))}
-                    </div>
-                    <div className="discovery-marquee-group" aria-hidden="true">
-                      {row3.map((item, index) => (
-                        <EpisodeCard key={`r3-g2-${item.id}-${index}`} item={item} />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div className="discovery-episodes-grid" aria-label="أحدث حلقات الأنمي المعروضة">
+              {visible.slice(0, 16).map((item, index) => (
+                <EpisodeCard key={`${item.id}-${item.available_episode || index}`} item={item} eager={index < 4} />
+              ))}
             </div>
           ) : (
             <div className="discovery-empty">

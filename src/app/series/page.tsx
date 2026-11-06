@@ -6,27 +6,51 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "مكتبة مسلسلات الأنمي المترجمة اون لاين HD | Watch Anime Series - Anime Clover",
+    absolute: "أنميات - مسلسلات الأنمي المترجمة اون لاين - AnimeClover",
   },
   description:
-    "تصفح وشاهد أحدث وأشهر مسلسلات الأنمي الياباني المترجمة بالعربية بجودة Full HD. فلاتر متقدمة للتصنيف والحالة وسنة الإنتاج على أنمي كلوفر Anime Clover.",
+    "قسم الأنمي على أنمي كلوفر AnimeClover يمكنك من خلاله متابعة وتحميل أفضل وآخر مسلسلات الأنمي المترجمة اون لاين بجودات متعددة وسيرفرات سريعة.",
   keywords: [
+    "أنميات",
+    "انميات",
     "مسلسلات أنمي",
     "أنمي مترجم",
+    "مشاهدة انمي",
+    "تحميل انمي",
     "مكتبة الأنمي",
-    "انمي اكشن",
-    "انمي مغامرات",
-    "انمي رومانسي",
     "anime series online",
     "watch anime series",
-    "Anime Clover",
+    "AnimeClover",
+    "animeclover",
     "أنمي كلوفر",
+    "انمي كلوفر",
   ],
+  alternates: {
+    canonical: "/series",
+  },
   openGraph: {
-    title: "مكتبة مسلسلات الأنمي المترجمة | Anime Clover",
-    description: "اكتشف مسلسلات الأنمي المترجمة بتصنيفات متعددة وجودة عالية على Anime Clover.",
+    title: "أنميات - مسلسلات الأنمي المترجمة اون لاين - AnimeClover",
+    description:
+      "قسم الأنمي على أنمي كلوفر AnimeClover يمكنك من خلاله متابعة وتحميل أفضل وآخر مسلسلات الأنمي المترجمة اون لاين بجودات متعددة وسيرفرات سريعة.",
     url: "/series",
-    siteName: "Anime Clover | أنمي كلوفر",
+    siteName: "AnimeClover",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "أنميات - مسلسلات الأنمي المترجمة اون لاين - AnimeClover",
+    description:
+      "قسم الأنمي على أنمي كلوفر AnimeClover يمكنك من خلاله متابعة وتحميل أفضل وآخر مسلسلات الأنمي المترجمة اون لاين بجودات متعددة وسيرفرات سريعة.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

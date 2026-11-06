@@ -6,24 +6,50 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "أفلام الأنمي المترجمة والمدبلجة بجودة عالية HD | Anime Movies - Anime Clover",
+    absolute: "أفلام أنمي - تحميل ومشاهدة أفلام الأنمي مترجمة اون لاين - AnimeClover",
   },
   description:
-    "شاهد وحمل أحدث وأقوى أفلام الأنمي الياباني المترجمة بدقة عالية Full HD وسيرفرات مباشرة بدون إعلانات على أنمي كلوفر Anime Clover.",
+    "قسم أفلام الأنمي على أنمي كلوفر AnimeClover يمكنك من خلاله مشاهدة وتحميل أحدث وأقوى أفلام الأنمي المترجمة اون لاين بجودة عالية FHD وسيرفرات مباشرة سريعة.",
   keywords: [
     "أفلام أنمي",
+    "افلام انمي",
     "فلم انمي",
     "افلام انمي مترجمة",
+    "مشاهدة افلام انمي",
+    "تحميل افلام انمي",
     "anime movies hd",
     "watch anime movies",
-    "Anime Clover",
+    "AnimeClover",
+    "animeclover",
     "أنمي كلوفر",
+    "انمي كلوفر",
   ],
+  alternates: {
+    canonical: "/movies",
+  },
   openGraph: {
-    title: "أفلام الأنمي المترجمة | Anime Clover",
-    description: "مكتبة أفلام الأنمي المترجمة والمدبلجة بأعلى جودة على Anime Clover.",
+    title: "أفلام أنمي - تحميل ومشاهدة أفلام الأنمي مترجمة اون لاين - AnimeClover",
+    description:
+      "قسم أفلام الأنمي على أنمي كلوفر AnimeClover يمكنك من خلاله مشاهدة وتحميل أحدث وأقوى أفلام الأنمي المترجمة اون لاين بجودة عالية FHD وسيرفرات مباشرة سريعة.",
     url: "/movies",
-    siteName: "Anime Clover | أنمي كلوفر",
+    siteName: "AnimeClover",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "أفلام أنمي - تحميل ومشاهدة أفلام الأنمي مترجمة اون لاين - AnimeClover",
+    description:
+      "قسم أفلام الأنمي على أنمي كلوفر AnimeClover يمكنك من خلاله مشاهدة وتحميل أحدث وأقوى أفلام الأنمي المترجمة اون لاين بجودة عالية FHD وسيرفرات مباشرة سريعة.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
 };
 

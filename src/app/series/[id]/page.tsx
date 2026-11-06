@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CalendarDays, ChevronLeft, Clock3, Film, Layers3, Settings, Star, Tv } from "lucide-react";
+import { CalendarDays, ChevronLeft, Clock3, Film, Layers3, Star, Tv } from "lucide-react";
 import { fetchMediaById, fetchPopularSeries } from "@/lib/api";
 import { genreArabic } from "@/lib/schedule";
 import { formatDuration } from "@/lib/utils";
@@ -26,37 +26,39 @@ interface PageProps {
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  if (!/^\d+$/.test(params.id)) return { title: "الأنمي غير موجود | Anime Clover" };
+  if (!/^\d+$/.test(params.id)) return { title: "الأنمي غير موجود - AnimeClover" };
   const series = await fetchMediaById(params.id).catch(() => null);
-  if (!series) return { title: "الأنمي غير موجود | Anime Clover" };
+  if (!series) return { title: "الأنمي غير موجود - AnimeClover" };
 
   const cleanDesc = series.description
     ? series.description.replace(/<[^>]*>?/gm, "").slice(0, 170).trim()
     : "شاهد جميع حلقات وأفلام هذا العمل بجودة فائقة Full HD على أنمي كلوفر.";
 
   const titleAr = series.title;
-  const titleEn = series.original_title && series.original_title !== series.title ? ` (${series.original_title})` : "";
-  const pageTitle = `أنمي ${titleAr}${titleEn} مترجم كامل اون لاين HD | Watch ${series.original_title || titleAr} Anime Online`;
-  const pageDesc = `شاهد وحمل أنمي ${titleAr}${titleEn} مترجم عربي كامل بأعلى جودة Full HD ومواعيد الحلقات الأسبوعية بدون حجب. ${cleanDesc} Watch ${series.original_title || titleAr} english sub online on Anime Clover.`;
+  const titleEn = series.original_title && series.original_title !== series.title ? ` ${series.original_title}` : "";
+  const pageTitle = `انمي ${titleAr}${titleEn} جميع الحلقات مترجمة تحميل ومشاهدة اون لاين - AnimeClover`;
+  const pageDesc = `انمي ${titleAr} جميع الحلقات تحميل ومشاهدة اون لاين${titleEn ? ` (${series.original_title})` : ""} مترجم كامل الحلقات بجودة عالية مع روابط تحميل سريعة على موقع أنمي كلوفر AnimeClover. ${cleanDesc}`;
 
   const genresList = (series.genres || []).map((g) => genreArabic[g.name] || g.name);
   const keywords = [
     series.title,
-    `أنمي ${series.title}`,
-    `أنمي ${series.title} مترجم`,
-    `مشاهدة أنمي ${series.title}`,
-    `تحميل أنمي ${series.title}`,
+    `انمي ${series.title}`,
+    `انمي ${series.title} جميع الحلقات`,
+    `انمي ${series.title} مترجم`,
+    `مشاهدة انمي ${series.title}`,
+    `تحميل انمي ${series.title}`,
     `حلقات ${series.title}`,
     series.original_title || "",
     `${series.original_title || series.title} anime online`,
     `watch ${series.original_title || series.title} sub`,
     ...genresList,
-    "Anime Clover",
-    "أنمي كلوفر",
+    "AnimeClover",
     "animeclover",
+    "أنمي كلوفر",
+    "انمي كلوفر",
   ].filter(Boolean);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
   const canonicalUrl = `${siteUrl}/series/${series.id}`;
   const posterImg = series.banner_url || series.poster_url || `${siteUrl}/preview_full.png`;
 
@@ -71,10 +73,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     openGraph: {
       type: series.media_type === "MOVIE" ? "video.movie" : "video.tv_show",
-      title: `أنمي ${titleAr} مترجم كامل | Anime Clover`,
+      title: pageTitle,
       description: pageDesc,
       url: canonicalUrl,
-      siteName: "Anime Clover | أنمي كلوفر",
+      siteName: "AnimeClover",
       images: [
         {
           url: posterImg,
@@ -86,9 +88,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     },
     twitter: {
       card: "summary_large_image",
-      title: `أنمي ${titleAr} مترجم كامل اون لاين | Anime Clover`,
+      title: pageTitle,
       description: pageDesc,
       images: [posterImg],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -109,7 +122,7 @@ export default async function Page({ params }: PageProps) {
   const status = series.status ? statuses[series.status] : undefined;
   const recommendations = (recommended?.items || []).filter((item) => item.id !== series.id).slice(0, 6);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.com";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
   const cleanDescription = (series.description || "").replace(/<[^>]*>?/gm, "").trim();
 
   // JSON-LD Schemas for search engines
@@ -135,7 +148,7 @@ export default async function Page({ params }: PageProps) {
       : undefined,
     "publisher": {
       "@type": "Organization",
-      "name": "Anime Clover",
+      "name": "AnimeClover",
       "url": siteUrl,
     },
   };
@@ -261,14 +274,6 @@ export default async function Page({ params }: PageProps) {
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <SeriesWatchActions item={series} upcoming={series.status === "NOT_YET_RELEASED"} />
-              <Link
-                href={`/admin?anime_id=${series.id}`}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-cinema-textSecondary hover:text-white bg-cinema-elevated hover:bg-cinema-hover border border-cinema-border rounded-xl transition-colors"
-                title="إدارة الحلقات والسيرفرات في لوحة التحكم"
-              >
-                <Settings size={14} />
-                <span>تعديل في لوحة التحكم</span>
-              </Link>
             </div>
             <a className="anime-all-episodes" href="#episodes">
               تصفّح الحلقات

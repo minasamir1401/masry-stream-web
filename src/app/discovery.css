@@ -86,6 +86,10 @@ html,body { background:var(--discovery-bg); }
 .discovery-tabs button { padding:7px 18px; min-height:33px; border:1px solid transparent; background:#171520; color:#c5bace; border-radius:9px; font-size:11px; white-space:nowrap; }
 .discovery-tabs button:hover { color:#fff; border-color:#78469e; }
 .discovery-tabs button.selected { background:linear-gradient(120deg,#ab5be9,#873ccb); border-color:#c286f1; color:#fff; box-shadow:0 0 13px #b94ef42b; }
+.discovery-episodes-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; width:100%; }
+.discovery-episodes-grid .discovery-episode { width:100%; min-width:0; text-align:right; }
+@media (max-width: 1100px) { .discovery-episodes-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; } }
+@media (max-width: 768px) { .discovery-episodes-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; } }
 /* Discovery Marquee Strip (Infinite Moving Bricks - Seamless Continuous Flow) */
 .discovery-marquee-viewport { position:relative; width:100%; overflow:hidden; padding:8px 0 16px; direction:ltr !important; mask-image:linear-gradient(90deg,transparent,#000 2.5%,#000 97.5%,transparent); -webkit-mask-image:linear-gradient(90deg,transparent,#000 2.5%,#000 97.5%,transparent); }
 .discovery-marquee-strip { display:flex; flex-direction:column; gap:24px; direction:ltr !important; }

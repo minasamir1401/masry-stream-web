@@ -5,11 +5,24 @@ import { HomeExperience } from "@/components/HomeExperience";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Anime Clover | أنمي كلوفر - مشاهدة وتحميل أحدث مسلسلات وأفلام الأنمي المترجم اون لاين",
+  title: "AnimeClover - موقع مشاهدة وتحميل الانمي مترجم اون لاين",
   description:
-    "موقع أنمي كلوفر Anime Clover لمشاهدة أحدث مسلسلات وأفلام الأنمي الياباني المترجمة باللغة العربية بجودة Full HD. مواعيد الحلقات الأسبوعية، استكشاف التصنيفات، وبث مباشر سريع بدون إعلانات مزعجة. Watch subbed anime series and movies online in HD on Anime Clover.",
+    "أنمي كلوفر AnimeClover موقع عربي يمكنك من خلاله تحميل ومشاهدة جميع افلام وحلقات الانمي مترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة Full HD بدون إعلانات مزعجة.",
   alternates: {
     canonical: "/",
+  },
+  openGraph: {
+    title: "AnimeClover - موقع مشاهدة وتحميل الانمي مترجم اون لاين",
+    description:
+      "أنمي كلوفر AnimeClover موقع عربي يمكنك من خلاله تحميل ومشاهدة جميع افلام وحلقات الانمي مترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة.",
+    url: "/",
+    siteName: "AnimeClover",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AnimeClover - موقع مشاهدة وتحميل الانمي مترجم اون لاين",
+    description:
+      "أنمي كلوفر AnimeClover موقع عربي يمكنك من خلاله تحميل ومشاهدة جميع افلام وحلقات الانمي مترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة.",
   },
 };
 
