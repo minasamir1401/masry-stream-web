@@ -192,8 +192,9 @@ export async function middleware(request: NextRequest) {
     );
   }
 
-  // 2. Sliding-window rate limit on API endpoints
-  if (path.startsWith("/api/")) {
+  // 2. Sliding-window rate limit on API endpoints (exempt video/media streaming segments)
+  const isMediaStream = path.includes("/hls/") || path.includes("/video/") || path.includes("/stream/");
+  if (path.startsWith("/api/") && !isMediaStream) {
     const isAllowed = checkRateLimit(clientIp, 120, 60000);
     if (!isAllowed) {
       return new NextResponse(
