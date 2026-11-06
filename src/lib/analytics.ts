@@ -69,8 +69,44 @@ export function trackEvent(payload: TrackingPayload): void {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
       keepalive: true,
-    }).catch(() => {});
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || typeof window === "undefined") return;
+        if (data.is_banned) {
+          window.dispatchEvent(
+            new CustomEvent("masry_security_status", {
+              detail: { is_banned: true, ban_reason: data.ban_reason },
+            })
+          );
+        } else if (data.requires_challenge) {
+          window.dispatchEvent(
+            new CustomEvent("masry_security_status", {
+              detail: { requires_challenge: true },
+            })
+          );
+        }
+      })
+      .catch(() => {});
   } catch {
     // Fail silently to never disrupt user experience
+  }
+}
+
+export async function checkSecurityStatus(visitorId?: string): Promise<{
+  is_banned: boolean;
+  ban_reason?: string | null;
+  requires_challenge: boolean;
+}> {
+  if (typeof window === "undefined") {
+    return { is_banned: false, requires_challenge: false };
+  }
+  const vid = visitorId || getVisitorId();
+  try {
+    const res = await fetch(`/api/security/status?vid=${encodeURIComponent(vid)}`);
+    if (!res.ok) return { is_banned: false, requires_challenge: false };
+    return await res.json();
+  } catch {
+    return { is_banned: false, requires_challenge: false };
   }
 }

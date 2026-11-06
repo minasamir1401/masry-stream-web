@@ -1,13 +1,49 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
-import { getVisitorId, isUserAdmin, trackEvent } from "@/lib/analytics";
+import { getVisitorId, isUserAdmin, trackEvent, checkSecurityStatus } from "@/lib/analytics";
+import { BannedOverlay } from "@/components/BannedOverlay";
+import { SecurityChallengeModal } from "@/components/SecurityChallengeModal";
 
 export function AnalyticsTracker() {
   const pathname = usePathname();
   const lastPathRef = useRef<string>("");
   const lastHeartbeatRef = useRef<number>(Date.now());
+
+  const [isBanned, setIsBanned] = useState<boolean>(false);
+  const [banReason, setBanReason] = useState<string | null>(null);
+  const [requiresChallenge, setRequiresChallenge] = useState<boolean>(false);
+
+  useEffect(() => {
+    function handleSecurityStatus(e: Event) {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.is_banned) {
+        setIsBanned(true);
+        setBanReason(detail.ban_reason || null);
+      }
+      if (detail?.requires_challenge) {
+        setRequiresChallenge(true);
+      }
+    }
+
+    window.addEventListener("masry_security_status", handleSecurityStatus);
+    return () => {
+      window.removeEventListener("masry_security_status", handleSecurityStatus);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (pathname?.startsWith("/admin") || isUserAdmin()) return;
+    checkSecurityStatus().then((status) => {
+      if (status.is_banned) {
+        setIsBanned(true);
+        setBanReason(status.ban_reason || null);
+      } else if (status.requires_challenge) {
+        setRequiresChallenge(true);
+      }
+    });
+  }, [pathname]);
 
   useEffect(() => {
     if (pathname?.startsWith("/admin") || isUserAdmin()) return;
@@ -129,5 +165,16 @@ export function AnalyticsTracker() {
     };
   }, []);
 
-  return null;
+  return (
+    <>
+      {isBanned && <BannedOverlay reason={banReason} />}
+      {requiresChallenge && (
+        <SecurityChallengeModal
+          onSolved={() => {
+            setRequiresChallenge(false);
+          }}
+        />
+      )}
+    </>
+  );
 }

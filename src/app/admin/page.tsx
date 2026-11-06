@@ -44,6 +44,8 @@ import {
   Users,
   Video,
   X,
+  Ban,
+  ShieldAlert,
 } from "lucide-react";
 import { getVisitorId, setAdminFlag } from "@/lib/analytics";
 
@@ -112,6 +114,9 @@ interface VisitorSessionItem {
   animes_list: InteractedAnimeItem[];
   actions_summary: string;
   recent_actions: ActionTimelineItem[];
+  is_banned?: boolean;
+  ban_reason?: string | null;
+  requires_challenge?: boolean;
 }
 
 interface RecentEventItem {
@@ -418,6 +423,58 @@ export default function AdminPage() {
     }
   }
 
+  async function handleToggleBanVisitor(visitorId: string, currentBanned: boolean) {
+    try {
+      const endpoint = currentBanned ? `/visitors/${visitorId}/unban` : `/visitors/${visitorId}/ban`;
+      await adminRequest(endpoint, "POST");
+
+      setAnalytics((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          recent_sessions: prev.recent_sessions.map((s) =>
+            s.visitor_id === visitorId ? { ...s, is_banned: !currentBanned } : s
+          ),
+        };
+      });
+
+      if (selectedVisitorDetail && selectedVisitorDetail.visitor_id === visitorId) {
+        setSelectedVisitorDetail((prev) => (prev ? { ...prev, is_banned: !currentBanned } : null));
+      }
+      if (visitorDeepDetail && visitorDeepDetail.visitor_id === visitorId) {
+        setVisitorDeepDetail((prev: any) => (prev ? { ...prev, is_banned: !currentBanned } : null));
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "فشل تغيير حالة الحظر");
+    }
+  }
+
+  async function handleToggleChallengeVisitor(visitorId: string, currentChallenged: boolean) {
+    try {
+      const endpoint = currentChallenged ? `/visitors/${visitorId}/unchallenge` : `/visitors/${visitorId}/challenge`;
+      await adminRequest(endpoint, "POST");
+
+      setAnalytics((prev) => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          recent_sessions: prev.recent_sessions.map((s) =>
+            s.visitor_id === visitorId ? { ...s, requires_challenge: !currentChallenged } : s
+          ),
+        };
+      });
+
+      if (selectedVisitorDetail && selectedVisitorDetail.visitor_id === visitorId) {
+        setSelectedVisitorDetail((prev) => (prev ? { ...prev, requires_challenge: !currentChallenged } : null));
+      }
+      if (visitorDeepDetail && visitorDeepDetail.visitor_id === visitorId) {
+        setVisitorDeepDetail((prev: any) => (prev ? { ...prev, requires_challenge: !currentChallenged } : null));
+      }
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "فشل تغيير حالة التحقق الأمني");
+    }
+  }
+
   async function handleChangeCredentials(e: FormEvent) {
     e.preventDefault();
     setCredMessage(null);
@@ -483,7 +540,7 @@ export default function AdminPage() {
       if (data) {
         setHiddenAnimeList(data.items || []);
       }
-    } catch {}
+    } catch { }
   }
 
   async function handleToggleHideAnime(animeId: number, currentHidden: boolean, title?: string) {
@@ -877,22 +934,20 @@ export default function AdminPage() {
           <nav className="flex flex-wrap gap-2 border-b border-cinema-border pb-3">
             <button
               onClick={() => setActiveTab("anime")}
-              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${
-                activeTab === "anime"
-                  ? "bg-cinema-accent text-white"
-                  : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
-              }`}
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${activeTab === "anime"
+                ? "bg-cinema-accent text-white"
+                : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
+                }`}
             >
               <Tv className="h-4 w-4" />
               إدارة الأنمي والحلقات والسيرفرات
             </button>
             <button
               onClick={() => setActiveTab("analytics")}
-              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${
-                activeTab === "analytics"
-                  ? "bg-cinema-accent text-white"
-                  : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
-              }`}
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${activeTab === "analytics"
+                ? "bg-cinema-accent text-white"
+                : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
+                }`}
             >
               <BarChart3 className="h-4 w-4" />
               إحصائيات وتحليلات الزوار
@@ -903,11 +958,10 @@ export default function AdminPage() {
                 loadReports();
                 loadAdminComments();
               }}
-              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${
-                activeTab === "reports"
-                  ? "bg-cinema-accent text-white"
-                  : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
-              }`}
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${activeTab === "reports"
+                ? "bg-cinema-accent text-white"
+                : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
+                }`}
             >
               <Inbox className="h-4 w-4" />
               البلاغات والطلبات والتعليقات
@@ -919,22 +973,20 @@ export default function AdminPage() {
             </button>
             <button
               onClick={() => setActiveTab("credentials")}
-              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${
-                activeTab === "credentials"
-                  ? "bg-cinema-accent text-white"
-                  : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
-              }`}
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${activeTab === "credentials"
+                ? "bg-cinema-accent text-white"
+                : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
+                }`}
             >
               <KeyRound className="h-4 w-4" />
               تغيير بيانات الدخول
             </button>
             <button
               onClick={() => setActiveTab("system")}
-              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${
-                activeTab === "system"
-                  ? "bg-cinema-accent text-white"
-                  : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
-              }`}
+              className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-bold transition ${activeTab === "system"
+                ? "bg-cinema-accent text-white"
+                : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
+                }`}
             >
               <ShieldCheck className="h-4 w-4" />
               حالة النظام
@@ -946,11 +998,10 @@ export default function AdminPage() {
             <div className="space-y-6">
               {actionNotice && (
                 <div
-                  className={`flex items-center justify-between gap-3 rounded-xl border p-4 text-sm font-semibold ${
-                    actionNotice.type === "success"
-                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                      : "border-red-500/30 bg-red-500/10 text-red-400"
-                  }`}
+                  className={`flex items-center justify-between gap-3 rounded-xl border p-4 text-sm font-semibold ${actionNotice.type === "success"
+                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                    : "border-red-500/30 bg-red-500/10 text-red-400"
+                    }`}
                 >
                   <div className="flex items-center gap-2">
                     {actionNotice.type === "success" ? (
@@ -990,11 +1041,10 @@ export default function AdminPage() {
                               معرف الأنمي #{selectedAnime.id}
                             </span>
                             <span
-                              className={`rounded-md px-2 py-0.5 text-xs font-bold ${
-                                selectedAnime.is_hidden
-                                  ? "bg-red-500/20 text-red-400"
-                                  : "bg-emerald-500/20 text-emerald-400"
-                              }`}
+                              className={`rounded-md px-2 py-0.5 text-xs font-bold ${selectedAnime.is_hidden
+                                ? "bg-red-500/20 text-red-400"
+                                : "bg-emerald-500/20 text-emerald-400"
+                                }`}
                             >
                               {selectedAnime.is_hidden ? "مخفي من الموقع" : "معروض للمستخدمين"}
                             </span>
@@ -1019,11 +1069,10 @@ export default function AdminPage() {
                               selectedAnime.title
                             )
                           }
-                          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${
-                            selectedAnime.is_hidden
-                              ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/40"
-                              : "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/40"
-                          }`}
+                          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition ${selectedAnime.is_hidden
+                            ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/40"
+                            : "bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/40"
+                            }`}
                         >
                           {selectedAnime.is_hidden ? (
                             <>
@@ -1193,15 +1242,14 @@ export default function AdminPage() {
                                       {server.server_type === "direct"
                                         ? "مباشر MP4"
                                         : server.server_type === "hls"
-                                        ? "دفق HLS"
-                                        : "مدمج Embed"}
+                                          ? "دفق HLS"
+                                          : "مدمج Embed"}
                                     </span>
                                     <span
-                                      className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${
-                                        server.is_active
-                                          ? "bg-emerald-500/20 text-emerald-400"
-                                          : "bg-cinema-border text-cinema-muted"
-                                      }`}
+                                      className={`rounded px-1.5 py-0.5 text-[10px] font-bold ${server.is_active
+                                        ? "bg-emerald-500/20 text-emerald-400"
+                                        : "bg-cinema-border text-cinema-muted"
+                                        }`}
                                     >
                                       {server.is_active ? "نشط" : "معطل"}
                                     </span>
@@ -1420,11 +1468,10 @@ export default function AdminPage() {
                             setShowHiddenOnly(!showHiddenOnly);
                             loadHiddenAnime();
                           }}
-                          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition ${
-                            showHiddenOnly
-                              ? "bg-red-500 text-white"
-                              : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
-                          }`}
+                          className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition ${showHiddenOnly
+                            ? "bg-red-500 text-white"
+                            : "border border-cinema-border bg-cinema-card text-cinema-muted hover:text-white"
+                            }`}
                         >
                           <EyeOff className="h-4 w-4" />
                           الأنميات المخفية ({hiddenAnimeList.length})
@@ -1531,11 +1578,10 @@ export default function AdminPage() {
                           {animeSearchResults.map((anime) => (
                             <div
                               key={anime.id}
-                              className={`rounded-2xl border bg-cinema-card p-4 flex gap-4 transition hover:shadow-xl ${
-                                anime.is_hidden
-                                  ? "border-red-500/40 bg-red-950/10"
-                                  : "border-cinema-border"
-                              }`}
+                              className={`rounded-2xl border bg-cinema-card p-4 flex gap-4 transition hover:shadow-xl ${anime.is_hidden
+                                ? "border-red-500/40 bg-red-950/10"
+                                : "border-cinema-border"
+                                }`}
                             >
                               {anime.poster_url && (
                                 <img
@@ -1551,11 +1597,10 @@ export default function AdminPage() {
                                       #{anime.id}
                                     </span>
                                     <span
-                                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                                        anime.is_hidden
-                                          ? "bg-red-500/20 text-red-400"
-                                          : "bg-emerald-500/20 text-emerald-400"
-                                      }`}
+                                      className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${anime.is_hidden
+                                        ? "bg-red-500/20 text-red-400"
+                                        : "bg-emerald-500/20 text-emerald-400"
+                                        }`}
                                     >
                                       {anime.is_hidden ? "مخفي من الموقع" : "معروض"}
                                     </span>
@@ -1577,11 +1622,10 @@ export default function AdminPage() {
                                         anime.title
                                       )
                                     }
-                                    className={`flex-1 inline-flex items-center justify-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold transition ${
-                                      anime.is_hidden
-                                        ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
-                                        : "bg-red-500/20 text-red-400 hover:bg-red-500/30"
-                                    }`}
+                                    className={`flex-1 inline-flex items-center justify-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-bold transition ${anime.is_hidden
+                                      ? "bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30"
+                                      : "bg-red-500/20 text-red-400 hover:bg-red-500/30"
+                                      }`}
                                   >
                                     {anime.is_hidden ? (
                                       <>
@@ -1635,11 +1679,10 @@ export default function AdminPage() {
                       <button
                         key={p.days}
                         onClick={() => setPeriodDays(p.days)}
-                        className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                          periodDays === p.days
-                            ? "bg-cinema-accent text-white"
-                            : "border border-cinema-border bg-cinema-bg text-cinema-muted hover:text-white"
-                        }`}
+                        className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${periodDays === p.days
+                          ? "bg-cinema-accent text-white"
+                          : "border border-cinema-border bg-cinema-bg text-cinema-muted hover:text-white"
+                          }`}
                       >
                         {p.label}
                       </button>
@@ -1831,25 +1874,22 @@ export default function AdminPage() {
                     <div className="flex items-center rounded-xl border border-cinema-border bg-cinema-bg p-1 text-xs">
                       <button
                         onClick={() => setSessionFilter("all")}
-                        className={`rounded-lg px-2.5 py-1 font-semibold transition ${
-                          sessionFilter === "all" ? "bg-cinema-accent text-white" : "text-cinema-muted hover:text-white"
-                        }`}
+                        className={`rounded-lg px-2.5 py-1 font-semibold transition ${sessionFilter === "all" ? "bg-cinema-accent text-white" : "text-cinema-muted hover:text-white"
+                          }`}
                       >
                         الكل ({analytics?.recent_sessions.length || 0})
                       </button>
                       <button
                         onClick={() => setSessionFilter("active")}
-                        className={`rounded-lg px-2.5 py-1 font-semibold transition ${
-                          sessionFilter === "active" ? "bg-cinema-accent text-white" : "text-cinema-muted hover:text-white"
-                        }`}
+                        className={`rounded-lg px-2.5 py-1 font-semibold transition ${sessionFilter === "active" ? "bg-cinema-accent text-white" : "text-cinema-muted hover:text-white"
+                          }`}
                       >
                         المتواجدون الآن ({analytics?.recent_sessions.filter((s) => s.is_active).length || 0})
                       </button>
                       <button
                         onClick={() => setSessionFilter("watching")}
-                        className={`rounded-lg px-2.5 py-1 font-semibold transition ${
-                          sessionFilter === "watching" ? "bg-cinema-accent text-white" : "text-cinema-muted hover:text-white"
-                        }`}
+                        className={`rounded-lg px-2.5 py-1 font-semibold transition ${sessionFilter === "watching" ? "bg-cinema-accent text-white" : "text-cinema-muted hover:text-white"
+                          }`}
                       >
                         شاهدوا فيديو ({analytics?.recent_sessions.filter((s) => s.watch_minutes > 0).length || 0})
                       </button>
@@ -1866,7 +1906,7 @@ export default function AdminPage() {
                         <th className="py-2.5 font-semibold">ماذا فعل الزائر؟</th>
                         <th className="py-2.5 font-semibold text-center">وقت البقاء بالموقع</th>
                         <th className="py-2.5 font-semibold text-left">آخر تواجد</th>
-                        <th className="py-2.5 font-semibold text-center">تفاصيل الرحلة</th>
+                        <th className="py-2.5 font-semibold text-center">التحكم وإجراءات الحماية</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-cinema-border/30">
@@ -1900,6 +1940,20 @@ export default function AdminPage() {
                                     </span>
                                   )}
                                 </div>
+                                <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                                  {s.is_banned && (
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 border border-red-500/40 px-2 py-0.5 text-[10px] font-bold text-red-400">
+                                      <ShieldAlert className="h-3 w-3" />
+                                      محظور
+                                    </span>
+                                  )}
+                                  {s.requires_challenge && (
+                                    <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/20 border border-amber-500/40 px-2 py-0.5 text-[10px] font-bold text-amber-400">
+                                      <ShieldCheck className="h-3 w-3" />
+                                      مطلوب تحقق
+                                    </span>
+                                  )}
+                                </div>
                                 <div className="mt-1 flex items-center gap-1 text-[11px] text-cinema-muted">
                                   <Globe className="h-3 w-3 shrink-0" />
                                   <span className="truncate max-w-[140px]">{s.device}</span>
@@ -1912,11 +1966,10 @@ export default function AdminPage() {
                                     {s.animes_list.slice(0, 2).map((anime, aIdx) => (
                                       <span
                                         key={aIdx}
-                                        className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium ${
-                                          anime.watch_minutes > 0
-                                            ? "border border-purple-500/30 bg-purple-500/10 text-purple-300"
-                                            : "border border-pink-500/30 bg-pink-500/10 text-pink-300"
-                                        }`}
+                                        className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium ${anime.watch_minutes > 0
+                                          ? "border border-purple-500/30 bg-purple-500/10 text-purple-300"
+                                          : "border border-pink-500/30 bg-pink-500/10 text-pink-300"
+                                          }`}
                                       >
                                         {anime.watch_minutes > 0 ? (
                                           <PlayCircle className="h-3 w-3 text-purple-400 shrink-0" />
@@ -1965,13 +2018,42 @@ export default function AdminPage() {
                               </td>
 
                               <td className="py-3 text-center">
-                                <button
-                                  onClick={() => handleOpenVisitorDetail(s)}
-                                  className="inline-flex items-center gap-1 rounded-lg border border-cinema-border bg-cinema-bg px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-cinema-accent hover:border-cinema-accent transition"
-                                >
-                                  <span>تفاصيل الرحلة</span>
-                                  <ArrowRight className="h-3 w-3" />
-                                </button>
+                                <div className="flex flex-wrap items-center justify-center gap-1.5 min-w-[210px]">
+                                  <button
+                                    onClick={() => handleToggleBanVisitor(s.visitor_id, !!s.is_banned)}
+                                    className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-bold transition ${
+                                      s.is_banned
+                                        ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                                        : "border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20"
+                                    }`}
+                                    title={s.is_banned ? "رفع الحظر عن هذا الزائر" : "حظر الزائر بالكامل ومنعه من دخول الموقع"}
+                                  >
+                                    <Ban className="h-3 w-3 shrink-0" />
+                                    <span>{s.is_banned ? "رفع الحظر" : "حظر"}</span>
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleToggleChallengeVisitor(s.visitor_id, !!s.requires_challenge)}
+                                    className={`inline-flex items-center gap-1 rounded-lg border px-2 py-1 text-[11px] font-bold transition ${
+                                      s.requires_challenge
+                                        ? "border-blue-500/40 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20"
+                                        : "border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
+                                    }`}
+                                    title={s.requires_challenge ? "إلغاء طلب التحقق الأمني" : "فرض مسألة حسابية إجبارية على هذا الزائر"}
+                                  >
+                                    <ShieldCheck className="h-3 w-3 shrink-0" />
+                                    <span>{s.requires_challenge ? "إلغاء التحقق" : "فرض تحقق"}</span>
+                                  </button>
+
+                                  <button
+                                    onClick={() => handleOpenVisitorDetail(s)}
+                                    className="inline-flex items-center gap-1 rounded-lg border border-cinema-border bg-cinema-bg px-2 py-1 text-[11px] font-semibold text-white hover:bg-cinema-accent hover:border-cinema-accent transition"
+                                    title="استعراض مسار الزائر وتفاصيل أنشطته"
+                                  >
+                                    <span>تفاصيل</span>
+                                    <ArrowRight className="h-3 w-3" />
+                                  </button>
+                                </div>
                               </td>
                             </tr>
                           ))
@@ -2106,11 +2188,10 @@ export default function AdminPage() {
                       <button
                         key={f.key}
                         onClick={() => setEventsFilter(f.key as any)}
-                        className={`rounded-lg px-2.5 py-1 font-semibold transition ${
-                          eventsFilter === f.key
-                            ? "bg-cinema-accent text-white"
-                            : "border border-cinema-border bg-cinema-bg text-cinema-muted hover:text-white"
-                        }`}
+                        className={`rounded-lg px-2.5 py-1 font-semibold transition ${eventsFilter === f.key
+                          ? "bg-cinema-accent text-white"
+                          : "border border-cinema-border bg-cinema-bg text-cinema-muted hover:text-white"
+                          }`}
                       >
                         {f.label}
                       </button>
@@ -2145,15 +2226,14 @@ export default function AdminPage() {
                               <td className="py-2 font-mono text-cinema-muted">{formatDate(ev.created_at)}</td>
                               <td className="py-2">
                                 <span
-                                  className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold ${
-                                    ev.event_type === "play_anime"
-                                      ? "bg-purple-500/20 text-purple-300"
-                                      : ev.event_type === "browse_anime"
+                                  className={`inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[11px] font-bold ${ev.event_type === "play_anime"
+                                    ? "bg-purple-500/20 text-purple-300"
+                                    : ev.event_type === "browse_anime"
                                       ? "bg-pink-500/20 text-pink-300"
                                       : ev.event_type === "search"
-                                      ? "bg-amber-500/20 text-amber-300"
-                                      : "bg-blue-500/20 text-blue-300"
-                                  }`}
+                                        ? "bg-amber-500/20 text-amber-300"
+                                        : "bg-blue-500/20 text-blue-300"
+                                    }`}
                                 >
                                   {formatEventType(ev.event_type)}
                                 </span>
@@ -2225,6 +2305,44 @@ export default function AdminPage() {
                         <p className="mt-1 text-xs font-mono text-cinema-muted">
                           معرّف الجلسة: {selectedVisitorDetail.visitor_id}
                         </p>
+                        <div className="mt-3 flex flex-wrap items-center gap-2">
+                          {selectedVisitorDetail.is_banned && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-red-500/20 border border-red-500/40 px-2.5 py-0.5 text-xs font-bold text-red-400">
+                              <ShieldAlert className="h-3.5 w-3.5" />
+                              محظور من الموقع
+                            </span>
+                          )}
+                          {selectedVisitorDetail.requires_challenge && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/20 border border-amber-500/40 px-2.5 py-0.5 text-xs font-bold text-amber-400">
+                              <ShieldCheck className="h-3.5 w-3.5" />
+                              مطلوب تحقق أمني
+                            </span>
+                          )}
+
+                          <button
+                            onClick={() => handleToggleBanVisitor(selectedVisitorDetail.visitor_id, !!selectedVisitorDetail.is_banned)}
+                            className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                              selectedVisitorDetail.is_banned
+                                ? "border-emerald-500/40 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                                : "border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20"
+                            }`}
+                          >
+                            <Ban className="h-3.5 w-3.5" />
+                            <span>{selectedVisitorDetail.is_banned ? "رفع الحظر عن هذا الزائر" : "حظر الزائر بالكامل"}</span>
+                          </button>
+
+                          <button
+                            onClick={() => handleToggleChallengeVisitor(selectedVisitorDetail.visitor_id, !!selectedVisitorDetail.requires_challenge)}
+                            className={`inline-flex items-center gap-1.5 rounded-xl border px-3 py-1.5 text-xs font-bold transition ${
+                              selectedVisitorDetail.requires_challenge
+                                ? "border-blue-500/40 bg-blue-500/10 text-blue-300 hover:bg-blue-500/20"
+                                : "border-amber-500/40 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
+                            }`}
+                          >
+                            <ShieldCheck className="h-3.5 w-3.5" />
+                            <span>{selectedVisitorDetail.requires_challenge ? "إلغاء طلب التحقق الأمني" : "فرض مسألة رياضية إجبارية"}</span>
+                          </button>
+                        </div>
                       </div>
 
                       <button
@@ -2366,15 +2484,14 @@ export default function AdminPage() {
                             >
                               <div className="flex items-center gap-2.5">
                                 <span
-                                  className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${
-                                    step.event_type === "play_anime"
-                                      ? "bg-purple-500/20 text-purple-300"
-                                      : step.event_type === "browse_anime"
+                                  className={`rounded-md px-1.5 py-0.5 text-[10px] font-bold ${step.event_type === "play_anime"
+                                    ? "bg-purple-500/20 text-purple-300"
+                                    : step.event_type === "browse_anime"
                                       ? "bg-pink-500/20 text-pink-300"
                                       : step.event_type === "search"
-                                      ? "bg-amber-500/20 text-amber-300"
-                                      : "bg-blue-500/20 text-blue-300"
-                                  }`}
+                                        ? "bg-amber-500/20 text-amber-300"
+                                        : "bg-blue-500/20 text-blue-300"
+                                    }`}
                                 >
                                   {formatEventType(step.event_type)}
                                 </span>
@@ -2419,11 +2536,10 @@ export default function AdminPage() {
                 <div className="flex items-center gap-2 rounded-xl border border-cinema-border bg-cinema-card p-1">
                   <button
                     onClick={() => setReportsSubTab("reports")}
-                    className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition ${
-                      reportsSubTab === "reports"
-                        ? "bg-cinema-accent text-white"
-                        : "text-cinema-muted hover:text-white"
-                    }`}
+                    className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition ${reportsSubTab === "reports"
+                      ? "bg-cinema-accent text-white"
+                      : "text-cinema-muted hover:text-white"
+                      }`}
                   >
                     <Flag className="h-3.5 w-3.5" />
                     البلاغات والشكاوى والطلبات
@@ -2434,11 +2550,10 @@ export default function AdminPage() {
 
                   <button
                     onClick={() => setReportsSubTab("comments")}
-                    className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition ${
-                      reportsSubTab === "comments"
-                        ? "bg-cinema-accent text-white"
-                        : "text-cinema-muted hover:text-white"
-                    }`}
+                    className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-bold transition ${reportsSubTab === "comments"
+                      ? "bg-cinema-accent text-white"
+                      : "text-cinema-muted hover:text-white"
+                      }`}
                   >
                     <MessageSquare className="h-3.5 w-3.5" />
                     تعليقات الحلقات
@@ -2505,10 +2620,10 @@ export default function AdminPage() {
                       <span className="mr-3 text-sm">جاري تحميل البلاغات...</span>
                     </div>
                   ) : reportsList.filter((r) => {
-                      const matchCat = reportCategoryFilter === "all" || r.category === reportCategoryFilter;
-                      const matchStatus = reportStatusFilter === "all" || r.status === reportStatusFilter;
-                      return matchCat && matchStatus;
-                    }).length === 0 ? (
+                    const matchCat = reportCategoryFilter === "all" || r.category === reportCategoryFilter;
+                    const matchStatus = reportStatusFilter === "all" || r.status === reportStatusFilter;
+                    return matchCat && matchStatus;
+                  }).length === 0 ? (
                     <div className="rounded-2xl border border-cinema-border bg-cinema-card p-12 text-center">
                       <Inbox className="mx-auto h-12 w-12 text-cinema-muted/50" />
                       <h3 className="mt-3 text-base font-bold text-white">لا توجد بلاغات تطابق الفلتر المحدد</h3>
@@ -2532,43 +2647,41 @@ export default function AdminPage() {
                             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-cinema-border/40 pb-3">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span
-                                  className={`rounded-lg px-2.5 py-1 text-xs font-bold border ${
-                                    report.category === "broken_episode"
-                                      ? "border-red-500/30 bg-red-500/10 text-red-300"
-                                      : report.category === "anime_request"
+                                  className={`rounded-lg px-2.5 py-1 text-xs font-bold border ${report.category === "broken_episode"
+                                    ? "border-red-500/30 bg-red-500/10 text-red-300"
+                                    : report.category === "anime_request"
                                       ? "border-sky-500/30 bg-sky-500/10 text-sky-300"
                                       : report.category === "site_issue"
-                                      ? "border-amber-500/30 bg-amber-500/10 text-amber-300"
-                                      : "border-purple-500/30 bg-purple-500/10 text-purple-300"
-                                  }`}
+                                        ? "border-amber-500/30 bg-amber-500/10 text-amber-300"
+                                        : "border-purple-500/30 bg-purple-500/10 text-purple-300"
+                                    }`}
                                 >
                                   {report.category === "broken_episode"
                                     ? "حلقة تالفة أو ناقصة"
                                     : report.category === "anime_request"
-                                    ? "طلب أنمي جديد"
-                                    : report.category === "site_issue"
-                                    ? "مشكلة في الموقع"
-                                    : "أخرى"}
+                                      ? "طلب أنمي جديد"
+                                      : report.category === "site_issue"
+                                        ? "مشكلة في الموقع"
+                                        : "أخرى"}
                                 </span>
 
                                 <span
-                                  className={`rounded-lg px-2.5 py-1 text-xs font-bold border ${
-                                    report.status === "pending"
-                                      ? "border-amber-500/30 bg-amber-500/10 text-amber-300"
-                                      : report.status === "in_progress"
+                                  className={`rounded-lg px-2.5 py-1 text-xs font-bold border ${report.status === "pending"
+                                    ? "border-amber-500/30 bg-amber-500/10 text-amber-300"
+                                    : report.status === "in_progress"
                                       ? "border-blue-500/30 bg-blue-500/10 text-blue-300"
                                       : report.status === "resolved"
-                                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                                      : "border-zinc-500/30 bg-zinc-500/10 text-zinc-400"
-                                  }`}
+                                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+                                        : "border-zinc-500/30 bg-zinc-500/10 text-zinc-400"
+                                    }`}
                                 >
                                   {report.status === "pending"
                                     ? "قيد الانتظار"
                                     : report.status === "in_progress"
-                                    ? "جاري المتابعة"
-                                    : report.status === "resolved"
-                                    ? "تم الحل"
-                                    : "تم التجاهل"}
+                                      ? "جاري المتابعة"
+                                      : report.status === "resolved"
+                                        ? "تم الحل"
+                                        : "تم التجاهل"}
                                 </span>
 
                                 {report.priority && (
@@ -2701,11 +2814,10 @@ export default function AdminPage() {
 
                             <div className="flex items-center gap-2">
                               <span
-                                className={`rounded-lg px-2 py-0.5 text-xs font-bold border ${
-                                  comm.is_approved
-                                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                                    : "border-red-500/30 bg-red-500/10 text-red-300"
-                                }`}
+                                className={`rounded-lg px-2 py-0.5 text-xs font-bold border ${comm.is_approved
+                                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
+                                  : "border-red-500/30 bg-red-500/10 text-red-300"
+                                  }`}
                               >
                                 {comm.is_approved ? "معتمد وظاهر" : "مخفي ومحجوب"}
                               </span>
@@ -2743,11 +2855,10 @@ export default function AdminPage() {
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => handleToggleAdminCommentApproval(comm.id)}
-                                className={`rounded-lg border px-3 py-1 text-xs font-bold transition ${
-                                  comm.is_approved
-                                    ? "border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
-                                    : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
-                                }`}
+                                className={`rounded-lg border px-3 py-1 text-xs font-bold transition ${comm.is_approved
+                                  ? "border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/20"
+                                  : "border-emerald-500/30 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20"
+                                  }`}
                               >
                                 {comm.is_approved ? "إخفاء التعليق" : "إلغاء الإخفاء والاعتماد"}
                               </button>
@@ -2785,11 +2896,10 @@ export default function AdminPage() {
 
                 {credMessage && (
                   <div
-                    className={`flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-sm ${
-                      credMessage.type === "success"
-                        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                        : "border-red-500/30 bg-red-500/10 text-red-400"
-                    }`}
+                    className={`flex items-center gap-2 rounded-xl border px-3.5 py-2.5 text-sm ${credMessage.type === "success"
+                      ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+                      : "border-red-500/30 bg-red-500/10 text-red-400"
+                      }`}
                   >
                     {credMessage.type === "success" ? (
                       <CheckCircle2 className="h-4 w-4 shrink-0" />
