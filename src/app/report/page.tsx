@@ -1,7 +1,8 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   AlertCircle,
   AlertTriangle,
@@ -19,8 +20,16 @@ import { getVisitorId } from "@/lib/analytics";
 
 type ReportTab = "site_issue" | "anime_request";
 
-export default function ReportPage() {
-  const [activeTab, setActiveTab] = useState<ReportTab>("site_issue");
+function ReportContent() {
+  const searchParams = useSearchParams();
+  const paramType = searchParams.get("type");
+  const paramAnimeId = searchParams.get("anime_id");
+  const paramAnimeTitle = searchParams.get("anime_title") || searchParams.get("title");
+  const paramEp = searchParams.get("ep") || searchParams.get("episode");
+
+  const isBrokenEpisode = paramType === "broken_episode" || Boolean(paramAnimeTitle && paramEp);
+
+  const [activeTab, setActiveTab] = useState<ReportTab>(isBrokenEpisode ? "anime_request" : "site_issue");
 
   // Site issue fields
   const [siteIssueType, setSiteIssueType] = useState("مشكلة في مشغل الفيديو");
@@ -30,16 +39,38 @@ export default function ReportPage() {
   const [siteEmail, setSiteEmail] = useState("");
 
   // Anime request / broken episode fields
-  const [animeRequestType, setAnimeRequestType] = useState("طلب إضافة أنمي جديد");
-  const [animeName, setAnimeName] = useState("");
-  const [episodeNum, setEpisodeNum] = useState("");
-  const [animeDetails, setAnimeDetails] = useState("");
+  const [animeRequestType, setAnimeRequestType] = useState(
+    isBrokenEpisode ? "حلقة تالفة أو صوت غير متزامن" : "طلب إضافة أنمي جديد"
+  );
+  const [animeName, setAnimeName] = useState(paramAnimeTitle || "");
+  const [episodeNum, setEpisodeNum] = useState(paramEp || "");
+  const [animeDetails, setAnimeDetails] = useState(
+    isBrokenEpisode
+      ? `إبلاغ عن مشكلة في تشغيل الحلقة ${paramEp || ""} من أنمي "${paramAnimeTitle || ""}".`
+      : ""
+  );
   const [animeEmail, setAnimeEmail] = useState("");
 
   // Status
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [submittedData, setSubmittedData] = useState<{ id: number; message: string } | null>(null);
+
+  useEffect(() => {
+    if (paramAnimeTitle) {
+      setAnimeName(paramAnimeTitle);
+    }
+    if (paramEp) {
+      setEpisodeNum(paramEp);
+    }
+    if (isBrokenEpisode) {
+      setActiveTab("anime_request");
+      setAnimeRequestType("حلقة تالفة أو صوت غير متزامن");
+      if (!animeDetails) {
+        setAnimeDetails(`إبلاغ عن مشكلة في تشغيل الحلقة ${paramEp || ""} من أنمي "${paramAnimeTitle || ""}".`);
+      }
+    }
+  }, [paramAnimeTitle, paramEp, isBrokenEpisode]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -68,12 +99,14 @@ export default function ReportPage() {
           throw new Error("يرجى كتابة اسم الأنمي وتفاصيل الطلب");
         }
         const ep = episodeNum.trim() ? parseInt(episodeNum.trim(), 10) : undefined;
+        const targetAnimeId = paramAnimeId ? parseInt(paramAnimeId, 10) : undefined;
         body = {
           category: animeRequestType.includes("تالف") || animeRequestType.includes("ناقصة")
             ? "broken_episode"
             : "anime_request",
           title: `[${animeRequestType}] ${animeName.trim()}${ep ? ` - الحلقة ${ep}` : ""}`,
           details: animeDetails.trim(),
+          anime_id: !isNaN(targetAnimeId as any) ? targetAnimeId : undefined,
           episode_number: isNaN(ep as any) ? undefined : ep,
           contact_email: animeEmail.trim() || undefined,
           visitor_id: visitorId,
@@ -378,5 +411,13 @@ export default function ReportPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+export default function ReportPage() {
+  return (
+    <Suspense fallback={<div className="container mx-auto py-12 text-center text-cinema-muted">جاري التحميل...</div>}>
+      <ReportContent />
+    </Suspense>
   );
 }

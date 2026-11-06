@@ -304,6 +304,9 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
       fragLoadingTimeOut: 20000,
       fragLoadingMaxRetry: 4,
       fragLoadingRetryDelay: 1000,
+      xhrSetup: (xhr) => {
+        xhr.withCredentials = true;
+      },
     });
     hls.on(Hls.Events.ERROR, (_, data) => {
       if (data.fatal) {

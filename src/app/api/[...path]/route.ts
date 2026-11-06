@@ -24,6 +24,17 @@ async function proxy(request: NextRequest, { params }: { params: { path?: string
   // backend must answer uncompressed; the edge compresses for the browser.
   headers.set("accept-encoding", "identity");
 
+  const clientIp =
+    request.headers.get("cf-connecting-ip") ||
+    request.headers.get("x-real-ip") ||
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
+    request.ip;
+
+  if (clientIp) {
+    headers.set("x-forwarded-for", clientIp);
+    headers.set("x-real-ip", clientIp);
+  }
+
   const forwardHost = request.headers.get("x-forwarded-host") || request.headers.get("host");
   if (forwardHost) {
     headers.set("x-forwarded-host", forwardHost);
