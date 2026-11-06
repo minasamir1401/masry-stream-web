@@ -148,17 +148,42 @@ class AdminRequestError extends Error {
 }
 
 async function adminRequest<T>(path: string, method = "GET", body?: object): Promise<T | null> {
+  const headers: Record<string, string> = {};
+  if (body) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  if (typeof window !== "undefined") {
+    const savedToken = localStorage.getItem("masry_admin_token");
+    if (savedToken) {
+      headers["x-admin-token"] = savedToken;
+      headers["authorization"] = `Bearer ${savedToken}`;
+    }
+  }
+
   const response = await fetch(`/api/admin${path}`, {
     method,
     cache: "no-store",
-    headers: body ? { "Content-Type": "application/json" } : undefined,
+    headers,
     body: body ? JSON.stringify(body) : undefined,
   });
-  if (response.status === 401 && path !== "/login") return null;
+
+  if (response.status === 401 && path !== "/login") {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("masry_admin_token");
+      window.dispatchEvent(new CustomEvent("admin_auth_unauthorized"));
+    }
+    return null;
+  }
+
   if (!response.ok) {
     const data = await response.json().catch(() => ({}));
     const retryAfter = Number(response.headers.get("Retry-After"));
-    throw new AdminRequestError(data.detail || "فشل تنفيذ العملية الإدارية", response.status, Number.isFinite(retryAfter) && retryAfter > 0 ? Math.ceil(retryAfter) : 60);
+    throw new AdminRequestError(
+      data.detail || "فشل تنفيذ العملية الإدارية",
+      response.status,
+      Number.isFinite(retryAfter) && retryAfter > 0 ? Math.ceil(retryAfter) : 60
+    );
   }
   return response.json();
 }
@@ -237,6 +262,15 @@ export default function AdminPage() {
 
   useEffect(() => {
     checkAuth();
+
+    const handleUnauthorized = () => {
+      setAuthenticated(false);
+      setAdminFlag(false);
+      setCurrentUsername("");
+      setAnalytics(null);
+    };
+    window.addEventListener("admin_auth_unauthorized", handleUnauthorized);
+    return () => window.removeEventListener("admin_auth_unauthorized", handleUnauthorized);
   }, []);
 
   useEffect(() => {
@@ -299,12 +333,15 @@ export default function AdminPage() {
     setLoginError(null);
     try {
       const vid = getVisitorId();
-      const data = await adminRequest<{ status: string; username: string }>("/login", "POST", {
+      const data = await adminRequest<{ status: string; username: string; token?: string }>("/login", "POST", {
         username: loginUsername.trim(),
         password: loginPassword,
         visitor_id: vid,
       });
       if (data && data.status === "authenticated") {
+        if (data.token && typeof window !== "undefined") {
+          localStorage.setItem("masry_admin_token", data.token);
+        }
         setCurrentUsername(data.username);
         setAuthenticated(true);
         setAdminFlag(true);
@@ -324,6 +361,9 @@ export default function AdminPage() {
     try {
       await adminRequest("/logout", "POST");
     } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("masry_admin_token");
+      }
       setAuthenticated(false);
       setAdminFlag(false);
       setCurrentUsername("");

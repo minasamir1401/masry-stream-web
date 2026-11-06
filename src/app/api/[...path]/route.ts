@@ -60,10 +60,23 @@ async function proxy(request: NextRequest, { params }: { params: { path?: string
     const encoded = (res.headers.get("content-encoding") || "identity") !== "identity";
     res.headers.forEach((val, key) => {
       const lower = key.toLowerCase();
-      if (!STRIPPED_RESPONSE.has(lower) && !(encoded && lower === "content-length")) {
+      if (!STRIPPED_RESPONSE.has(lower) && !(encoded && lower === "content-length") && lower !== "set-cookie") {
         resHeaders.append(key, val);
       }
     });
+
+    // Preserve individual Set-Cookie headers accurately
+    const setCookies = (res.headers as any).getSetCookie?.() || [];
+    if (setCookies.length > 0) {
+      setCookies.forEach((cookieStr: string) => {
+        resHeaders.append("set-cookie", cookieStr);
+      });
+    } else {
+      const singleCookie = res.headers.get("set-cookie");
+      if (singleCookie) {
+        resHeaders.append("set-cookie", singleCookie);
+      }
+    }
 
     if (!res.body) {
       return new NextResponse(null, {
