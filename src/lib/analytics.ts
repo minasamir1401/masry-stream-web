@@ -1,5 +1,5 @@
 export interface TrackingPayload {
-  event_type: "heartbeat" | "page_view" | "browse_anime" | "play_anime";
+  event_type: "heartbeat" | "page_view" | "browse_anime" | "play_anime" | "search";
   path?: string;
   anime_id?: number;
   anime_title?: string;
@@ -8,6 +8,27 @@ export interface TrackingPayload {
 }
 
 const VISITOR_KEY = "masry_vid";
+const ADMIN_FLAG_KEY = "masry_is_admin";
+
+export function isUserAdmin(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return localStorage.getItem(ADMIN_FLAG_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+export function setAdminFlag(isAdmin: boolean): void {
+  if (typeof window === "undefined") return;
+  try {
+    if (isAdmin) {
+      localStorage.setItem(ADMIN_FLAG_KEY, "1");
+    } else {
+      localStorage.removeItem(ADMIN_FLAG_KEY);
+    }
+  } catch {}
+}
 
 export function getVisitorId(): string {
   if (typeof window === "undefined") return "server_session";
@@ -26,11 +47,16 @@ export function getVisitorId(): string {
 export function trackEvent(payload: TrackingPayload): void {
   if (typeof window === "undefined") return;
 
+  const currentPath = payload.path || window.location.pathname;
+  if (currentPath.startsWith("/admin") || isUserAdmin()) {
+    return;
+  }
+
   const visitor_id = getVisitorId();
   const body = {
     visitor_id,
     event_type: payload.event_type,
-    path: payload.path || window.location.pathname,
+    path: currentPath,
     anime_id: payload.anime_id,
     anime_title: payload.anime_title,
     episode_number: payload.episode_number,
@@ -48,4 +74,3 @@ export function trackEvent(payload: TrackingPayload): void {
     // Fail silently to never disrupt user experience
   }
 }
-

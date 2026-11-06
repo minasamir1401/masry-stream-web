@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import { getVisitorId, trackEvent } from "@/lib/analytics";
+import { getVisitorId, isUserAdmin, trackEvent } from "@/lib/analytics";
 
 export function AnalyticsTracker() {
   const pathname = usePathname();
@@ -10,11 +10,14 @@ export function AnalyticsTracker() {
   const lastHeartbeatRef = useRef<number>(Date.now());
 
   useEffect(() => {
+    if (pathname?.startsWith("/admin") || isUserAdmin()) return;
     getVisitorId();
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     if (!pathname || pathname === lastPathRef.current) return;
+    if (pathname.startsWith("/admin") || isUserAdmin()) return;
+
     lastPathRef.current = pathname;
 
     trackEvent({
@@ -26,6 +29,7 @@ export function AnalyticsTracker() {
     if (seriesMatch) {
       const animeId = parseInt(seriesMatch[1], 10);
       const timer = setTimeout(() => {
+        if (isUserAdmin()) return;
         const pageTitle = typeof document !== "undefined" ? document.title.split("|")[0].trim() : undefined;
         trackEvent({
           event_type: "browse_anime",
@@ -34,8 +38,47 @@ export function AnalyticsTracker() {
           anime_title: pageTitle || undefined,
           duration_seconds: 5,
         });
-      }, 1000);
+      }, 800);
       return () => clearTimeout(timer);
+    }
+
+    const watchMatch = pathname.match(/^\/watch\/(\d+)/);
+    if (watchMatch) {
+      const animeId = parseInt(watchMatch[1], 10);
+      const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+      const epStr = params?.get("ep") || "1";
+      const episodeNum = parseInt(epStr, 10);
+
+      const timer = setTimeout(() => {
+        if (isUserAdmin()) return;
+        const pageTitle = typeof document !== "undefined" ? document.title.split("|")[0].trim() : undefined;
+        trackEvent({
+          event_type: "browse_anime",
+          path: pathname,
+          anime_id: isNaN(animeId) ? undefined : animeId,
+          anime_title: pageTitle || undefined,
+          episode_number: isNaN(episodeNum) ? 1 : episodeNum,
+          duration_seconds: 5,
+        });
+      }, 800);
+      return () => clearTimeout(timer);
+    }
+
+    if (pathname === "/search" && typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const query = params.get("q");
+      if (query && query.trim()) {
+        const timer = setTimeout(() => {
+          if (isUserAdmin()) return;
+          trackEvent({
+            event_type: "search",
+            path: `/search?q=${encodeURIComponent(query.trim())}`,
+            anime_title: query.trim(),
+            duration_seconds: 2,
+          });
+        }, 500);
+        return () => clearTimeout(timer);
+      }
     }
   }, [pathname]);
 
@@ -44,6 +87,8 @@ export function AnalyticsTracker() {
     lastHeartbeatRef.current = Date.now();
 
     const intervalId = setInterval(() => {
+      if (typeof window === "undefined") return;
+      if (window.location.pathname.startsWith("/admin") || isUserAdmin()) return;
       if (typeof document !== "undefined" && document.visibilityState !== "visible") {
         lastHeartbeatRef.current = Date.now();
         return;
@@ -63,6 +108,8 @@ export function AnalyticsTracker() {
     }, HEARTBEAT_INTERVAL);
 
     const handleBeforeUnload = () => {
+      if (typeof window === "undefined") return;
+      if (window.location.pathname.startsWith("/admin") || isUserAdmin()) return;
       const now = Date.now();
       const elapsedSeconds = Math.round((now - lastHeartbeatRef.current) / 1000);
       if (elapsedSeconds >= 5) {
@@ -84,4 +131,3 @@ export function AnalyticsTracker() {
 
   return null;
 }
-
