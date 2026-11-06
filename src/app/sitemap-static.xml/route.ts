@@ -36,7 +36,7 @@ export async function GET() {
 
   const urlEntries = staticPages
     .map((page) => {
-      const pageUrl = escapeXml(`${siteUrl}${page.path}`);
+      const pageUrl = escapeXml(page.path === "" ? `${siteUrl}/` : `${siteUrl}${page.path}`);
       const imageBlock =
         page.path === ""
           ? `\n    <image:image>
