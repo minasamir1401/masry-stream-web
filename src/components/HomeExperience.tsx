@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpLeft, CalendarDays, ChevronLeft, Flame, Play, Star } from "lucide-react";
+import { ArrowUpLeft, CalendarDays, ChevronLeft, Clock3, Flame, Play, Star } from "lucide-react";
 import { HomepageData } from "@/lib/api";
 import { AiringWeek, genreArabic } from "@/lib/schedule";
 import { MediaItem } from "@/lib/types";
@@ -144,6 +144,48 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
           </section>
         )}
 
+        {today?.items.length ? (
+          <section className="discovery-section" aria-labelledby="airing-today-heading">
+            <div className="discovery-section-heading">
+              <h2 id="airing-today-heading">
+                <CalendarDays size={23} />
+                أنميات تُعرض اليوم
+              </h2>
+              <Link prefetch={false} className="discovery-text-link" href="/schedule">
+                جدول الأسبوع
+                <ChevronLeft size={16} />
+              </Link>
+            </div>
+            <div className="schedule-cards">
+              {today.items.slice(0, 6).map((item) => (
+                <Link
+                  prefetch={false}
+                  className="airing-card"
+                  key={item.id}
+                  href={`/series/${item.anime_id}`}
+                >
+                  <div className="airing-poster">
+                    <AnimeImage src={item.poster_url} alt={item.title} />
+                  </div>
+                  <div className="airing-info">
+                    <div className="airing-top">
+                      <span className="upcoming-tag">الحلقة {item.episode}</span>
+                      <time dir="ltr"><Clock3 size={14} />{item.local_time}</time>
+                    </div>
+                    <h3 dir="auto">{item.title}</h3>
+                    <div className="airing-genres">
+                      {item.genres.slice(0, 2).map((name) => (
+                        <span key={name}>{genreArabic[name] || name}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <ChevronLeft className="airing-chevron" size={18} />
+                </Link>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         <Link prefetch={false} className="discovery-schedule" href="/schedule">
           <span className="schedule-promo-art" aria-hidden="true" />
           <div className="schedule-promo-copy">
@@ -165,47 +207,47 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
           <div className="discovery-seo-card">
             <div className="discovery-seo-header">
               <h2 id="about-brand-heading" className="discovery-seo-title">
-                موقع انمي كلوفر الرسمي (AnimeClover) | منصتك العربية لمشاهدة وتحميل الأنمي المترجم
+                استكشف الأنمي على AnimeClover
               </h2>
               <p className="discovery-seo-lead">
-                مرحباً بكم في <strong>انمي كلوفر (AnimeClover)</strong>، المنصة العربية المتكاملة لمتابعة مسلسلات وأفلام الأنمي الياباني المترجمة باحترافية عالية. يوفّر موقع <strong>أنمي كلوفر</strong> مكتبة متجددة تضم آلاف الحلقات مع تحديث يومي فوري لحلقات المواسم الحالية، عبر سيرفرات بث مباشرة عالية السرعة وجودات متعددة تصل إلى 1080p Full HD مجاناً وبدون إعلانات منبثقة مزعجة.
+                تصفّح مسلسلات وأفلام الأنمي، تابع الحلقات الجديدة، واستخدم جدول العرض لمعرفة مواعيد الحلقات. افتح صفحة أي عمل للاطلاع على تفاصيله والحلقات المتاحة.
               </p>
             </div>
 
             <div className="discovery-seo-grid">
               <div className="discovery-seo-item">
-                <h3>مشاهدة أحدث حلقات الأنمي</h3>
+                <h3>الحلقات ومواعيد العرض</h3>
                 <p>
-                  تغطية يومية شاملة لجميع أنميات الموسم مع{" "}
+                  راجع الحلقات الظاهرة على الصفحة الرئيسية، أو افتح{" "}
                   <Link href="/schedule" className="text-purple-300 hover:underline">
-                    جدول مواعيد عرض الأنمي الأسبوعي
+                    جدول مواعيد العرض
                   </Link>{" "}
-                  وسيرفرات مشاهدة متعددة تعمل على جميع الأجهزة.
+                  لمتابعة الأعمال حسب يوم العرض.
                 </p>
               </div>
               <div className="discovery-seo-item">
-                <h3>مكتبة مسلسلات وأفلام شاملة</h3>
+                <h3>المسلسلات والأفلام</h3>
                 <p>
-                  تصفح{" "}
+                  انتقل مباشرة إلى{" "}
                   <Link href="/series" className="text-purple-300 hover:underline">
-                    قائمة مسلسلات الأنمي
+                    مكتبة المسلسلات
                   </Link>{" "}
                   و{" "}
                   <Link href="/movies" className="text-purple-300 hover:underline">
-                    أفلام الأنمي المترجمة
+                    مكتبة الأفلام
                   </Link>{" "}
-                  مصنفة حسب النوع وسنة الإصدار والتقييم العالمي.
+                  واستخدم البحث والتصنيفات للوصول إلى العمل الذي تريده.
                 </p>
               </div>
               <div className="discovery-seo-item">
-                <h3>تصنيفات الأنمي الأكثر طلباً</h3>
+                <h3>تصفّح حسب النوع</h3>
                 <p>
-                  استكشف أقوى أنميات{" "}
+                  اختر من التصنيفات المتاحة مثل{" "}
                   <Link href="/series?genre=Action" className="text-purple-300 hover:underline">الأكشن</Link>،{" "}
                   <Link href="/series?genre=Adventure" className="text-purple-300 hover:underline">المغامرات</Link>،{" "}
                   <Link href="/series?genre=Fantasy" className="text-purple-300 hover:underline">الخيال</Link>، و{" "}
                   <Link href="/series?genre=Drama" className="text-purple-300 hover:underline">الدراما</Link>{" "}
-                  مع حفظ تلقائي لسجل المشاهدة والمفضلة.
+                  .
                 </p>
               </div>
             </div>
