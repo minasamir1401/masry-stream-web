@@ -14,8 +14,11 @@ export function AnalyticsTracker() {
   const [isBanned, setIsBanned] = useState<boolean>(false);
   const [banReason, setBanReason] = useState<string | null>(null);
   const [requiresChallenge, setRequiresChallenge] = useState<boolean>(false);
+  const isCrawler = typeof navigator !== "undefined" &&
+    /googlebot|google-inspectiontool|googleother|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|applebot|linkedinbot/i.test(navigator.userAgent);
 
   useEffect(() => {
+    if (isCrawler) return;
     function handleSecurityStatus(e: Event) {
       const detail = (e as CustomEvent).detail;
       if (detail?.is_banned) {
@@ -31,9 +34,10 @@ export function AnalyticsTracker() {
     return () => {
       window.removeEventListener("masry_security_status", handleSecurityStatus);
     };
-  }, []);
+  }, [isCrawler]);
 
   useEffect(() => {
+    if (isCrawler) return;
     if (pathname?.startsWith("/admin") || isUserAdmin()) return;
     checkSecurityStatus().then((status) => {
       if (status.is_banned) {
@@ -43,14 +47,16 @@ export function AnalyticsTracker() {
         setRequiresChallenge(true);
       }
     });
-  }, [pathname]);
+  }, [pathname, isCrawler]);
 
   useEffect(() => {
+    if (isCrawler) return;
     if (pathname?.startsWith("/admin") || isUserAdmin()) return;
     getVisitorId();
-  }, [pathname]);
+  }, [pathname, isCrawler]);
 
   useEffect(() => {
+    if (isCrawler) return;
     if (!pathname || pathname === lastPathRef.current) return;
     if (pathname.startsWith("/admin") || isUserAdmin()) return;
 
@@ -116,9 +122,10 @@ export function AnalyticsTracker() {
         return () => clearTimeout(timer);
       }
     }
-  }, [pathname]);
+  }, [pathname, isCrawler]);
 
   useEffect(() => {
+    if (isCrawler) return;
     const HEARTBEAT_INTERVAL = 30000;
     lastHeartbeatRef.current = Date.now();
 
@@ -163,7 +170,7 @@ export function AnalyticsTracker() {
       clearInterval(intervalId);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [isCrawler]);
 
   return (
     <>

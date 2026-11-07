@@ -7,12 +7,12 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/api/", "/favorites"],
+        disallow: ["/admin"],
       },
       {
         userAgent: "Googlebot",
         allow: "/",
-        disallow: ["/admin", "/api/", "/favorites"],
+        disallow: ["/admin"],
       },
       {
         userAgent: "Googlebot-Image",

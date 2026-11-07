@@ -64,6 +64,8 @@ async function proxy(request: NextRequest, { params }: { params: { path?: string
         resHeaders.append(key, val);
       }
     });
+    // API responses are only data dependencies for site pages; keep them out of search results.
+    resHeaders.set("X-Robots-Tag", "noindex, nofollow, noarchive");
 
     // Preserve individual Set-Cookie headers accurately
     const setCookies = (res.headers as any).getSetCookie?.() || [];

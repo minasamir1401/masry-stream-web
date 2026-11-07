@@ -55,6 +55,10 @@ export function EpisodeDiscussion({
   const [likedMap, setLikedMap] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
+    if (typeof navigator !== "undefined" && /googlebot|google-inspectiontool|googleother|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|applebot|linkedinbot/i.test(navigator.userAgent)) {
+      setLoadingComments(false);
+      return;
+    }
     loadRatings();
     loadComments();
   }, [mediaId, episodeNumber]);
