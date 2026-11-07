@@ -38,40 +38,53 @@ export async function GET() {
     for (const item of items) {
       if (!seen.has(item.id)) {
         seen.add(item.id);
-        const rawTitle = item.title || item.original_title || `أنمي #${item.id}`;
-        const posterUrl = item.poster_url || `${SITE_URL}/og-image.png`;
         const totalEp = item.total_episodes || (item.episodes ? item.episodes.length : 12);
         const epLimit = Math.min(Math.max(totalEp, 1), 24);
 
         for (let ep = 1; ep <= epLimit; ep++) {
           const watchUrl = `${SITE_URL}/watch/${item.id}?ep=${ep}`;
-          const imageTitle = escapeXml(`انمي ${rawTitle} الحلقة ${ep} مترجمة - انمي كلوفر`.slice(0, 100));
-
           urls.push(`  <url>
     <loc>${escapeXml(watchUrl)}</loc>
     <lastmod>${dailyDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
-    <image:image>
-      <image:loc>${escapeXml(posterUrl)}</image:loc>
-      <image:title>${imageTitle}</image:title>
-    </image:image>
   </url>`);
         }
       }
     }
   } catch {}
 
+  if (urls.length === 0) {
+    urls.push(`  <url>
+    <loc>${escapeXml(`${SITE_URL}/schedule`)}</loc>
+    <lastmod>${dailyDate}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>`);
+  }
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.join("\n")}
 </urlset>`;
 
   return new NextResponse(xml, {
+    status: 200,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
+
+export async function HEAD() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }

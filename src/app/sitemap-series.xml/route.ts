@@ -40,37 +40,47 @@ export async function GET() {
     for (const item of items) {
       if (!seen.has(item.id)) {
         seen.add(item.id);
-        const title = escapeXml(`انمي ${item.title || item.original_title || item.id} مترجم - انمي كلوفر`);
-        const poster = item.poster_url ? escapeXml(item.poster_url) : "";
-
-        let imageTag = "";
-        if (poster) {
-          imageTag = `\n    <image:image>
-      <image:loc>${poster}</image:loc>
-      <image:title>${title}</image:title>
-    </image:image>`;
-        }
-
         urls.push(`  <url>
     <loc>${escapeXml(`${SITE_URL}/series/${item.id}`)}</loc>
     <lastmod>${dailyDate}</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.85</priority>${imageTag}
+    <priority>0.85</priority>
   </url>`);
       }
     }
   } catch {}
 
+  if (urls.length === 0) {
+    urls.push(`  <url>
+    <loc>${escapeXml(`${SITE_URL}/series`)}</loc>
+    <lastmod>${dailyDate}</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>`);
+  }
+
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${urls.join("\n")}
 </urlset>`;
 
   return new NextResponse(xml, {
+    status: 200,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
-      "Cache-Control": "public, s-maxage=3600, stale-while-revalidate=86400",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+      "X-Content-Type-Options": "nosniff",
+    },
+  });
+}
+
+export async function HEAD() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Content-Type": "application/xml; charset=utf-8",
+      "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
+      "X-Content-Type-Options": "nosniff",
     },
   });
 }
