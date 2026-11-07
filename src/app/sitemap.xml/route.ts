@@ -98,6 +98,7 @@ export async function GET() {
     status: 200,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
+      "Content-Length": Buffer.byteLength(xml, "utf8").toString(),
       "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
       "X-Content-Type-Options": "nosniff",
     },
@@ -105,10 +106,12 @@ export async function GET() {
 }
 
 export async function HEAD() {
+  const xml = await buildSitemapXml();
   return new NextResponse(null, {
     status: 200,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
+      "Content-Length": Buffer.byteLength(xml, "utf8").toString(),
       "Cache-Control": "public, max-age=3600, s-maxage=3600, stale-while-revalidate=86400",
       "X-Content-Type-Options": "nosniff",
     },

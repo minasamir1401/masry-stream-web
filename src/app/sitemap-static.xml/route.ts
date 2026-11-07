@@ -54,6 +54,7 @@ ${urlEntries}
     status: 200,
     headers: {
       "Content-Type": "application/xml; charset=utf-8",
+      "Content-Length": Buffer.byteLength(xml, "utf8").toString(),
       "Cache-Control": "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
       "X-Content-Type-Options": "nosniff",
     },

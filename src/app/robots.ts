@@ -20,10 +20,13 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/admin", "/api/"],
       },
     ],
-    host: SITE_URL,
     sitemap: [
       `${SITE_URL}/sitemap.xml`,
       `${SITE_URL}/sitemap_index.xml`,
+      `${SITE_URL}/sitemap-static.xml`,
+      `${SITE_URL}/sitemap-series.xml`,
+      `${SITE_URL}/sitemap-movies.xml`,
+      `${SITE_URL}/sitemap-episodes.xml`,
     ],
   };
 }
