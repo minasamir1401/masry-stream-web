@@ -5,8 +5,8 @@ export function Brand() {
     <Link
       href="/"
       className="site-brand clover-brand"
-      aria-label="انمي كلوفر AnimeClover الرئيسية"
-      title="موقع انمي كلوفر AnimeClover"
+      aria-label="انمي كلوفر AnimeClover - الصفحة الرئيسية"
+      title="موقع انمي كلوفر الرسمي AnimeClover"
       dir="ltr"
     >
       <img
@@ -14,10 +14,10 @@ export function Brand() {
         src="/brand/anime-clover-mark.svg"
         width={48}
         height={48}
-        alt="شعار انمي كلوفر AnimeClover"
+        alt="شعار موقع انمي كلوفر AnimeClover"
       />
       <span className="clover-brand-wordmark">
-        <span>ANIME</span>
+        <span className="clover-brand-sub">انمي كلوفر · ANIME</span>
         <strong>CLOVER</strong>
       </span>
     </Link>

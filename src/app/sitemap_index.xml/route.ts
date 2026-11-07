@@ -1,29 +1,28 @@
 import { NextResponse } from "next/server";
+import { SITE_URL, getDailyIsoDate } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
 export const revalidate = 3600;
 
 export async function GET() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-  const now = new Date().toISOString();
+  const dailyDate = getDailyIsoDate();
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>${siteUrl}/sitemap-static.xml</loc>
-    <lastmod>${now}</lastmod>
+    <loc>${SITE_URL}/sitemap-static.xml</loc>
+    <lastmod>${dailyDate}</lastmod>
   </sitemap>
   <sitemap>
-    <loc>${siteUrl}/sitemap-series.xml</loc>
-    <lastmod>${now}</lastmod>
+    <loc>${SITE_URL}/sitemap-series.xml</loc>
+    <lastmod>${dailyDate}</lastmod>
   </sitemap>
   <sitemap>
-    <loc>${siteUrl}/sitemap-movies.xml</loc>
-    <lastmod>${now}</lastmod>
+    <loc>${SITE_URL}/sitemap-movies.xml</loc>
+    <lastmod>${dailyDate}</lastmod>
   </sitemap>
   <sitemap>
-    <loc>${siteUrl}/sitemap-episodes.xml</loc>
-    <lastmod>${now}</lastmod>
+    <loc>${SITE_URL}/sitemap-episodes.xml</loc>
+    <lastmod>${dailyDate}</lastmod>
   </sitemap>
 </sitemapindex>`;
 

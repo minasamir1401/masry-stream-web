@@ -36,8 +36,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const titleAr = series.title;
   const titleEn = series.original_title && series.original_title !== series.title ? ` ${series.original_title}` : "";
-  const pageTitle = `انمي ${titleAr}${titleEn} جميع الحلقات مترجمة تحميل ومشاهدة اون لاين - AnimeClover`;
-  const pageDesc = `انمي ${titleAr} جميع الحلقات تحميل ومشاهدة اون لاين${titleEn ? ` (${series.original_title})` : ""} مترجم كامل الحلقات بجودة عالية مع روابط تحميل سريعة على موقع أنمي كلوفر AnimeClover. ${cleanDesc}`;
+  const pageTitle = `انمي ${titleAr}${titleEn} جميع الحلقات مترجمة اون لاين | انمي كلوفر AnimeClover`;
+  const pageDesc = `مشاهدة وتحميل انمي ${titleAr}${titleEn ? ` (${series.original_title})` : ""} جميع الحلقات مترجمة اون لاين بجودة عالية Full HD على موقع انمي كلوفر الرسمي (AnimeClover). ${cleanDesc}`;
 
   const genresList = (series.genres || []).map((g) => genreArabic[g.name] || g.name);
   const keywords = [
@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: pageTitle,
       description: pageDesc,
       url: canonicalUrl,
-      siteName: "AnimeClover",
+      siteName: "انمي كلوفر AnimeClover",
       images: [
         {
           url: posterImg,
@@ -150,7 +150,8 @@ export default async function Page({ params }: PageProps) {
       : undefined,
     "publisher": {
       "@type": "Organization",
-      "name": "AnimeClover",
+      "@id": `${siteUrl}/#organization`,
+      "name": "انمي كلوفر AnimeClover",
       "url": siteUrl,
     },
   };
@@ -162,7 +163,7 @@ export default async function Page({ params }: PageProps) {
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "الرئيسية",
+        "name": "انمي كلوفر الرئيسية",
         "item": siteUrl,
       },
       {

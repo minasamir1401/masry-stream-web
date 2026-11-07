@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchAnimeMovies } from "@/lib/api";
+import { SITE_URL, getDailyIsoDate } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
@@ -19,41 +20,32 @@ function escapeXml(unsafe: string | null | undefined): string {
 }
 
 export async function GET() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-  const now = new Date().toISOString();
-
+  const dailyDate = getDailyIsoDate();
   const urls: string[] = [];
 
   try {
     const movies = await fetchAnimeMovies(1, 100);
     for (const item of movies.items || []) {
       const rawTitle = item.title || item.original_title || `فيلم أنمي #${item.id}`;
-      const videoTitle = escapeXml(`فيلم ${rawTitle} مترجم بجودة عالية`.slice(0, 100));
-      const rawDesc = item.description || `مشاهدة وتحميل فيلم ${rawTitle} مترجم اون لاين بجودة عالية HD على انمي كلوفر`;
-      const videoDesc = escapeXml(rawDesc.slice(0, 500));
-      const thumbUrl = item.poster_url || `${siteUrl}/og-image.png`;
-      const watchUrl = `${siteUrl}/watch/${item.id}?ep=1`;
+      const imageTitle = escapeXml(`فيلم ${rawTitle} مترجم - انمي كلوفر AnimeClover`.slice(0, 100));
+      const thumbUrl = item.poster_url || `${SITE_URL}/og-image.png`;
 
       urls.push(`  <url>
-    <loc>${escapeXml(`${siteUrl}/movie/${item.id}`)}</loc>
-    <lastmod>${now}</lastmod>
+    <loc>${escapeXml(`${SITE_URL}/movie/${item.id}`)}</loc>
+    <lastmod>${dailyDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-    <video:video>
-      <video:thumbnail_loc>${escapeXml(thumbUrl)}</video:thumbnail_loc>
-      <video:title>${videoTitle}</video:title>
-      <video:description>${videoDesc}</video:description>
-      <video:player_loc>${escapeXml(watchUrl)}</video:player_loc>
-      <video:publication_date>${now}</video:publication_date>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
+    <image:image>
+      <image:loc>${escapeXml(thumbUrl)}</image:loc>
+      <image:title>${imageTitle}</image:title>
+    </image:image>
   </url>`);
     }
   } catch {}
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urls.join("\n")}
 </urlset>`;
 

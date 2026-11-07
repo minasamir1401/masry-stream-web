@@ -1,42 +1,39 @@
 import type { Metadata } from "next";
 import { fetchCatalog, CatalogQuery } from "@/lib/api";
 import { CatalogBrowser } from "@/components/CatalogBrowser";
+import { SITE_URL, SITE_BRAND, buildBreadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_TITLE = "أفلام أنمي - مشاهدة وتحميل أفلام الأنمي المترجمة | انمي كلوفر AnimeClover";
+const PAGE_DESC =
+  "قسم أفلام الأنمي على موقع انمي كلوفر الرسمي (AnimeClover). شاهد وحمّل أحدث وأشهر أفلام الأنمي المترجمة والمدبلجة اون لاين بجودة عالية Full HD وسيرفرات مباشرة.";
+
 export const metadata: Metadata = {
   title: {
-    absolute: "أفلام أنمي - تحميل ومشاهدة أفلام الأنمي مترجمة اون لاين | انمي كلوفر AnimeClover",
+    absolute: PAGE_TITLE,
   },
-  description:
-    "قسم أفلام الأنمي على انمي كلوفر (انمي لكوفر - AnimeClover) يمكنك من خلاله مشاهدة وتحميل أحدث وأقوى أفلام الأنمي المترجمة اون لاين بجودة عالية FHD وسيرفرات مباشرة سريعة.",
+  description: PAGE_DESC,
   keywords: [
-    "انمي",
-    "أنمي",
+    "انمي كلوفر",
+    "أنمي كلوفر",
     "أفلام أنمي",
-    "افلام انمي",
-    "فلم انمي",
     "افلام انمي مترجمة",
     "مشاهدة افلام انمي",
     "تحميل افلام انمي",
-    "انمي كلوفر",
-    "أنمي كلوفر",
-    "انمي لكوفر",
-    "أنمي لكوفر",
+    "افلام انمي كلوفر",
     "AnimeClover",
     "animeclover",
-    "anime movies hd",
-    "watch anime movies",
+    "انمي لكوفر",
   ],
   alternates: {
     canonical: "/movies",
   },
   openGraph: {
-    title: "أفلام أنمي - تحميل ومشاهدة أفلام الأنمي مترجمة اون لاين | انمي كلوفر AnimeClover",
-    description:
-      "قسم أفلام الأنمي على انمي كلوفر (انمي لكوفر - AnimeClover) يمكنك من خلاله مشاهدة وتحميل أحدث وأقوى أفلام الأنمي المترجمة اون لاين بجودة عالية FHD وسيرفرات مباشرة سريعة.",
+    title: PAGE_TITLE,
+    description: PAGE_DESC,
     url: "/movies",
-    siteName: "انمي كلوفر AnimeClover",
+    siteName: SITE_BRAND,
     images: [
       {
         url: "/og-image.png",
@@ -48,33 +45,62 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "أفلام أنمي - تحميل ومشاهدة أفلام الأنمي مترجمة اون لاين | انمي كلوفر AnimeClover",
-    description:
-      "قسم أفلام الأنمي على انمي كلوفر (انمي لكوفر - AnimeClover) يمكنك من خلاله مشاهدة وتحميل أحدث وأقوى أفلام الأنمي المترجمة اون لاين بجودة عالية FHD وسيرفرات مباشرة سريعة.",
+    title: PAGE_TITLE,
+    description: PAGE_DESC,
     images: ["/og-image.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
   },
 };
 
 export default async function Page({ searchParams }: { searchParams: CatalogQuery }) {
   const filters = { ...searchParams, format: searchParams.format || "MOVIE" };
   const data = await fetchCatalog(filters).catch(() => null);
+  const items = data?.items || [];
+
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "انمي كلوفر الرئيسية", path: "/" },
+    { name: "أفلام الأنمي", path: "/movies" },
+  ]);
+
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": PAGE_TITLE,
+    "description": PAGE_DESC,
+    "url": `${SITE_URL}/movies`,
+    "isPartOf": { "@id": `${SITE_URL}/#website` },
+    "inLanguage": "ar",
+    ...(items.length > 0
+      ? {
+          "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": items.length,
+            "itemListElement": items.slice(0, 16).map((item, idx) => ({
+              "@type": "ListItem",
+              "position": idx + 1,
+              "name": item.title,
+              "url": `${SITE_URL}/movie/${item.id}`,
+            })),
+          },
+        }
+      : {}),
+  };
+
   return (
-    <CatalogBrowser
-      title="أفلام الأنمي"
-      filters={filters}
-      data={data || { items: [], total: 0, page: 1, page_size: 24, total_pages: 1 }}
-      failed={!data}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      />
+      <CatalogBrowser
+        title="أفلام الأنمي"
+        filters={filters}
+        data={data || { items: [], total: 0, page: 1, page_size: 24, total_pages: 1 }}
+        failed={!data}
+      />
+    </>
   );
 }

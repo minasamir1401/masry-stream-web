@@ -36,8 +36,8 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
 
   const titleAr = movie.title;
   const titleEn = movie.original_title && movie.original_title !== movie.title ? ` ${movie.original_title}` : "";
-  const pageTitle = `فيلم ${titleAr}${titleEn} مترجم تحميل ومشاهدة اون لاين - AnimeClover`;
-  const pageDesc = `تحميل ومشاهدة فيلم ${titleAr}${titleEn ? ` (${movie.original_title})` : ""} مترجم اون لاين بجودة عالية Full HD مع روابط تحميل مباشرة على موقع أنمي كلوفر AnimeClover. ${movie.description || ""}`.trim();
+  const pageTitle = `فيلم ${titleAr}${titleEn} مترجم اون لاين | انمي كلوفر AnimeClover`;
+  const pageDesc = `مشاهدة وتحميل فيلم ${titleAr}${titleEn ? ` (${movie.original_title})` : ""} مترجم اون لاين بجودة عالية Full HD على موقع انمي كلوفر الرسمي (AnimeClover). ${movie.description || ""}`.trim();
 
   return {
     title: {
@@ -68,7 +68,7 @@ export async function generateMetadata({ params }: MovieDetailPageProps): Promis
       title: pageTitle,
       description: pageDesc,
       url: canonicalUrl,
-      siteName: "AnimeClover",
+      siteName: "انمي كلوفر AnimeClover",
       images: [{ url: posterImg, width: 1200, height: 630, alt: movie.title }],
     },
     twitter: {
@@ -118,7 +118,8 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
     "inLanguage": ["ar", "ja"],
     "publisher": {
       "@type": "Organization",
-      "name": "AnimeClover",
+      "@id": `${siteUrl}/#organization`,
+      "name": "انمي كلوفر AnimeClover",
       "url": siteUrl,
     },
   };

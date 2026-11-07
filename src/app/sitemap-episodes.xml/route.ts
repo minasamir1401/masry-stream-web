@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchPopularSeries, fetchTrendingAnime } from "@/lib/api";
+import { SITE_URL, getDailyIsoDate } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 3600;
@@ -19,9 +20,7 @@ function escapeXml(unsafe: string | null | undefined): string {
 }
 
 export async function GET() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-  const now = new Date().toISOString();
-
+  const dailyDate = getDailyIsoDate();
   const urls: string[] = [];
 
   try {
@@ -40,30 +39,23 @@ export async function GET() {
       if (!seen.has(item.id)) {
         seen.add(item.id);
         const rawTitle = item.title || item.original_title || `أنمي #${item.id}`;
-        const posterUrl = item.poster_url || `${siteUrl}/og-image.png`;
+        const posterUrl = item.poster_url || `${SITE_URL}/og-image.png`;
         const totalEp = item.total_episodes || (item.episodes ? item.episodes.length : 12);
         const epLimit = Math.min(Math.max(totalEp, 1), 24);
 
         for (let ep = 1; ep <= epLimit; ep++) {
-          const watchUrl = `${siteUrl}/watch/${item.id}?ep=${ep}`;
-          const videoTitle = escapeXml(`مشاهدة أنمي ${rawTitle} الحلقة ${ep} مترجمة`.slice(0, 100));
-          const videoDesc = escapeXml(
-            `شاهد الحلقة ${ep} من أنمي ${rawTitle} أون لاين بجودة عالية HD مع الترجمة العربية الكاملة على انمي كلوفر`.slice(0, 500)
-          );
+          const watchUrl = `${SITE_URL}/watch/${item.id}?ep=${ep}`;
+          const imageTitle = escapeXml(`انمي ${rawTitle} الحلقة ${ep} مترجمة - انمي كلوفر`.slice(0, 100));
 
           urls.push(`  <url>
     <loc>${escapeXml(watchUrl)}</loc>
-    <lastmod>${now}</lastmod>
+    <lastmod>${dailyDate}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.75</priority>
-    <video:video>
-      <video:thumbnail_loc>${escapeXml(posterUrl)}</video:thumbnail_loc>
-      <video:title>${videoTitle}</video:title>
-      <video:description>${videoDesc}</video:description>
-      <video:player_loc>${escapeXml(watchUrl)}</video:player_loc>
-      <video:publication_date>${now}</video:publication_date>
-      <video:family_friendly>yes</video:family_friendly>
-    </video:video>
+    <image:image>
+      <image:loc>${escapeXml(posterUrl)}</image:loc>
+      <image:title>${imageTitle}</image:title>
+    </image:image>
   </url>`);
         }
       }
@@ -72,7 +64,7 @@ export async function GET() {
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 ${urls.join("\n")}
 </urlset>`;
 

@@ -7,19 +7,21 @@ export function Footer() {
       <div className="app-footer-inner">
         <div>
           <Brand />
-          <p>حكايات لا تنتهي. اكتشف عالمك القادم.</p>
+          <p>منصة انمي كلوفر العربية لمشاهدة وتحميل الأنمي المترجم اون لاين.</p>
         </div>
         <nav aria-label="روابط الموقع" className="flex flex-wrap items-center gap-4 text-xs">
-          <Link href="/series">اكتشف الأنمي</Link>
+          <Link href="/">انمي كلوفر الرئيسية</Link>
+          <Link href="/series">مكتبة الأنمي</Link>
+          <Link href="/movies">أفلام الأنمي</Link>
           <Link href="/schedule">جدول الحلقات</Link>
           <Link href="/report" className="text-pink-400 font-bold hover:text-pink-300">الشكاوى والطلبات</Link>
-          <Link href="/about">عن المنصة</Link>
+          <Link href="/about">عن انمي كلوفر</Link>
           <Link href="/privacy">سياسة الخصوصية</Link>
           <Link href="/terms">الشروط وDMCA</Link>
           <Link href="/contact">اتصل بنا</Link>
         </nav>
         <small>
-          انمي كلوفر (انمي لكوفر - AnimeClover) — موقع مشاهدة وتحميل أحدث مسلسلات وأفلام الأنمي مترجمة اون لاين.
+          موقع انمي كلوفر الرسمي (AnimeClover) — مشاهدة وتحميل أحدث مسلسلات وأفلام وحلقات الأنمي المترجمة اون لاين بجودة Full HD.
           <br />
           جميع حقوق الأعمال والعلامات التجارية محفوظة لأصحابها ومؤلفيها الأصليين.
         </small>

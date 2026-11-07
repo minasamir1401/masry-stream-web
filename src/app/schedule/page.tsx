@@ -1,40 +1,39 @@
 import type { Metadata } from "next";
 import { fetchAiringWeek } from "@/lib/api";
 import { AiringSchedule } from "@/components/AiringSchedule";
+import { SITE_BRAND, buildBreadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_TITLE = "جدول مواعيد عرض الأنمي الأسبوعي | انمي كلوفر AnimeClover";
+const PAGE_DESC =
+  "جدول مواعيد نزول حلقات مسلسلات الأنمي الأسبوعية المترجمة اون لاين ومواعيد البث المحدثة بتوقيت القاهرة والمنطقة العربية على موقع انمي كلوفر الرسمي (AnimeClover).";
+
 export const metadata: Metadata = {
   title: {
-    absolute: "جدول مواعيد عرض الأنمي الأسبوعي | انمي كلوفر AnimeClover",
+    absolute: PAGE_TITLE,
   },
-  description:
-    "جدول مواعيد نزول حلقات مسلسلات الأنمي الأسبوعية المترجمة اون لاين ومواعيد البث المحدثة فور صدورها في اليابان على موقع انمي كلوفر (انمي لكوفر - AnimeClover).",
+  description: PAGE_DESC,
   keywords: [
-    "انمي",
-    "أنمي",
+    "انمي كلوفر",
+    "أنمي كلوفر",
     "جدول الأنمي",
     "جدول نزول الحلقات",
     "مواعيد عرض الأنمي",
-    "أنمي اليوم",
     "انمي اليوم",
-    "انمي كلوفر",
-    "أنمي كلوفر",
-    "انمي لكوفر",
-    "أنمي لكوفر",
+    "جدول انمي كلوفر",
     "AnimeClover",
     "animeclover",
-    "anime schedule",
-    "anime airing schedule",
+    "انمي لكوفر",
   ],
   alternates: {
     canonical: "/schedule",
   },
   openGraph: {
-    title: "جدول مواعيد عرض الأنمي الأسبوعي | انمي كلوفر AnimeClover",
-    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في انمي كلوفر (انمي لكوفر - AnimeClover).",
+    title: PAGE_TITLE,
+    description: PAGE_DESC,
     url: "/schedule",
-    siteName: "انمي كلوفر AnimeClover",
+    siteName: SITE_BRAND,
     images: [
       {
         url: "/og-image.png",
@@ -46,25 +45,27 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "جدول مواعيد عرض الأنمي الأسبوعي | انمي كلوفر AnimeClover",
-    description: "مواعيد الحلقات الجديدة والعد التنازلي على مدار أيام الأسبوع في انمي كلوفر AnimeClover.",
+    title: PAGE_TITLE,
+    description: PAGE_DESC,
     images: ["/og-image.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
   },
 };
 
 export default async function SchedulePage({ searchParams }: { searchParams: { day?: string } }) {
   const day = searchParams.day && /^\d{4}-\d{2}-\d{2}$/.test(searchParams.day) ? searchParams.day : undefined;
   const week = await fetchAiringWeek(day).catch(() => null);
-  return <AiringSchedule initial={week} selectedDay={day} />;
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "انمي كلوفر الرئيسية", path: "/" },
+    { name: "جدول مواعيد الحلقات", path: "/schedule" },
+  ]);
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <AiringSchedule initial={week} selectedDay={day} />
+    </>
+  );
 }

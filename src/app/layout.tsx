@@ -3,10 +3,17 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { InstallToastNotification } from "@/components/InstallToastNotification";
+import {
+  SITE_URL,
+  SITE_BRAND,
+  SITE_NAME_EN,
+  DEFAULT_TITLE,
+  DEFAULT_DESCRIPTION,
+  CORE_KEYWORDS,
+  buildRootGraphJsonLd,
+} from "@/lib/seo";
 import "./globals.css";
 import "./discovery.css";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
 
 export const viewport: Viewport = {
   themeColor: "#0b0e14",
@@ -16,19 +23,18 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "انمي كلوفر AnimeClover | موقع مشاهدة وتحميل انمي مترجم اون لاين",
-    template: "%s | انمي كلوفر AnimeClover",
+    default: DEFAULT_TITLE,
+    template: `%s | ${SITE_BRAND}`,
   },
-  description:
-    "موقع انمي كلوفر (انمي لكوفر - AnimeClover) افضل موقع انمي عربي لمشاهدة وتحميل جميع مسلسلات وافلام وحلقات الانمي مترجمة اون لاين بجودة عالية Full HD مجانا وبدون اعلانات مزعجة.",
-  applicationName: "AnimeClover",
+  description: DEFAULT_DESCRIPTION,
+  applicationName: SITE_BRAND,
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "AnimeClover",
+    title: SITE_BRAND,
   },
   icons: {
     icon: [
@@ -45,78 +51,47 @@ export const metadata: Metadata = {
     ],
     shortcut: "/favicon.ico",
   },
-  authors: [{ name: "AnimeClover" }],
+  authors: [{ name: SITE_BRAND, url: SITE_URL }],
+  creator: SITE_NAME_EN,
+  publisher: SITE_BRAND,
   generator: "Next.js",
   verification: {
     google: "Lo5jfaL9kqxdNMycHzc__ac1jP5rdLe4fTXIFEzQWdc",
   },
-  keywords: [
-    "انمي",
-    "أنمي",
-    "انمي كلوفر",
-    "أنمي كلوفر",
-    "انمي لكوفر",
-    "أنمي لكوفر",
-    "كلوفر انمي",
-    "لكوفر انمي",
-    "موقع انمي كلوفر",
-    "موقع انمي لكوفر",
-    "موقع انمي",
-    "مشاهدة انمي",
-    "تحميل انمي",
-    "انمي مترجم",
-    "انمي اون لاين",
-    "مسلسلات انمي",
-    "افلام انمي",
-    "حلقات انمي",
-    "AnimeClover",
-    "animeclover",
-    "Anime Clover",
-    "animeclover.click",
-    "anime online",
-    "watch anime online",
-    "subbed anime",
-    "arabic sub anime",
-    "anime episodes streaming",
-    "anime movies hd",
-  ],
+  keywords: CORE_KEYWORDS,
   alternates: {
     canonical: "/",
     languages: {
       "ar": "/",
-      "en": "/",
       "x-default": "/",
     },
   },
   openGraph: {
     type: "website",
     locale: "ar_AR",
-    alternateLocale: ["en_US"],
-    url: siteUrl,
-    siteName: "انمي كلوفر AnimeClover",
-    title: "انمي كلوفر AnimeClover | موقع مشاهدة وتحميل انمي مترجم اون لاين",
-    description:
-      "موقع انمي كلوفر (انمي لكوفر - AnimeClover) افضل موقع انمي عربي لمشاهدة وتحميل مسلسلات وافلام وحلقات الانمي مترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة.",
+    url: SITE_URL,
+    siteName: SITE_BRAND,
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "انمي كلوفر AnimeClover - موقع مشاهدة وتحميل الانمي مترجم اون لاين",
+        alt: "انمي كلوفر AnimeClover - الموقع الرسمي لمشاهدة وتحميل الأنمي المترجم اون لاين",
       },
       {
         url: "/preview_full.png",
         width: 1200,
         height: 630,
-        alt: "انمي كلوفر AnimeClover",
+        alt: SITE_BRAND,
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "انمي كلوفر AnimeClover | موقع مشاهدة وتحميل انمي مترجم اون لاين",
-    description:
-      "موقع انمي كلوفر (انمي لكوفر - AnimeClover) افضل موقع انمي عربي لمشاهدة وتحميل جميع افلام وحلقات الانمي مترجمة اون لاين بجودة عالية.",
+    title: DEFAULT_TITLE,
+    description: DEFAULT_DESCRIPTION,
     images: ["/og-image.png"],
   },
   robots: {
@@ -138,70 +113,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const jsonLdWebsite = {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "انمي كلوفر AnimeClover",
-    "alternateName": [
-      "انمي كلوفر",
-      "أنمي كلوفر",
-      "انمي لكوفر",
-      "أنمي لكوفر",
-      "كلوفر انمي",
-      "لكوفر انمي",
-      "موقع انمي كلوفر",
-      "موقع انمي لكوفر",
-      "موقع انمي",
-      "انمي اون لاين",
-      "AnimeClover",
-      "Anime Clover",
-      "AnimeClover Online",
-    ],
-    "url": siteUrl,
-    "description":
-      "موقع انمي كلوفر AnimeClover (انمي لكوفر) لمشاهدة وتحميل أحدث مسلسلات وأفلام وحلقات الأنمي المترجمة باللغة العربية بجودة عالية وبدون إعلانات مزعجة.",
-    "inLanguage": ["ar", "en", "ja"],
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${siteUrl}/search?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
-  };
-
-  const jsonLdOrg = {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "انمي كلوفر AnimeClover",
-    "alternateName": ["انمي كلوفر", "انمي لكوفر", "Anime Clover", "AnimeClover"],
-    "url": siteUrl,
-    "logo": {
-      "@type": "ImageObject",
-      "url": `${siteUrl}/icons/icon-512.png`,
-      "width": 512,
-      "height": 512,
-    },
-    "image": `${siteUrl}/og-image.png`,
-    "sameAs": [],
-  };
+  const rootGraphJsonLd = buildRootGraphJsonLd();
 
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
-        <meta
-          name="google-site-verification"
-          content="Lo5jfaL9kqxdNMycHzc__ac1jP5rdLe4fTXIFEzQWdc"
-        />
-        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-        <link rel="icon" href="/favicon.ico" sizes="any" />
-        <link rel="icon" type="image/png" sizes="48x48" href="/icons/icon-48.png" />
-        <link rel="icon" type="image/png" sizes="96x96" href="/icons/icon-96.png" />
-        <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <meta name="thumbnail" content={`${siteUrl}/og-image.png`} />
-        <link rel="image_src" href={`${siteUrl}/og-image.png`} />
+        <meta name="thumbnail" content={`${SITE_URL}/og-image.png`} />
+        <link rel="image_src" href={`${SITE_URL}/og-image.png`} />
         <link rel="preconnect" href="https://s4.anilist.co" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://cdn.myanimelist.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="//s4.anilist.co" />
@@ -209,11 +127,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//image.tmdb.org" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebsite) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdOrg) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(rootGraphJsonLd) }}
         />
       </head>
       <body

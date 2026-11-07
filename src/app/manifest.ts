@@ -2,9 +2,10 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "انمي كلوفر AnimeClover | موقع مشاهدة وتحميل انمي مترجم اون لاين",
+    name: "انمي كلوفر AnimeClover | الموقع الرسمي لمشاهدة وتحميل الأنمي المترجم",
     short_name: "انمي كلوفر",
-    description: "موقع انمي كلوفر (انمي لكوفر - AnimeClover) موقع عربي لمشاهدة وتحميل مسلسلات وأفلام الأنمي مترجمة اون لاين بجودات متعددة مجانا وبأعلى جودة",
+    description:
+      "موقع انمي كلوفر الرسمي (AnimeClover) لمشاهدة وتحميل مسلسلات وأفلام وحلقات الأنمي المترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة.",
     start_url: "/",
     scope: "/",
     display: "standalone",

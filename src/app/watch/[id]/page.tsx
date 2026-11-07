@@ -26,8 +26,8 @@ export async function generateMetadata({ params, searchParams }: WatchPageProps)
 
   const titleAr = media.title;
   const titleEn = media.original_title && media.original_title !== media.title ? ` (${media.original_title})` : "";
-  const pageTitle = `انمي ${titleAr} الحلقة ${episode} مترجمة اون لاين - AnimeClover`;
-  const pageDesc = `انمي ${titleAr} الحلقة ${episode} مترجمة اون لاين تحميل ومشاهدة بجودة عالية ${titleAr}${titleEn} الحلقة ${episode} كاملة مع التحميل على موقع أنمي كلوفر AnimeClover.`;
+  const pageTitle = `انمي ${titleAr} الحلقة ${episode} مترجمة اون لاين | انمي كلوفر AnimeClover`;
+  const pageDesc = `مشاهدة وتحميل انمي ${titleAr}${titleEn} الحلقة ${episode} مترجمة اون لاين بجودة عالية Full HD على موقع انمي كلوفر الرسمي (AnimeClover).`;
 
   const keywords = [
     media.title,
@@ -63,7 +63,7 @@ export async function generateMetadata({ params, searchParams }: WatchPageProps)
       title: pageTitle,
       description: pageDesc,
       url: canonicalUrl,
-      siteName: "AnimeClover",
+      siteName: "انمي كلوفر AnimeClover",
       images: [
         {
           url: posterImg,
@@ -126,17 +126,21 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
   };
 
   // Schema: VideoObject for Google Video Rich Snippets
+  const uploadIso = media.release_year
+    ? `${media.release_year}-01-01T00:00:00.000Z`
+    : "2026-01-01T00:00:00.000Z";
   const jsonLdVideo = {
     "@context": "https://schema.org",
     "@type": "VideoObject",
-    "name": `انمي ${media.title} الحلقة ${episode} مترجمة اون لاين`,
-    "description": `مشاهدة انمي ${media.title} الحلقة ${episode} اون لاين بجودة عالية HD مع روابط تحميل مباشرة على AnimeClover.`,
+    "name": `انمي ${media.title} الحلقة ${episode} مترجمة اون لاين | انمي كلوفر`,
+    "description": `مشاهدة انمي ${media.title} الحلقة ${episode} اون لاين بجودة عالية HD مع روابط تحميل مباشرة على موقع انمي كلوفر AnimeClover.`,
     "thumbnailUrl": [posterImg],
-    "uploadDate": new Date().toISOString(),
+    "uploadDate": uploadIso,
     "embedUrl": `${siteUrl}/watch/${media.id}?ep=${episode}`,
     "publisher": {
       "@type": "Organization",
-      "name": "AnimeClover",
+      "@id": `${siteUrl}/#organization`,
+      "name": "انمي كلوفر AnimeClover",
       "url": siteUrl,
     },
   };
@@ -149,7 +153,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "الرئيسية",
+        "name": "انمي كلوفر الرئيسية",
         "item": siteUrl,
       },
       {

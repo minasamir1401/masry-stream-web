@@ -3,8 +3,13 @@ import Link from "next/link";
 import { Lock, Shield, Eye, Database, FileText, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "سياسة الخصوصية - AnimeClover",
-  description: "سياسة الخصوصية وحماية بيانات المستخدمين في منصة أنمي كلوفر، وكيفية التعامل مع ملفات تعريف الارتباط وسجلات المشاهدة.",
+  title: {
+    absolute: "سياسة الخصوصية | انمي كلوفر AnimeClover",
+  },
+  description: "سياسة الخصوصية وحماية بيانات المستخدمين في منصة انمي كلوفر الرسمية (AnimeClover)، وكيفية التعامل مع ملفات تعريف الارتباط وسجلات المشاهدة.",
+  alternates: {
+    canonical: "/privacy",
+  },
 };
 
 export default function PrivacyPage() {

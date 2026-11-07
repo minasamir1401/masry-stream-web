@@ -1,30 +1,29 @@
 import { MetadataRoute } from "next";
+import { SITE_URL } from "@/lib/seo";
 
 export default function robots(): MetadataRoute.Robots {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-
   return {
     rules: [
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/api/admin/"],
+        disallow: ["/admin", "/api/", "/favorites"],
       },
       {
         userAgent: "Googlebot",
         allow: "/",
-        disallow: ["/admin", "/api/admin/"],
+        disallow: ["/admin", "/api/", "/favorites"],
       },
       {
         userAgent: "Googlebot-Image",
         allow: "/",
-        disallow: ["/admin", "/api/admin/"],
+        disallow: ["/admin", "/api/"],
       },
     ],
+    host: SITE_URL,
     sitemap: [
-      `${siteUrl}/sitemap.xml`,
-      `${siteUrl}/sitemap_index.xml`,
+      `${SITE_URL}/sitemap.xml`,
+      `${SITE_URL}/sitemap_index.xml`,
     ],
   };
 }
-

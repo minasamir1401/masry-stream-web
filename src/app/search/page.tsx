@@ -1,37 +1,24 @@
 import type { Metadata } from "next";
 import { fetchCatalog, CatalogQuery } from "@/lib/api";
 import { CatalogBrowser } from "@/components/CatalogBrowser";
+import { SITE_BRAND } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "بحث عن أنمي | انمي كلوفر AnimeClover",
+    absolute: "البحث في مكتبة الأنمي | انمي كلوفر AnimeClover",
   },
   description:
-    "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية وتصفح الحلقات والمواسم على انمي كلوفر (انمي لكوفر - AnimeClover).",
-  keywords: [
-    "انمي",
-    "أنمي",
-    "بحث انمي",
-    "search anime",
-    "animeclover search",
-    "انمي كلوفر",
-    "أنمي كلوفر",
-    "انمي لكوفر",
-    "أنمي لكوفر",
-    "AnimeClover",
-    "animeclover",
-    "animeclover.click",
-  ],
+    "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية وتصفح الحلقات والمواسم على موقع انمي كلوفر الرسمي (AnimeClover).",
   alternates: {
     canonical: "/search",
   },
   openGraph: {
-    title: "بحث عن أنمي | انمي كلوفر AnimeClover",
-    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على انمي كلوفر (انمي لكوفر - AnimeClover).",
+    title: "البحث في مكتبة الأنمي | انمي كلوفر AnimeClover",
+    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على موقع انمي كلوفر AnimeClover.",
     url: "/search",
-    siteName: "انمي كلوفر AnimeClover",
+    siteName: SITE_BRAND,
     images: [
       {
         url: "/og-image.png",
@@ -41,22 +28,9 @@ export const metadata: Metadata = {
       },
     ],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "بحث عن أنمي | انمي كلوفر AnimeClover",
-    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على انمي كلوفر AnimeClover.",
-    images: ["/og-image.png"],
-  },
   robots: {
-    index: true,
+    index: false,
     follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
   },
 };
 

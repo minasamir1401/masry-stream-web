@@ -3,8 +3,13 @@ import Link from "next/link";
 import { AlertTriangle, FileCheck, HelpCircle, Mail, Scale, ShieldAlert } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "الشروط والأحكام وحقوق الملكية DMCA - AnimeClover",
-  description: "الشروط والأحكام وسياسة حقوق الملكية الفكرية DMCA وإخلاء المسؤولية القانونية لمنصة أنمي كلوفر.",
+  title: {
+    absolute: "الشروط والأحكام وحقوق الملكية DMCA | انمي كلوفر AnimeClover",
+  },
+  description: "الشروط والأحكام وسياسة حقوق الملكية الفكرية DMCA وإخلاء المسؤولية القانونية لمنصة انمي كلوفر الرسمية (AnimeClover).",
+  alternates: {
+    canonical: "/terms",
+  },
 };
 
 export default function TermsPage() {

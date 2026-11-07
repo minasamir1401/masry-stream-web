@@ -1,43 +1,40 @@
 import type { Metadata } from "next";
 import { fetchCatalog, CatalogQuery } from "@/lib/api";
 import { CatalogBrowser } from "@/components/CatalogBrowser";
+import { SITE_URL, SITE_BRAND, buildBreadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_TITLE = "مكتبة الأنمي - مسلسلات أنمي مترجمة اون لاين | انمي كلوفر AnimeClover";
+const PAGE_DESC =
+  "تصفح مكتبة مسلسلات الأنمي الكاملة على موقع انمي كلوفر الرسمي (AnimeClover). شاهد وحمّل أحدث وأقوى مسلسلات الأنمي المترجمة اون لاين بجودة عالية Full HD وسيرفرات سريعة.";
+
 export const metadata: Metadata = {
   title: {
-    absolute: "أنميات - مسلسلات الأنمي المترجمة اون لاين | انمي كلوفر AnimeClover",
+    absolute: PAGE_TITLE,
   },
-  description:
-    "قسم الأنمي على انمي كلوفر (انمي لكوفر - AnimeClover) يمكنك من خلاله متابعة وتحميل أفضل وآخر مسلسلات الأنمي المترجمة اون لاين بجودات متعددة وسيرفرات سريعة.",
+  description: PAGE_DESC,
   keywords: [
-    "انمي",
-    "أنمي",
-    "أنميات",
-    "انميات",
-    "مسلسلات أنمي",
-    "أنمي مترجم",
-    "مشاهدة انمي",
-    "تحميل انمي",
-    "مكتبة الأنمي",
     "انمي كلوفر",
     "أنمي كلوفر",
-    "انمي لكوفر",
-    "أنمي لكوفر",
+    "مكتبة انمي كلوفر",
+    "قائمة الأنمي",
+    "مسلسلات أنمي مترجمة",
+    "أنمي مترجم اون لاين",
+    "مشاهدة انمي",
+    "تحميل انمي",
     "AnimeClover",
     "animeclover",
-    "anime series online",
-    "watch anime series",
+    "انمي لكوفر",
   ],
   alternates: {
     canonical: "/series",
   },
   openGraph: {
-    title: "أنميات - مسلسلات الأنمي المترجمة اون لاين | انمي كلوفر AnimeClover",
-    description:
-      "قسم الأنمي على انمي كلوفر (انمي لكوفر - AnimeClover) يمكنك من خلاله متابعة وتحميل أفضل وآخر مسلسلات الأنمي المترجمة اون لاين بجودات متعددة وسيرفرات سريعة.",
+    title: PAGE_TITLE,
+    description: PAGE_DESC,
     url: "/series",
-    siteName: "انمي كلوفر AnimeClover",
+    siteName: SITE_BRAND,
     images: [
       {
         url: "/og-image.png",
@@ -49,32 +46,61 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "أنميات - مسلسلات الأنمي المترجمة اون لاين | انمي كلوفر AnimeClover",
-    description:
-      "قسم الأنمي على انمي كلوفر (انمي لكوفر - AnimeClover) يمكنك من خلاله متابعة وتحميل أفضل وآخر مسلسلات الأنمي المترجمة اون لاين بجودات متعددة وسيرفرات سريعة.",
+    title: PAGE_TITLE,
+    description: PAGE_DESC,
     images: ["/og-image.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
   },
 };
 
 export default async function Page({ searchParams }: { searchParams: CatalogQuery }) {
   const data = await fetchCatalog(searchParams).catch(() => null);
+  const items = data?.items || [];
+
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "انمي كلوفر الرئيسية", path: "/" },
+    { name: "مكتبة مسلسلات الأنمي", path: "/series" },
+  ]);
+
+  const collectionJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": PAGE_TITLE,
+    "description": PAGE_DESC,
+    "url": `${SITE_URL}/series`,
+    "isPartOf": { "@id": `${SITE_URL}/#website` },
+    "inLanguage": "ar",
+    ...(items.length > 0
+      ? {
+          "mainEntity": {
+            "@type": "ItemList",
+            "numberOfItems": items.length,
+            "itemListElement": items.slice(0, 16).map((item, idx) => ({
+              "@type": "ListItem",
+              "position": idx + 1,
+              "name": item.title,
+              "url": `${SITE_URL}/series/${item.id}`,
+            })),
+          },
+        }
+      : {}),
+  };
+
   return (
-    <CatalogBrowser
-      title="قائمة الأنمي"
-      filters={searchParams}
-      data={data || { items: [], total: 0, page: 1, page_size: 24, total_pages: 1 }}
-      failed={!data}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+      />
+      <CatalogBrowser
+        title="مكتبة مسلسلات الأنمي"
+        filters={searchParams}
+        data={data || { items: [], total: 0, page: 1, page_size: 24, total_pages: 1 }}
+        failed={!data}
+      />
+    </>
   );
 }

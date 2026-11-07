@@ -450,7 +450,7 @@ html,body { background:var(--discovery-bg); }
   .app-header-inner { padding:10px 16px 6px; min-height:0; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:0; }
   .app-header .clover-brand { gap:8px; }
   .clover-brand-symbol { width:36px; height:36px; }
-  .clover-brand-wordmark>span { font-size:8px; letter-spacing:3px; }
+  .clover-brand-wordmark>span { font-size:8px; letter-spacing:.2px; }
   .clover-brand-wordmark>strong { font-size:20px; }
   .app-header-tools { gap:8px; margin-inline-start:auto; }
   .app-icon-link { width:32px; height:32px; border-radius:8px; }
@@ -514,7 +514,7 @@ html,body { background:var(--discovery-bg); }
 }
 
 /* SEO Content & Semantic Foundation */
-.discovery-seo-section { margin-top:40px; margin-bottom:20px; }
+.brand-top-banner { background:linear-gradient(90deg,#120d1f,#0c0b16 50%,#120d1f); border-bottom:1px solid #b98af524; padding:8px clamp(16px,3.4vw,55px); } .brand-top-banner-inner { max-width:1540px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; } .brand-primary-h1 { margin:0; font-size:12px; font-weight:700; color:#d7c9eb; line-height:1.5; letter-spacing:0; } .brand-primary-h1 span { color:#c988fb; font-weight:800; } .brand-top-links { display:flex; align-items:center; gap:14px; font-size:11px; color:#a999c2; } .brand-top-links a:hover { color:#e2baff; } @media(max-width:640px) { .brand-top-banner { padding:6px 14px; } .brand-primary-h1 { font-size:11px; } .brand-top-links { display:none; } } .discovery-seo-section { margin-top:40px; margin-bottom:20px; }
 .discovery-seo-card { border:1px solid #c87bfa2b; border-radius:20px; background:radial-gradient(circle at top right,rgba(168,85,247,0.08),transparent 70%),#141024; padding:32px 36px; box-shadow:0 12px 32px #00000055; }
 .discovery-seo-title { font-size:20px; font-weight:800; color:#f3eddc; margin-bottom:12px; line-height:1.4; }
 .discovery-seo-lead { font-size:13px; line-height:1.8; color:#c6c0d3; margin-bottom:24px; }
@@ -533,11 +533,11 @@ html,body { background:var(--discovery-bg); }
 .clover-brand-symbol { display:block; width:48px; height:48px; flex-shrink:0; filter:drop-shadow(0 3px 9px #9b4ddb24); transition:filter .2s; }
 .clover-brand:hover .clover-brand-symbol { filter:drop-shadow(0 3px 12px #bc78f94d); }
 .clover-brand-wordmark { display:flex; flex-direction:column; align-items:flex-start; gap:3px; font-family:Arial,sans-serif; }
-.clover-brand-wordmark>span { color:#d5c4e4; font-size:9px; font-weight:700; line-height:1; letter-spacing:4.4px; padding-left:2px; }
+.clover-brand-wordmark>span { color:#d5c4e4; font-size:9.5px; font-weight:700; line-height:1; letter-spacing:.4px; padding-left:2px; font-family:'Cairo',Arial,sans-serif; }
 .clover-brand-wordmark>strong { display:block; color:#e6c6ff; background:linear-gradient(110deg,#f2e5ff 5%,#c889f5 90%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; font-size:25px; font-weight:900; font-style:italic; line-height:1; letter-spacing:-.7px; }
 .app-footer .clover-brand-symbol { width:43px; height:43px; }.app-footer .clover-brand-wordmark>strong { font-size:23px; }
 @media(max-width:1000px) { .clover-brand-symbol { width:46px; height:46px; }.clover-brand-wordmark>strong { font-size:24px; } }
-@media(max-width:480px) { .clover-brand-symbol { width:42px; height:42px; }.clover-brand-wordmark>span { font-size:8px; letter-spacing:4px; }.clover-brand-wordmark>strong { font-size:22px; }.app-header .clover-brand { gap:7px; } }
+@media(max-width:480px) { .clover-brand-symbol { width:42px; height:42px; }.clover-brand-wordmark>span { font-size:8.5px; letter-spacing:.2px; }.clover-brand-wordmark>strong { font-size:22px; }.app-header .clover-brand { gap:7px; } }
 @media(prefers-reduced-motion:reduce) { .clover-brand-symbol { transition:none; } }
 
 /* PWA App Installation Components (Navbar Button, Home Banner, Instructions Modal) */
