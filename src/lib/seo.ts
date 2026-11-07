@@ -5,10 +5,10 @@ export const SITE_NAME_EN = "AnimeClover";
 export const SITE_BRAND = "انمي كلوفر AnimeClover";
 
 export const DEFAULT_TITLE =
-  "انمي كلوفر - AnimeClover | الموقع الرسمي لمشاهدة وتحميل الأنمي المترجم اون لاين";
+  "موقع انمي كلوفر AnimeClover | مشاهدة الأنمي المترجم اون لاين";
 
 export const DEFAULT_DESCRIPTION =
-  "موقع انمي كلوفر الرسمي (AnimeClover) وجهتك العربية الأولى لمشاهدة وتحميل جميع مسلسلات وأفلام وحلقات الأنمي المترجمة اون لاين بجودة عالية Full HD مجاناً وبدون إعلانات مزعجة.";
+  "انمي كلوفر AnimeClover: تصفح مكتبة مسلسلات وأفلام الأنمي المترجمة، واكتشف الحلقات الجديدة وجدول العرض الأسبوعي في مكان واحد.";
 
 export const BRAND_ALTERNATE_NAMES = [
   "انمي كلوفر",

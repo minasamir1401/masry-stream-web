@@ -66,7 +66,7 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
       <header className="brand-top-banner" aria-label="تعريف منصة انمي كلوفر">
         <div className="brand-top-banner-inner">
           <h1 className="brand-primary-h1">
-            انمي كلوفر <span>AnimeClover</span> — الموقع الرسمي لمشاهدة وتحميل الأنمي المترجم اون لاين
+            موقع انمي كلوفر <span>AnimeClover</span> — مشاهدة الأنمي المترجم اون لاين
           </h1>
           <div className="brand-top-links">
             <Link href="/series">مكتبة الأنمي</Link>
