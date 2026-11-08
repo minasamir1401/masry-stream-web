@@ -35,6 +35,10 @@ const nextConfig = {
         ],
       },
       {
+        source: "/api/anime/suggestions",
+        headers: [{ key: "Cache-Control", value: "no-store" }],
+      },
+      {
         source: "/api/anime/:id/stream/:path*",
         headers: [{ key: "Cache-Control", value: "no-store" }],
       },

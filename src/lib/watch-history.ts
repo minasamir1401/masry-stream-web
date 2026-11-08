@@ -5,6 +5,7 @@ export const WATCH_HISTORY_EVENT = "watch-history-updated";
 export interface WatchProgress {
   animeId: number;
   title: string;
+  title_ar?: string;
   posterUrl?: string;
   episode: number;
   currentTime: number;
@@ -25,7 +26,7 @@ export function saveWatchProgress(item: MediaItem, episode: number, currentTime:
   if (typeof window === "undefined" || !Number.isFinite(currentTime) || !Number.isFinite(duration) || duration <= 30 || currentTime < 5) return;
   try {
     const history = readWatchHistory().filter(entry => entry.animeId !== item.id);
-    if (currentTime / duration < .95) history.unshift({ animeId:item.id, title:item.title, posterUrl:item.poster_url || item.poster_proxy_url, episode, currentTime, duration, updatedAt:Date.now() });
+    if (currentTime / duration < .95) history.unshift({ animeId:item.id, title:item.title, title_ar:item.title_ar, posterUrl:item.poster_url || item.poster_proxy_url, episode, currentTime, duration, updatedAt:Date.now() });
     localStorage.setItem(WATCH_HISTORY_KEY, JSON.stringify(history.slice(0,20)));
     window.dispatchEvent(new Event(WATCH_HISTORY_EVENT));
   } catch { /* Storage may be unavailable or full; playback should continue. */ }

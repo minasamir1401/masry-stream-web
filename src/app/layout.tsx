@@ -1,4 +1,6 @@
+import { jsonLd } from "@/lib/seo";
 import type { Metadata, Viewport } from "next";
+import { Suspense } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
@@ -127,14 +129,14 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//image.tmdb.org" />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(rootGraphJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLd(rootGraphJsonLd) }}
         />
       </head>
       <body
         suppressHydrationWarning
         className="text-slate-100 min-h-screen flex flex-col font-arabic antialiased selection:bg-emerald-600 selection:text-white"
       >
-        <AnalyticsTracker />
+        <Suspense fallback={null}><AnalyticsTracker /></Suspense>
         <InstallToastNotification />
         <Navbar />
         <main className="site-main">{children}</main>

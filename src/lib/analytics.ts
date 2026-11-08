@@ -1,5 +1,5 @@
 export interface TrackingPayload {
-  event_type: "heartbeat" | "page_view" | "browse_anime" | "play_anime" | "search";
+  event_type: "heartbeat" | "page_view" | "browse_anime" | "play_anime" | "watch_progress" | "search";
   path?: string;
   anime_id?: number;
   anime_title?: string;
@@ -7,6 +7,7 @@ export interface TrackingPayload {
   duration_seconds?: number;
 }
 
+const fallbackVisitorId = "guest_" + Math.random().toString(36).slice(2) + Date.now().toString(36);
 const VISITOR_KEY = "masry_vid";
 const ADMIN_FLAG_KEY = "masry_is_admin";
 
@@ -40,14 +41,14 @@ export function getVisitorId(): string {
     }
     return id;
   } catch {
-    return "guest_" + Date.now().toString(36);
+    return fallbackVisitorId;
   }
 }
 
 export function trackEvent(payload: TrackingPayload): void {
   if (typeof window === "undefined") return;
 
-  const currentPath = payload.path || window.location.pathname;
+  const currentPath = payload.path || window.location.pathname + window.location.search;
   if (currentPath.startsWith("/admin") || isUserAdmin()) {
     return;
   }
@@ -55,6 +56,9 @@ export function trackEvent(payload: TrackingPayload): void {
   const visitor_id = getVisitorId();
   const body = {
     visitor_id,
+    event_id: crypto.randomUUID(),
+    schema_version: 2,
+    referrer: document.referrer.slice(0, 255),
     event_type: payload.event_type,
     path: currentPath,
     anime_id: payload.anime_id,

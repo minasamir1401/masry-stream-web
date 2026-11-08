@@ -1,14 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Download, Bell, X } from "lucide-react";
 import { usePwaInstall } from "@/lib/usePwaInstall";
 import { InstallModal } from "./InstallModal";
 
 const DISMISS_KEY = "clover_pwa_notify_dismissed_at";
-const COOLDOWN_MS = 20 * 60 * 1000; // 20 minutes
+const COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
 export function InstallToastNotification() {
+  const watching = usePathname().startsWith("/watch/");
   const { isStandalone, promptInstall, isIOS } = usePwaInstall();
   const [visible, setVisible] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -27,30 +29,23 @@ export function InstallToastNotification() {
   };
 
   useEffect(() => {
-    if (isStandalone) {
+    if (isStandalone || watching) {
       setVisible(false);
+      setModalOpen(false);
       return;
     }
 
-    // Show on page load after a slight smooth delay (1.2s)
+    // Let visitors explore before suggesting installation.
     const initialTimer = setTimeout(() => {
       if (checkEligibility()) {
         setVisible(true);
       }
-    }, 1200);
-
-    // Periodically re-check every minute so if 20 minutes elapse, it shows again
-    const interval = setInterval(() => {
-      if (checkEligibility()) {
-        setVisible(true);
-      }
-    }, 60000);
+    }, 30000);
 
     return () => {
       clearTimeout(initialTimer);
-      clearInterval(interval);
     };
-  }, [isStandalone]);
+  }, [isStandalone, watching]);
 
   const handleDismiss = () => {
     setVisible(false);
@@ -69,7 +64,7 @@ export function InstallToastNotification() {
     }
   };
 
-  if (!visible || isStandalone) {
+  if (!visible || isStandalone || watching) {
     return <InstallModal isOpen={modalOpen} onClose={() => setModalOpen(false)} isIOS={isIOS} />;
   }
 

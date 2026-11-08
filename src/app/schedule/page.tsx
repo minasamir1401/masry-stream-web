@@ -1,3 +1,4 @@
+import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { fetchAiringWeek } from "@/lib/api";
 import { AiringSchedule } from "@/components/AiringSchedule";
@@ -24,7 +25,6 @@ export const metadata: Metadata = {
     "جدول انمي كلوفر",
     "AnimeClover",
     "animeclover",
-    "انمي لكوفر",
   ],
   alternates: {
     canonical: "/schedule",
@@ -63,7 +63,7 @@ export default async function SchedulePage({ searchParams }: { searchParams: { d
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbJsonLd) }}
       />
       <AiringSchedule initial={week} selectedDay={day} />
     </>

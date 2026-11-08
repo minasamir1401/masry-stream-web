@@ -135,6 +135,7 @@ interface RecentEventItem {
 
 interface AnalyticsData {
   period_days: number;
+  measurement_note?: string;
   overview: AnalyticsOverview;
   top_watched_anime: TopWatchedItem[];
   top_browsed_anime: TopBrowsedItem[];
@@ -156,14 +157,6 @@ async function adminRequest<T>(path: string, method = "GET", body?: object): Pro
   const headers: Record<string, string> = {};
   if (body) {
     headers["Content-Type"] = "application/json";
-  }
-
-  if (typeof window !== "undefined") {
-    const savedToken = localStorage.getItem("masry_admin_token");
-    if (savedToken) {
-      headers["x-admin-token"] = savedToken;
-      headers["authorization"] = `Bearer ${savedToken}`;
-    }
   }
 
   const response = await fetch(`/api/admin${path}`, {
@@ -344,9 +337,7 @@ export default function AdminPage() {
         visitor_id: vid,
       });
       if (data && data.status === "authenticated") {
-        if (data.token && typeof window !== "undefined") {
-          localStorage.setItem("masry_admin_token", data.token);
-        }
+        localStorage.removeItem("masry_admin_token");
         setCurrentUsername(data.username);
         setAuthenticated(true);
         setAdminFlag(true);
@@ -769,6 +760,7 @@ export default function AdminPage() {
       case "browse_anime":
         return "تصفح أنمي";
       case "play_anime":
+      case "watch_progress":
         return "مشاهدة حلقة";
       case "search":
         return "بحث في الموقع";
@@ -1662,6 +1654,7 @@ export default function AdminPage() {
           {/* TAB 1: Analytics */}
           {activeTab === "analytics" && (
             <div className="space-y-6">
+              <p className="text-sm text-cinema-muted">{analytics?.measurement_note}</p>
               {/* Controls bar */}
               <div className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-cinema-border bg-cinema-card p-4">
                 <div className="flex flex-wrap items-center gap-3">
@@ -1736,7 +1729,7 @@ export default function AdminPage() {
                 {/* Total Visitors */}
                 <div className={cardClass}>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-semibold text-cinema-muted">إجمالي الزوار الفعليين</span>
+                    <span className="text-xs font-semibold text-cinema-muted">متصفحات فريدة خلال الفترة</span>
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400">
                       <Users className="h-4 w-4" />
                     </div>
@@ -1744,7 +1737,7 @@ export default function AdminPage() {
                   <div className="mt-3 text-3xl font-black text-white">
                     {analytics?.overview.total_visitors.toLocaleString() ?? "-"}
                   </div>
-                  <p className="mt-1 text-xs text-cinema-muted">الجلسات الحقيقية (باستثناء المشرفين)</p>
+                  <p className="mt-1 text-xs text-cinema-muted">باستثناء زيارات المشرفين</p>
                 </div>
 
                 {/* Active Now */}
@@ -1839,7 +1832,7 @@ export default function AdminPage() {
                     </div>
                   </div>
                   <p className="mt-2 text-xs text-cinema-muted">
-                    الوقت الحقيقي المسجل داخل مشغّل الفيديو أثناء تشغيل الحلقات
+                    مدة التشغيل المقاسة للمشغّل المباشر فقط؛ المشغّلات الخارجية غير مشمولة
                   </p>
                 </div>
               </div>
@@ -1855,7 +1848,7 @@ export default function AdminPage() {
                       </h3>
                     </div>
                     <p className="mt-1 text-xs text-cinema-muted">
-                      تعرف على الأنمي الذي فتحه الزائر، ما قام به بالتفصيل، ومدة بقائه في الموقع بالدقائق
+                      سجل الزائر التراكمي؛ الأرقام الرئيسية بالأعلى تخص الفترة المحددة
                     </p>
                   </div>
 
@@ -2215,7 +2208,7 @@ export default function AdminPage() {
                       {analytics?.recent_events && analytics.recent_events.length > 0 ? (
                         analytics.recent_events
                           .filter((ev) => {
-                            if (eventsFilter === "play") return ev.event_type === "play_anime";
+                            if (eventsFilter === "play") return ["play_anime", "watch_progress"].includes(ev.event_type);
                             if (eventsFilter === "browse") return ev.event_type === "browse_anime";
                             if (eventsFilter === "search") return ev.event_type === "search";
                             if (eventsFilter === "page") return ev.event_type === "page_view";

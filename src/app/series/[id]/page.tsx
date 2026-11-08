@@ -1,6 +1,12 @@
+import { mediaHref } from "@/lib/media-links";
+import { mediaMetadata } from "@/lib/media-seo";
+import { mediaNames } from "@/lib/media-names";
+import { BilingualTitle } from "@/components/BilingualTitle";
+import { arabicSummary } from "@/lib/content";
+import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { CalendarDays, ChevronLeft, Clock3, Film, Layers3, Star, Tv } from "lucide-react";
 import { fetchMediaById, fetchPopularSeries } from "@/lib/api";
 import { genreArabic } from "@/lib/schedule";
@@ -9,6 +15,8 @@ import { EpisodeList } from "@/components/EpisodeList";
 import { AnimeImage } from "@/components/AnimeImage";
 import { MediaCard } from "@/components/MediaCard";
 import { SeriesWatchActions, SeriesSynopsis } from "@/components/SeriesDetailExtras";
+import { loadMedia, detailEpisodes } from "@/lib/media-page";
+import { fetchEpisodeIndex } from "@/lib/api";
 import "./detail.css";
 
 export const revalidate = 120;
@@ -23,101 +31,27 @@ const statuses: Record<string, string> = {
 
 interface PageProps {
   params: { id: string };
+  searchParams?: { episodes?: string };
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  if (!/^\d+$/.test(params.id)) return { title: "الأنمي غير موجود - AnimeClover" };
-  const series = await fetchMediaById(params.id).catch(() => null);
-  if (!series) return { title: "الأنمي غير موجود - AnimeClover" };
-
-  const cleanDesc = series.description
-    ? series.description.replace(/<[^>]*>?/gm, "").slice(0, 170).trim()
-    : "شاهد جميع حلقات وأفلام هذا العمل بجودة فائقة Full HD على أنمي كلوفر.";
-
-  const titleAr = series.title;
-  const titleEn = series.original_title && series.original_title !== series.title ? ` ${series.original_title}` : "";
-  const pageTitle = `انمي ${titleAr}${titleEn} جميع الحلقات مترجمة اون لاين | انمي كلوفر AnimeClover`;
-  const pageDesc = `مشاهدة وتحميل انمي ${titleAr}${titleEn ? ` (${series.original_title})` : ""} جميع الحلقات مترجمة اون لاين بجودة عالية Full HD على موقع انمي كلوفر الرسمي (AnimeClover). ${cleanDesc}`;
-
-  const genresList = (series.genres || []).map((g) => genreArabic[g.name] || g.name);
-  const keywords = [
-    series.title,
-    `انمي ${series.title}`,
-    `انمي ${series.title} جميع الحلقات`,
-    `انمي ${series.title} مترجم`,
-    `مشاهدة انمي ${series.title}`,
-    `تحميل انمي ${series.title}`,
-    `حلقات ${series.title}`,
-    series.original_title || "",
-    `${series.original_title || series.title} anime online`,
-    `watch ${series.original_title || series.title} sub`,
-    ...genresList,
-    "AnimeClover",
-    "animeclover",
-    "أنمي كلوفر",
-    "انمي كلوفر",
-    "انمي لكوفر",
-    "أنمي لكوفر",
-  ].filter(Boolean);
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-  const canonicalUrl = `${siteUrl}/series/${series.id}`;
-  const posterImg = series.banner_url || series.poster_url || `${siteUrl}/preview_full.png`;
-
-  return {
-    title: {
-      absolute: pageTitle,
-    },
-    description: pageDesc,
-    keywords,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      type: series.media_type === "MOVIE" ? "video.movie" : "video.tv_show",
-      title: pageTitle,
-      description: pageDesc,
-      url: canonicalUrl,
-      siteName: "انمي كلوفر AnimeClover",
-      images: [
-        {
-          url: posterImg,
-          width: 1200,
-          height: 630,
-          alt: series.title,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: pageTitle,
-      description: pageDesc,
-      images: [posterImg],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
-  };
+  const media = await loadMedia(params.id);
+  return mediaMetadata(media, "series");
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   if (!/^\d+$/.test(params.id)) notFound();
 
   const [seriesResult, recommendedResult] = await Promise.allSettled([
-    fetchMediaById(params.id),
+    loadMedia(params.id),
     fetchPopularSeries(1, 7),
   ]);
 
-  const series = seriesResult.status === "fulfilled" ? seriesResult.value : null;
+  if (seriesResult.status === "rejected") throw seriesResult.reason;
+  const series = seriesResult.value;
   if (!series) notFound();
+  if (mediaHref(series) !== `/series/${series.id}`) permanentRedirect(mediaHref(series));
+  const episodeIndex = await detailEpisodes(series);
 
   const recommended = recommendedResult.status === "fulfilled" ? recommendedResult.value : null;
   const total = series.total_episodes || series.episodes?.length;
@@ -125,29 +59,19 @@ export default async function Page({ params }: PageProps) {
   const recommendations = (recommended?.items || []).filter((item) => item.id !== series.id).slice(0, 6);
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-  const cleanDescription = (series.description || "").replace(/<[^>]*>?/gm, "").trim();
+  const cleanDescription = arabicSummary(series).replace(/<[^>]*>?/gm, "").trim();
 
   // JSON-LD Schemas for search engines
   const jsonLdSeries = {
     "@context": "https://schema.org",
     "@type": series.media_type === "MOVIE" ? "Movie" : "TVSeries",
-    "name": series.title,
-    "alternateName": series.original_title ? [series.original_title] : undefined,
+    "name": mediaNames(series).label,
+    "alternateName": mediaNames(series).aliases,
     "description": cleanDescription,
     "image": series.poster_url || series.banner_url,
     "genre": (series.genres || []).map((g) => genreArabic[g.name] || g.name),
-    "startDate": series.release_year ? `${series.release_year}-01-01` : undefined,
     "numberOfEpisodes": total || undefined,
     "inLanguage": ["ja", "ar", "en"],
-    "aggregateRating": series.average_score
-      ? {
-          "@type": "AggregateRating",
-          "ratingValue": (series.average_score / 10).toFixed(1),
-          "bestRating": "10",
-          "worstRating": "1",
-          "ratingCount": 150,
-        }
-      : undefined,
     "publisher": {
       "@type": "Organization",
       "@id": `${siteUrl}/#organization`,
@@ -175,8 +99,8 @@ export default async function Page({ params }: PageProps) {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": series.title,
-        "item": `${siteUrl}/series/${series.id}`,
+        "name": mediaNames(series).label,
+        "item": `${siteUrl}${mediaHref(series)}`,
       },
     ],
   };
@@ -185,11 +109,11 @@ export default async function Page({ params }: PageProps) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSeries) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(jsonLdSeries) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(jsonLdBreadcrumb) }}
       />
 
       <div className="anime-detail-page">
@@ -201,6 +125,7 @@ export default async function Page({ params }: PageProps) {
           <span dir="auto">{series.title}</span>
         </nav>
 
+        {series.catalog_stale && <p className="catalog-stale-note" role="status">نعرض آخر معلومات محفوظة لهذا العمل. قد تتأخر التحديثات مؤقتًا.</p>}
         <section className="anime-profile" aria-labelledby="anime-title">
           <div className="anime-profile-atmosphere" aria-hidden="true">
             <AnimeImage src={series.banner_url || series.poster_url} alt="" eager />
@@ -232,14 +157,7 @@ export default async function Page({ params }: PageProps) {
                 </span>
               )}
             </div>
-            <h1 id="anime-title" dir="auto">
-              {series.title}
-            </h1>
-            {series.original_title && series.original_title !== series.title && (
-              <p className="anime-original-title" dir="auto">
-                {series.original_title}
-              </p>
-            )}
+            <h1 id="anime-title" dir="auto"><BilingualTitle media={series}/></h1>
             <div className="anime-profile-genres">
               {series.genres.map((genre) => (
                 <Link key={genre.name} href={`/series?genre=${encodeURIComponent(genre.name)}`}>
@@ -250,7 +168,7 @@ export default async function Page({ params }: PageProps) {
             <p className="anime-profile-intro">
               {series.status === "NOT_YET_RELEASED"
                 ? "حكاية جديدة في الطريق. تابع مواعيد العرض وأضف العمل لقائمتك على Anime Clover."
-                : "كل حلقات العمل متوفرة الآن في مكان واحد بأعلى جودة وسيرفرات مباشرة."}
+                : "تصفّح معلومات العمل والحلقات التي عُرضت، واختر الحلقة لمراجعة خيارات المشاهدة المتاحة."}
             </p>
             <div className="anime-profile-stats">
               <div>
@@ -294,8 +212,8 @@ export default async function Page({ params }: PageProps) {
           {recommendations.length > 0 && <a href="#similar">حكايات تانية</a>}
         </nav>
 
-        <SeriesSynopsis description={series.description} />
-        <EpisodeList key={series.id} animeId={series.id} initialTotal={total} />
+        <SeriesSynopsis description={arabicSummary(series)} media={series} />
+        <EpisodeList key={`${series.id}-${searchParams?.episodes || 1}`} animeId={series.id} initialTotal={total} initialData={episodeIndex} initialPage={Number(searchParams?.episodes) || 1} />
 
         {recommendations.length > 0 && (
           <section id="similar" className="anime-recommendations">

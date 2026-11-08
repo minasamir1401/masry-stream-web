@@ -112,48 +112,43 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
     };
   }, [progressItem?.id, episodeNumber, expectedDuration, playerMode]);
 
-  const lastPlayTrackRef = useRef<number>(0);
-  const playTrackSentRef = useRef<boolean>(false);
-
+  const playTrackSentRef = useRef(false);
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-
-    const onPlay = () => {
-      if (!playTrackSentRef.current) {
-        playTrackSentRef.current = true;
-        trackEvent({
-          event_type: "play_anime",
-          anime_id: progressItem?.id,
-          anime_title: progressItem?.title || title,
-          episode_number: episodeNumber,
-          duration_seconds: 0,
-        });
+    if (!video || playerMode !== "direct") return;
+    let lastClock = performance.now();
+    let lastPosition = video.currentTime;
+    let seconds = 0;
+    const send = (kind: "play_anime" | "watch_progress", duration: number) => trackEvent({
+      event_type: kind, anime_id: progressItem?.id, anime_title: progressItem?.title || title,
+      episode_number: episodeNumber, duration_seconds: duration,
+    });
+    const sample = () => {
+      const now = performance.now();
+      const delta = video.currentTime - lastPosition;
+      const elapsed = (now - lastClock) / 1000;
+      if (!video.seeking && delta > 0 && elapsed > 0 && delta <= elapsed * video.playbackRate + 0.75) {
+        seconds += Math.min(delta / video.playbackRate, elapsed, 2);
+        if (!playTrackSentRef.current) { playTrackSentRef.current = true; send("play_anime", 0); }
       }
+      lastPosition = video.currentTime;
+      lastClock = now;
     };
-
-    const onTimeUpdate = () => {
-      const now = Date.now();
-      if (now - lastPlayTrackRef.current >= 30000) {
-        lastPlayTrackRef.current = now;
-        trackEvent({
-          event_type: "play_anime",
-          anime_id: progressItem?.id,
-          anime_title: progressItem?.title || title,
-          episode_number: episodeNumber,
-          duration_seconds: 30,
-        });
-      }
-    };
-
-    video.addEventListener("play", onPlay);
-    video.addEventListener("timeupdate", onTimeUpdate);
+    const flush = () => { sample(); const duration = Math.floor(seconds); seconds -= duration; if (duration > 0) send("watch_progress", duration); };
+    const reset = () => { lastPosition = video.currentTime; lastClock = performance.now(); };
+    const timer = setInterval(() => { sample(); if (seconds >= 15) flush(); }, 1000);
+    video.addEventListener("timeupdate", sample);
+    video.addEventListener("seeking", reset);
+    video.addEventListener("seeked", reset);
+    video.addEventListener("pause", flush);
+    video.addEventListener("ended", flush);
+    window.addEventListener("pagehide", flush);
     return () => {
-      video.removeEventListener("play", onPlay);
-      video.removeEventListener("timeupdate", onTimeUpdate);
+      flush(); clearInterval(timer); video.removeEventListener("timeupdate", sample);
+      video.removeEventListener("seeking", reset); video.removeEventListener("seeked", reset);
+      video.removeEventListener("pause", flush); video.removeEventListener("ended", flush); window.removeEventListener("pagehide", flush);
     };
-  }, [progressItem?.id, progressItem?.title, title, episodeNumber]);
-
+  }, [progressItem?.id, progressItem?.title, title, episodeNumber, playerMode, activeUrl]);
 
   async function refreshSources() {
     if (!resolveUrl || refreshingSourcesRef.current) return;

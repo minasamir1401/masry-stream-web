@@ -1,4 +1,6 @@
 export interface AiringItem {
+  canonical_path?: string; media_type?: string;
+  title_english?: string; title_ar?: string; title_aliases?: string[];
   id: number; anime_id: number; title: string; episode: number; airing_at: number;
   local_time: string; poster_url?: string; banner_url?: string; genres: string[];
   duration?: number; score?: number; source_url?: string;

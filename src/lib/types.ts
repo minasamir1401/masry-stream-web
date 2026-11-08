@@ -23,14 +23,23 @@ export interface Episode {
 }
 
 export interface MediaItem {
+  canonical_path?: string;
+  catalog_stale?: boolean;
   id: number;
   id_mal?: number;
   telegram_channel: string;
   telegram_message_id: number;
   telegram_watch_url?: string;
   title: string;
+  title_english?: string;
+  title_ar?: string;
+  title_ar_source?: string;
+  title_aliases?: string[];
   original_title?: string;
   description?: string;
+  description_ar?: string;
+  description_ar_kind?: "reviewed" | "provided" | "machine" | "facts";
+  description_source_url?: string;
   release_year?: number;
   duration?: number;
   file_size: number;

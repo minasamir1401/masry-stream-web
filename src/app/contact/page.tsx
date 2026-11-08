@@ -1,3 +1,4 @@
+import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail, MessageSquare, ShieldAlert } from "lucide-react";
@@ -45,11 +46,11 @@ export default function ContactPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(contactPageJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(contactPageJsonLd) }}
       />
       <div className="mx-auto max-w-4xl px-4 py-12 space-y-10">
         <section className="text-center space-y-3">

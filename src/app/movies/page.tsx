@@ -1,3 +1,5 @@
+import { mediaHref } from "@/lib/media-links";
+import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { fetchCatalog, CatalogQuery } from "@/lib/api";
 import { CatalogBrowser } from "@/components/CatalogBrowser";
@@ -9,7 +11,7 @@ const PAGE_TITLE = "أفلام أنمي - مشاهدة وتحميل أفلام �
 const PAGE_DESC =
   "قسم أفلام الأنمي على موقع انمي كلوفر الرسمي (AnimeClover). شاهد وحمّل أحدث وأشهر أفلام الأنمي المترجمة والمدبلجة اون لاين بجودة عالية Full HD وسيرفرات مباشرة.";
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   title: {
     absolute: PAGE_TITLE,
   },
@@ -24,7 +26,6 @@ export const metadata: Metadata = {
     "افلام انمي كلوفر",
     "AnimeClover",
     "animeclover",
-    "انمي لكوفر",
   ],
   alternates: {
     canonical: "/movies",
@@ -50,6 +51,15 @@ export const metadata: Metadata = {
     images: ["/og-image.png"],
   },
 };
+
+export function generateMetadata({ searchParams }: { searchParams: CatalogQuery }): Metadata {
+  const page = /^[1-9]\d*$/.test(searchParams.page || "") ? Number(searchParams.page) : 1;
+  const filtered = Object.entries(searchParams).some(([key, value]) => value && key !== "page");
+  const canonical = "/movies" + (page > 1 ? `?page=${page}` : "");
+  return { ...baseMetadata, alternates: { canonical },
+    openGraph: { ...baseMetadata.openGraph, url: canonical },
+    robots: { index: !filtered, follow: true, googleBot: { index: !filtered, follow: true } } };
+}
 
 export default async function Page({ searchParams }: { searchParams: CatalogQuery }) {
   const filters = { ...searchParams, format: searchParams.format || "MOVIE" };
@@ -78,7 +88,7 @@ export default async function Page({ searchParams }: { searchParams: CatalogQuer
               "@type": "ListItem",
               "position": idx + 1,
               "name": item.title,
-              "url": `${SITE_URL}/movie/${item.id}`,
+              "url": `${SITE_URL}${mediaHref(item)}`,
             })),
           },
         }
@@ -89,11 +99,11 @@ export default async function Page({ searchParams }: { searchParams: CatalogQuer
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(collectionJsonLd) }}
       />
       <CatalogBrowser
         title="أفلام الأنمي"

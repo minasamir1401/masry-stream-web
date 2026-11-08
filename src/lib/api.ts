@@ -1,16 +1,33 @@
+import { normalizeMediaPayload } from "./media-names";
 import { Genre, MediaItem, PaginatedMedia } from "./types";
+export class ApiError extends Error {
+  constructor(public status: number, message: string) { super(message); }
+}
+export function isMissing(error: unknown): boolean { return error instanceof ApiError && error.status === 404; }
+export interface EpisodeEntry { number: number; state: "listed" | "unverified" | "upcoming"; }
+export interface EpisodeIndex { total: number; reported_total: number | null; released: number; listed: number; episodes: EpisodeEntry[]; }
+export async function fetchEpisodeIndex(id: number | string): Promise<EpisodeIndex> {
+  const response = await fetch(`${getBaseUrl()}/api/anime/${id}/episodes?verify_sources=false`, { next: { revalidate: 60 } });
+  if (!response.ok) throw new ApiError(response.status, "تعذّر تحميل الحلقات");
+  return normalizeMediaPayload(await response.json());
+}
 import { AiringWeek } from "./schedule";
 
 export interface HomepageData { featured: MediaItem[]; spotlight: MediaItem[]; popular: MediaItem[]; recommended: MediaItem[]; }
+export async function fetchAnimeSuggestions(query: string, signal?: AbortSignal): Promise<{ items: MediaItem[] }> {
+  const response = await fetch(`${getBaseUrl()}/api/anime/suggestions?q=${encodeURIComponent(query)}&limit=6`, { signal, cache: "no-store" });
+  if (!response.ok) throw new ApiError(response.status, "تعذّر تحميل اقتراحات البحث");
+  return normalizeMediaPayload(await response.json());
+}
 export async function fetchHomepage(): Promise<HomepageData> {
   const response = await fetch(`${getBaseUrl()}/api/anime/homepage`, { next: { revalidate: 120 } });
   if (!response.ok) throw new Error("تعذّر تحميل الرئيسية");
-  return response.json();
+  return normalizeMediaPayload(await response.json());
 }
 export async function fetchAiringWeek(day?: string): Promise<AiringWeek> {
   const response = await fetch(`${getBaseUrl()}/api/anime/schedule${day ? `?day=${encodeURIComponent(day)}` : ""}`, { next: { revalidate: 300 } });
   if (!response.ok) throw new Error("تعذّر تحميل مواعيد العرض");
-  return response.json();
+  return normalizeMediaPayload(await response.json());
 }
 export type CatalogQuery = Record<string, string | undefined>;
 export async function fetchCatalog(filters: CatalogQuery): Promise<PaginatedMedia> {
@@ -20,7 +37,7 @@ export async function fetchCatalog(filters: CatalogQuery): Promise<PaginatedMedi
   }
   const response = await fetch(`${getBaseUrl()}/api/anime/catalog?${query}`, { next: { revalidate: 60 } });
   if (!response.ok) throw new Error("تعذّر تحميل الأنمي");
-  return response.json();
+  return normalizeMediaPayload(await response.json());
 }
 
 const getBaseUrl = (): string => {
@@ -49,16 +66,16 @@ export async function fetchMovies(params?: {
   if (!res.ok) {
     throw new Error(`Failed to fetch movies: ${res.statusText}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchMovieById(id: number | string): Promise<MediaItem> {
   const url = `${getBaseUrl()}/api/movies/${id}`;
   const res = await fetch(url, { next: { revalidate: 300 } });
   if (!res.ok) {
-    throw new Error(`Failed to fetch media details for id ${id}`);
+    throw new ApiError(res.status, `تعذّر تحميل بيانات العمل ${id}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchSeries(params?: {
@@ -79,7 +96,7 @@ export async function searchMedia(query: string, page = 1): Promise<PaginatedMed
   if (!res.ok) {
     throw new Error(`Failed to perform search: ${res.statusText}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchCategories(): Promise<Genre[]> {
@@ -88,7 +105,7 @@ export async function fetchCategories(): Promise<Genre[]> {
   if (!res.ok) {
     return [];
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchTrendingAnime(page = 1, pageSize = 24): Promise<PaginatedMedia> {
@@ -97,7 +114,7 @@ export async function fetchTrendingAnime(page = 1, pageSize = 24): Promise<Pagin
   if (!res.ok) {
     throw new Error(`Failed to fetch trending anime: ${res.statusText}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchPopularSeries(page = 1, pageSize = 24): Promise<PaginatedMedia> {
@@ -106,7 +123,7 @@ export async function fetchPopularSeries(page = 1, pageSize = 24): Promise<Pagin
   if (!res.ok) {
     throw new Error(`Failed to fetch popular series: ${res.statusText}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchAnimeMovies(page = 1, pageSize = 24): Promise<PaginatedMedia> {
@@ -115,7 +132,7 @@ export async function fetchAnimeMovies(page = 1, pageSize = 24): Promise<Paginat
   if (!res.ok) {
     throw new Error(`Failed to fetch anime movies: ${res.statusText}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchTopRatedAnime(page = 1, pageSize = 24): Promise<PaginatedMedia> {
@@ -124,7 +141,7 @@ export async function fetchTopRatedAnime(page = 1, pageSize = 24): Promise<Pagin
   if (!res.ok) {
     throw new Error(`Failed to fetch top rated anime: ${res.statusText}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 
@@ -134,22 +151,23 @@ export async function searchAnime(query: string, page = 1): Promise<PaginatedMed
   if (!res.ok) {
     throw new Error(`Failed to search anime: ${res.statusText}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchAnimeById(id: number | string): Promise<MediaItem> {
   const url = `${getBaseUrl()}/api/anime/${id}`;
   const res = await fetch(url, { next: { revalidate: 300 } });
   if (!res.ok) {
-    throw new Error(`Failed to fetch anime details for id ${id}`);
+    throw new ApiError(res.status, `تعذّر تحميل بيانات الأنمي ${id}`);
   }
-  return res.json();
+  return normalizeMediaPayload(await res.json());
 }
 
 export async function fetchMediaById(id: number | string): Promise<MediaItem> {
   try {
     return await fetchAnimeById(id);
-  } catch {
+  } catch (error) {
+    if (!isMissing(error)) throw error;
     return await fetchMovieById(id);
   }
 }

@@ -1,7 +1,14 @@
+import { mediaHref } from "@/lib/media-links";
+import { arabicSummary } from "@/lib/content";
+import { mediaMetadata } from "@/lib/media-seo";
+import { mediaNames } from "@/lib/media-names";
+import { BilingualTitle } from "@/components/BilingualTitle";
+import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { fetchMediaById, fetchPopularSeries, fetchAnimeMovies } from "@/lib/api";
 import { WatchExperience } from "@/components/WatchExperience";
+import { loadWatch } from "@/lib/media-page";
 import "./watch.css";
 
 export const dynamic = "force-dynamic";
@@ -12,96 +19,12 @@ interface WatchPageProps {
 }
 
 export async function generateMetadata({ params, searchParams }: WatchPageProps): Promise<Metadata> {
-  const rawEpisode = searchParams?.ep || "1";
-  if (!/^[1-9]\d*$/.test(rawEpisode) || !/^\d+$/.test(params.id)) {
-    return { title: "الحلقة غير متوفرة - AnimeClover" };
-  }
-  const episode = Number(rawEpisode);
-  const media = await fetchMediaById(params.id).catch(() => null);
-  if (!media) return { title: "الحلقة غير متوفرة - AnimeClover" };
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-  const canonicalUrl = `${siteUrl}/watch/${media.id}?ep=${episode}`;
-  const posterImg = media.banner_url || media.poster_url || `${siteUrl}/preview_full.png`;
-
-  const titleAr = media.title;
-  const titleEn = media.original_title && media.original_title !== media.title ? ` (${media.original_title})` : "";
-  const pageTitle = `انمي ${titleAr} الحلقة ${episode} مترجمة اون لاين | انمي كلوفر AnimeClover`;
-  const pageDesc = `مشاهدة وتحميل انمي ${titleAr}${titleEn} الحلقة ${episode} مترجمة اون لاين بجودة عالية Full HD على موقع انمي كلوفر الرسمي (AnimeClover).`;
-
-  const keywords = [
-    media.title,
-    `انمي ${media.title} الحلقة ${episode}`,
-    `انمي ${media.title} حلقة ${episode}`,
-    `انمي ${media.title} الحلقة ${episode} مترجمة`,
-    `مشاهدة انمي ${media.title} الحلقة ${episode}`,
-    `تحميل انمي ${media.title} الحلقة ${episode}`,
-    `${media.title} episode ${episode}`,
-    media.original_title || "",
-    `${media.original_title || media.title} ep ${episode}`,
-    `watch ${media.title} episode ${episode} sub`,
-    "AnimeClover",
-    "animeclover",
-    "animeclover.click",
-    "أنمي كلوفر",
-    "انمي كلوفر",
-    "انمي لكوفر",
-    "أنمي لكوفر",
-  ].filter(Boolean);
-
-  return {
-    title: {
-      absolute: pageTitle,
-    },
-    description: pageDesc,
-    keywords,
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      type: "video.episode",
-      title: pageTitle,
-      description: pageDesc,
-      url: canonicalUrl,
-      siteName: "انمي كلوفر AnimeClover",
-      images: [
-        {
-          url: posterImg,
-          width: 1200,
-          height: 630,
-          alt: `${media.title} - الحلقة ${episode}`,
-        },
-      ],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: pageTitle,
-      description: pageDesc,
-      images: [posterImg],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
-  };
+  const { media, episode } = await loadWatch(params.id, searchParams?.ep || "1");
+  return mediaMetadata(media, "watch", episode);
 }
 
 export default async function WatchPage({ params, searchParams }: WatchPageProps) {
-  const rawEpisode = searchParams?.ep || "1";
-  if (!/^[1-9]\d*$/.test(rawEpisode) || !/^\d+$/.test(params.id)) notFound();
-  const episode = Number(rawEpisode);
-  if (!Number.isSafeInteger(episode)) notFound();
-
-  const media = await fetchMediaById(params.id).catch(() => null);
-  if (!media) notFound();
-
+  const { media, episode } = await loadWatch(params.id, searchParams?.ep || "1");
   const [recommendations] = await Promise.allSettled([
     media.media_type === "SERIES" ? fetchPopularSeries(1, 7) : fetchAnimeMovies(1, 7),
   ]);
@@ -112,37 +35,18 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
   // Schema: TVEpisode
   const jsonLdEpisode = {
     "@context": "https://schema.org",
-    "@type": "TVEpisode",
-    "name": `انمي ${media.title} الحلقة ${episode}`,
+    "@type": media.media_type === "MOVIE" ? "Movie" : "TVEpisode",
+    "name": media.media_type === "MOVIE" ? mediaNames(media).label : `${mediaNames(media).label} — الحلقة ${episode}`,
+    "alternateName": mediaNames(media).aliases,
     "episodeNumber": episode,
-    "partOfSeries": {
+    "partOfSeries": media.media_type === "SERIES" ? {
       "@type": "TVSeries",
-      "name": media.title,
-      "url": `${siteUrl}/series/${media.id}`,
-    },
+      "name": mediaNames(media).label,
+      "url": `${siteUrl}${mediaHref(media)}`,
+    } : undefined,
     "image": posterImg,
-    "description": `مشاهدة وتحميل انمي ${media.title} الحلقة ${episode} مترجمة عربي اون لاين بجودة Full HD على موقع أنمي كلوفر AnimeClover.`,
+    "description": arabicSummary(media),
     "inLanguage": ["ja", "ar"],
-  };
-
-  // Schema: VideoObject for Google Video Rich Snippets
-  const uploadIso = media.release_year
-    ? `${media.release_year}-01-01T00:00:00.000Z`
-    : "2026-01-01T00:00:00.000Z";
-  const jsonLdVideo = {
-    "@context": "https://schema.org",
-    "@type": "VideoObject",
-    "name": `انمي ${media.title} الحلقة ${episode} مترجمة اون لاين | انمي كلوفر`,
-    "description": `مشاهدة انمي ${media.title} الحلقة ${episode} اون لاين بجودة عالية HD مع روابط تحميل مباشرة على موقع انمي كلوفر AnimeClover.`,
-    "thumbnailUrl": [posterImg],
-    "uploadDate": uploadIso,
-    "embedUrl": `${siteUrl}/watch/${media.id}?ep=${episode}`,
-    "publisher": {
-      "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
-      "name": "انمي كلوفر AnimeClover",
-      "url": siteUrl,
-    },
   };
 
   // Schema: BreadcrumbList
@@ -159,8 +63,8 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
       {
         "@type": "ListItem",
         "position": 2,
-        "name": media.title,
-        "item": `${siteUrl}/series/${media.id}`,
+        "name": mediaNames(media).label,
+        "item": `${siteUrl}${mediaHref(media)}`,
       },
       {
         "@type": "ListItem",
@@ -175,15 +79,11 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdEpisode) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(jsonLdEpisode) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdVideo) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdBreadcrumb) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(jsonLdBreadcrumb) }}
       />
 
       <WatchExperience

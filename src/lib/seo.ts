@@ -5,10 +5,10 @@ export const SITE_NAME_EN = "AnimeClover";
 export const SITE_BRAND = "انمي كلوفر AnimeClover";
 
 export const DEFAULT_TITLE =
-  "موقع انمي كلوفر AnimeClover | مشاهدة الأنمي المترجم اون لاين";
+  "انمي كلوفر AnimeClover | مشاهدة وتحميل الأنمي المترجم";
 
 export const DEFAULT_DESCRIPTION =
-  "انمي كلوفر AnimeClover: تصفح مكتبة مسلسلات وأفلام الأنمي المترجمة، واكتشف الحلقات الجديدة وجدول العرض الأسبوعي في مكان واحد.";
+  "شاهد مسلسلات وأفلام الأنمي المترجمة إلى العربية على انمي كلوفر AnimeClover. تصفح الحلقات الجديدة، وابحث عن أنميك المفضل، وتابع جدول العرض الأسبوعي.";
 
 export const BRAND_ALTERNATE_NAMES = [
   "انمي كلوفر",
@@ -20,9 +20,6 @@ export const BRAND_ALTERNATE_NAMES = [
   "AnimeClover",
   "Anime Clover",
   "animeclover.click",
-  "انمي لكوفر",
-  "أنمي لكوفر",
-  "موقع انمي لكوفر",
 ];
 
 export const CORE_KEYWORDS = [
@@ -35,18 +32,14 @@ export const CORE_KEYWORDS = [
   "Anime Clover",
   "animeclover",
   "animeclover.click",
-  "انمي لكوفر",
-  "أنمي لكوفر",
-  "موقع انمي لكوفر",
-  "مشاهدة انمي",
-  "تحميل انمي",
-  "انمي مترجم",
-  "انمي اون لاين",
-  "موقع انمي عربي",
-  "مسلسلات انمي مترجمة",
-  "افلام انمي مترجمة",
-  "حلقات انمي جديدة",
-  "جدول مواعيد الانمي",
+  "مشاهدة الأنمي المترجم اون لاين",
+  "مشاهدة انمي مترجم عربي",
+  "تحميل الأنمي المترجم",
+  "مسلسلات الأنمي المترجمة",
+  "أفلام الأنمي المترجمة",
+  "حلقات أنمي مترجمة",
+  "أحدث حلقات الأنمي",
+  "جدول عرض الأنمي الأسبوعي",
 ];
 
 const envSocials = (process.env.NEXT_PUBLIC_SOCIAL_LINKS || "")
@@ -60,6 +53,10 @@ export function getDailyIsoDate(): string {
 }
 
 export const STATIC_PAGE_LASTMOD = "2026-11-01T00:00:00.000Z";
+
+export function jsonLd(value: unknown): string {
+  return JSON.stringify(value).replace(/</g, "\\u003c");
+}
 
 export function buildRootGraphJsonLd() {
   const orgId = `${SITE_URL}/#organization`;
@@ -76,7 +73,7 @@ export function buildRootGraphJsonLd() {
         "legalName": SITE_NAME_EN,
         "alternateName": BRAND_ALTERNATE_NAMES,
         "url": SITE_URL,
-        "slogan": "بوابتك العربية الأولى لمشاهدة وتحميل الأنمي المترجم اون لاين",
+        "slogan": "شاهد واكتشف الأنمي المترجم بالعربية",
         "description": DEFAULT_DESCRIPTION,
         "logo": {
           "@type": "ImageObject",

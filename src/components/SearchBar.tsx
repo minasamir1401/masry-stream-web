@@ -1,4 +1,8 @@
 "use client";
+import { mediaHref } from "@/lib/media-links";
+import { BilingualTitle } from "./BilingualTitle";
+import { mediaNames } from "@/lib/media-names";
+
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -82,7 +86,7 @@ export function SearchBar({ initialQuery = "", autoFocus = false }: SearchBarPro
                 key={item.id}
                 onClick={() => {
                   setIsOpen(false);
-                  router.push(`/movie/${item.id}`);
+                  router.push(mediaHref(item));
                 }}
                 className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-cinema-elevated text-right transition-colors"
               >
@@ -90,7 +94,7 @@ export function SearchBar({ initialQuery = "", autoFocus = false }: SearchBarPro
                   <Film className="w-4 h-4 text-cinema-accentLight" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-bold text-white truncate">{item.title}</h4>
+                  <h4 className="text-sm font-bold text-white truncate"><BilingualTitle media={item}/></h4>
                   <span className="text-[11px] text-cinema-textMuted">
                     {item.release_year || "ديزني"} • {item.resolution || "FHD"}
                   </span>

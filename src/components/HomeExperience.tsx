@@ -1,4 +1,9 @@
 "use client";
+import { mediaHref } from "@/lib/media-links";
+import { HomeDiscoveryGuide } from "./HomeDiscoveryGuide";
+import { BilingualTitle } from "./BilingualTitle";
+import { mediaNames } from "@/lib/media-names";
+
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowUpLeft, CalendarDays, ChevronLeft, Clock3, Flame, Play, Star } from "lucide-react";
@@ -6,6 +11,7 @@ import { HomepageData } from "@/lib/api";
 import { AiringWeek, genreArabic } from "@/lib/schedule";
 import { MediaItem } from "@/lib/types";
 import { HeroBanner } from "./HeroBanner";
+import { selectHeroSlides } from "@/lib/hero-slides";
 import { AnimeImage } from "./AnimeImage";
 import { ContinueWatching } from "./ContinueWatching";
 import { MediaCard } from "./MediaCard";
@@ -19,7 +25,7 @@ const filters = [
   { label: "دراما", value: "Drama" },
 ];
 
-const detailsUrl = (item: MediaItem) => `/${item.media_type === "MOVIE" ? "movie" : "series"}/${item.id}`;
+const detailsUrl = (item: MediaItem) => mediaHref(item);
 
 function EpisodeCard({ item, eager }: { item: MediaItem; eager?: boolean }) {
   const ep = item.available_episode || 1;
@@ -29,9 +35,9 @@ function EpisodeCard({ item, eager }: { item: MediaItem; eager?: boolean }) {
         prefetch={false}
         className="discovery-episode-art"
         href={`/watch/${item.id}?ep=${ep}`}
-        aria-label={`شاهد انمي ${item.title} الحلقة ${ep} مترجمة على انمي كلوفر`}
+        aria-label={`شاهد انمي ${mediaNames(item).label} الحلقة ${ep} مترجمة على انمي كلوفر`}
       >
-        <AnimeImage src={item.poster_url} alt={`انمي ${item.title} الحلقة ${ep} - انمي كلوفر`} eager={eager} />
+        <AnimeImage src={item.poster_url} alt={`انمي ${mediaNames(item).label} الحلقة ${ep} - انمي كلوفر`} eager={eager} />
         <span className="discovery-episode-number">
           الحلقة {String(ep).padStart(2, "0")}
         </span>
@@ -40,7 +46,7 @@ function EpisodeCard({ item, eager }: { item: MediaItem; eager?: boolean }) {
         </span>
       </Link>
       <div className="discovery-card-heading">
-        <Link prefetch={false} href={detailsUrl(item)} dir="auto">{item.title}</Link>
+        <Link prefetch={false} href={detailsUrl(item)} dir="auto"><BilingualTitle media={item}/></Link>
         {item.average_score ? (
           <span className="discovery-rating">
             <Star size={13} fill="currentColor" />
@@ -60,6 +66,7 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
   const visible = data.spotlight.filter((item) => !genre || item.genres.some((entry) => entry.name === genre));
   const today = week?.days.find((day) => day.date === week.today);
   const popular = data.popular.length ? data.popular : data.recommended;
+  const heroItems = selectHeroSlides(popular, data.featured);
 
   return (
     <div className="home-shell discovery-home">
@@ -75,7 +82,7 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
           </div>
         </div>
       </header>
-      <HeroBanner items={data.featured} />
+      <HeroBanner items={heroItems} />
       <div className="discovery-content">
         <InstallAppBanner />
         <ContinueWatching suggestions={data.featured} />
@@ -162,17 +169,17 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
                   prefetch={false}
                   className="airing-card"
                   key={item.id}
-                  href={`/series/${item.anime_id}`}
+                  href={mediaHref({id:item.anime_id, canonical_path:item.canonical_path, media_type:item.media_type})}
                 >
                   <div className="airing-poster">
-                    <AnimeImage src={item.poster_url} alt={item.title} />
+                    <AnimeImage src={item.poster_url} alt={mediaNames(item).label} />
                   </div>
                   <div className="airing-info">
                     <div className="airing-top">
                       <span className="upcoming-tag">الحلقة {item.episode}</span>
                       <time dir="ltr"><Clock3 size={14} />{item.local_time}</time>
                     </div>
-                    <h3 dir="auto">{item.title}</h3>
+                    <h3 dir="auto"><BilingualTitle media={item}/></h3>
                     <div className="airing-genres">
                       {item.genres.slice(0, 2).map((name) => (
                         <span key={name}>{genreArabic[name] || name}</span>
@@ -203,56 +210,7 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
           </span>
         </Link>
 
-        <section className="discovery-section discovery-seo-section" aria-labelledby="about-brand-heading">
-          <div className="discovery-seo-card">
-            <div className="discovery-seo-header">
-              <h2 id="about-brand-heading" className="discovery-seo-title">
-                استكشف الأنمي على AnimeClover
-              </h2>
-              <p className="discovery-seo-lead">
-                تصفّح مسلسلات وأفلام الأنمي، تابع الحلقات الجديدة، واستخدم جدول العرض لمعرفة مواعيد الحلقات. افتح صفحة أي عمل للاطلاع على تفاصيله والحلقات المتاحة.
-              </p>
-            </div>
-
-            <div className="discovery-seo-grid">
-              <div className="discovery-seo-item">
-                <h3>الحلقات ومواعيد العرض</h3>
-                <p>
-                  راجع الحلقات الظاهرة على الصفحة الرئيسية، أو افتح{" "}
-                  <Link href="/schedule" className="text-purple-300 hover:underline">
-                    جدول مواعيد العرض
-                  </Link>{" "}
-                  لمتابعة الأعمال حسب يوم العرض.
-                </p>
-              </div>
-              <div className="discovery-seo-item">
-                <h3>المسلسلات والأفلام</h3>
-                <p>
-                  انتقل مباشرة إلى{" "}
-                  <Link href="/series" className="text-purple-300 hover:underline">
-                    مكتبة المسلسلات
-                  </Link>{" "}
-                  و{" "}
-                  <Link href="/movies" className="text-purple-300 hover:underline">
-                    مكتبة الأفلام
-                  </Link>{" "}
-                  واستخدم البحث والتصنيفات للوصول إلى العمل الذي تريده.
-                </p>
-              </div>
-              <div className="discovery-seo-item">
-                <h3>تصفّح حسب النوع</h3>
-                <p>
-                  اختر من التصنيفات المتاحة مثل{" "}
-                  <Link href="/series?genre=Action" className="text-purple-300 hover:underline">الأكشن</Link>،{" "}
-                  <Link href="/series?genre=Adventure" className="text-purple-300 hover:underline">المغامرات</Link>،{" "}
-                  <Link href="/series?genre=Fantasy" className="text-purple-300 hover:underline">الخيال</Link>، و{" "}
-                  <Link href="/series?genre=Drama" className="text-purple-300 hover:underline">الدراما</Link>{" "}
-                  .
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
+        <HomeDiscoveryGuide />
       </div>
     </div>
   );

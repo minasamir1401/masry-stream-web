@@ -1,3 +1,6 @@
+import { mediaHref } from "@/lib/media-links";
+import { mediaNames } from "@/lib/media-names";
+import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { fetchHomepage, fetchAiringWeek, fetchPopularSeries } from "@/lib/api";
 import { HomeExperience } from "@/components/HomeExperience";
@@ -54,7 +57,7 @@ export default async function HomePage() {
   const [home, schedule, popular] = await Promise.allSettled([
     fetchHomepage(),
     fetchAiringWeek(),
-    fetchPopularSeries(1, 6),
+    fetchPopularSeries(1, 12),
   ]);
   const data =
     home.status === "fulfilled"
@@ -92,8 +95,8 @@ export default async function HomePage() {
             "itemListElement": listCandidates.map((item, idx) => ({
               "@type": "ListItem",
               "position": idx + 1,
-              "name": item.title,
-              "url": `${SITE_URL}/${item.media_type === "MOVIE" ? "movie" : "series"}/${item.id}`,
+              "name": mediaNames(item).label,
+              "url": `${SITE_URL}${mediaHref(item)}`,
             })),
           },
         }
@@ -104,7 +107,7 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeCollectionJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(homeCollectionJsonLd) }}
       />
       <HomeExperience
         data={{

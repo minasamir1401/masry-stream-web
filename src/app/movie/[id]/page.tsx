@@ -1,7 +1,15 @@
+import { StoryProvenance } from "@/components/StoryProvenance";
+import { mediaHref } from "@/lib/media-links";
+import { mediaMetadata } from "@/lib/media-seo";
+import { mediaNames } from "@/lib/media-names";
+import { BilingualTitle } from "@/components/BilingualTitle";
+import { arabicSummary } from "@/lib/content";
+import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+import { loadMedia } from "@/lib/media-page";
 import { MediaItem } from "@/lib/types";
 import { fetchMovieById, fetchMovies } from "@/lib/api";
 import { formatBytes, formatDuration } from "@/lib/utils";
@@ -27,81 +35,15 @@ interface MovieDetailPageProps {
 }
 
 export async function generateMetadata({ params }: MovieDetailPageProps): Promise<Metadata> {
-  const movie = await fetchMovieById(params.id).catch(() => null);
-  if (!movie) return { title: "الفيلم غير متوفر - AnimeClover" };
-
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-  const canonicalUrl = `${siteUrl}/movie/${movie.id}`;
-  const posterImg = movie.poster_proxy_url || movie.poster_url || `${siteUrl}/preview_full.png`;
-
-  const titleAr = movie.title;
-  const titleEn = movie.original_title && movie.original_title !== movie.title ? ` ${movie.original_title}` : "";
-  const pageTitle = `فيلم ${titleAr}${titleEn} مترجم اون لاين | انمي كلوفر AnimeClover`;
-  const pageDesc = `مشاهدة وتحميل فيلم ${titleAr}${titleEn ? ` (${movie.original_title})` : ""} مترجم اون لاين بجودة عالية Full HD على موقع انمي كلوفر الرسمي (AnimeClover). ${movie.description || ""}`.trim();
-
-  return {
-    title: {
-      absolute: pageTitle,
-    },
-    description: pageDesc,
-    keywords: [
-      movie.title,
-      `فيلم ${movie.title}`,
-      `فيلم ${movie.title} مترجم`,
-      `مشاهدة فيلم ${movie.title}`,
-      `تحميل فيلم ${movie.title}`,
-      movie.original_title || "",
-      `${movie.original_title || movie.title} full movie`,
-      "AnimeClover",
-      "animeclover",
-      "animeclover.click",
-      "أنمي كلوفر",
-      "انمي كلوفر",
-      "انمي لكوفر",
-      "أنمي لكوفر",
-    ].filter(Boolean),
-    alternates: {
-      canonical: canonicalUrl,
-    },
-    openGraph: {
-      type: "video.movie",
-      title: pageTitle,
-      description: pageDesc,
-      url: canonicalUrl,
-      siteName: "انمي كلوفر AnimeClover",
-      images: [{ url: posterImg, width: 1200, height: 630, alt: movie.title }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: pageTitle,
-      description: pageDesc,
-      images: [posterImg],
-    },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
-  };
+  const media = await loadMedia(params.id, true);
+  return mediaMetadata(media, "movie");
 }
 
 export default async function MovieDetailPage({ params }: MovieDetailPageProps) {
-  let movie: MediaItem;
-  let related: MediaItem[] = [];
-
-  try {
-    movie = await fetchMovieById(params.id);
-    const relatedRes = await fetchMovies({ page: 1, pageSize: 8 });
-    related = relatedRes.items.filter((m: any) => m.id !== movie.id);
-  } catch {
-    notFound();
-  }
+  const movie = await loadMedia(params.id, true);
+  if (mediaHref(movie) !== `/movie/${movie.id}`) permanentRedirect(mediaHref(movie));
+  const relatedResult = await fetchMovies({ page: 1, pageSize: 8 }).catch(() => null);
+  const related = (relatedResult?.items || []).filter(item => item.id !== movie.id);
 
   const posterSrc = movie.poster_proxy_url || movie.poster_url || "/placeholder-poster.svg";
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
@@ -109,11 +51,10 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
   const jsonLdMovie = {
     "@context": "https://schema.org",
     "@type": "Movie",
-    "name": movie.title,
-    "alternateName": movie.original_title ? [movie.original_title] : undefined,
-    "description": movie.description || undefined,
+    "name": mediaNames(movie).label,
+    "alternateName": mediaNames(movie).aliases,
+    "description": arabicSummary(movie),
     "image": posterSrc,
-    "dateCreated": movie.release_year ? `${movie.release_year}-01-01` : undefined,
     "duration": movie.duration ? `PT${Math.round(movie.duration / 60)}M` : undefined,
     "inLanguage": ["ar", "ja"],
     "publisher": {
@@ -128,9 +69,10 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdMovie) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(jsonLdMovie) }}
       />
       <div className="py-6 pb-20">
+      {movie.catalog_stale && <p className="catalog-stale-note" role="status">نعرض آخر معلومات محفوظة لهذا العمل. قد تتأخر التحديثات مؤقتًا.</p>}
       {/* Back navigation */}
       <Link
         href="/movies"
@@ -166,7 +108,7 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
             <div className="flex flex-wrap items-center gap-2">
               <span className="px-3 py-1 rounded-full bg-cinema-accent text-white text-xs font-bold shadow-glow flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>مدبلج مصري</span>
+                <span>فيلم أنمي</span>
               </span>
 
               {movie.resolution && (
@@ -200,13 +142,8 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
             {/* Title & Original Title */}
             <div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-                {movie.title}
+                <BilingualTitle media={movie}/>
               </h1>
-              {movie.original_title && (
-                <h2 className="text-base sm:text-lg text-cinema-textMuted font-medium mt-1">
-                  {movie.original_title}
-                </h2>
-              )}
             </div>
 
             {/* Genres */}
@@ -230,8 +167,10 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
                 نبذة عن العمل
               </h3>
               <p className="text-sm sm:text-base text-cinema-textSecondary leading-relaxed whitespace-pre-line">
-                {movie.description || "فيلم كلاسيكي من روائع ديزني متوفر بالدبلجة المصرية الأصلية وبأعلى جودة صوت وصورة."}
+                {arabicSummary(movie)}
               </p>
+              <StoryProvenance media={movie}/>
+
             </div>
 
             {/* CTA Button */}
@@ -251,14 +190,14 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
                 <span className="text-[11px] text-cinema-textMuted block">جودة العرض</span>
                 <span className="text-xs font-bold text-white flex items-center gap-1.5 mt-0.5">
                   <Sparkles className="w-3.5 h-3.5 text-cinema-accent" />
-                  <span>{movie.quality_label || "1080p FHD"}</span>
+                  <span>{movie.quality_label || "حسب المصدر"}</span>
                 </span>
               </div>
 
               <div>
                 <span className="text-[11px] text-cinema-textMuted block">حالة المشاهدة</span>
                 <span className="text-xs font-bold text-emerald-400 mt-0.5 block">
-                  متاح مباشرة
+                  تحقق من خيارات المشاهدة
                 </span>
               </div>
 
@@ -286,7 +225,7 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
       {related.length > 0 && (
         <MediaSlider
           title="أعمال مشابهة قد تعجبك"
-          subtitle="مختارات من كلاسيكيات الدبلجة المصرية والرسوم المتحركة"
+          subtitle="أفلام وأعمال أخرى قد تعجبك"
           items={related}
         />
       )}

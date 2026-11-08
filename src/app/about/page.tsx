@@ -1,3 +1,4 @@
+import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2, Film, Sparkles, Users, Zap } from "lucide-react";
@@ -51,11 +52,11 @@ export default function AboutPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(breadcrumbJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutPageJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLd(aboutPageJsonLd) }}
       />
       <div className="mx-auto max-w-5xl px-4 py-12 space-y-12">
         <section className="text-center space-y-4">

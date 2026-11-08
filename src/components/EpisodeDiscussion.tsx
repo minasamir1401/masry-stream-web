@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useId, useState } from "react";
 import {
   AlertCircle,
   CheckCircle2,
@@ -12,6 +12,7 @@ import {
   ThumbsUp,
   User,
 } from "lucide-react";
+import "./episode-discussion.css";
 import { getVisitorId } from "@/lib/analytics";
 
 interface CommentItem {
@@ -35,8 +36,12 @@ export function EpisodeDiscussion({
   episodeNumber,
   animeTitle,
 }: EpisodeDiscussionProps) {
+  const formId = useId();
+  const [commentsError,setCommentsError] = useState("");
   // Rating states
   const [averageScore, setAverageScore] = useState<number>(0);
+  const [ratingLoading,setRatingLoading] = useState(true);
+  const [ratingUnavailable,setRatingUnavailable] = useState(false);
   const [totalVotes, setTotalVotes] = useState<number>(0);
   const [userScore, setUserScore] = useState<number | null>(null);
   const [hoverScore, setHoverScore] = useState<number>(0);
@@ -55,21 +60,19 @@ export function EpisodeDiscussion({
   const [likedMap, setLikedMap] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
-    if (typeof navigator !== "undefined" && /googlebot|google-inspectiontool|googleother|bingbot|yandexbot|duckduckbot|baiduspider|twitterbot|facebookexternalhit|applebot|linkedinbot/i.test(navigator.userAgent)) {
-      setLoadingComments(false);
-      return;
-    }
     loadRatings();
     loadComments();
   }, [mediaId, episodeNumber]);
 
   async function loadRatings() {
+    setRatingLoading(true);
     try {
       const vid = getVisitorId();
       const res = await fetch(
         `/api/ratings/${mediaId}/${episodeNumber}?visitor_id=${encodeURIComponent(vid)}`,
         { cache: "no-store" }
       );
+      if (!res.ok) throw new Error("ratings");
       if (res.ok) {
         const data = await res.json();
         setAverageScore(data.average_score || 0);
@@ -77,7 +80,9 @@ export function EpisodeDiscussion({
         setUserScore(data.user_score || null);
       }
     } catch {
-      // Graceful fallback
+      setRatingUnavailable(true);
+    } finally {
+      setRatingLoading(false);
     }
   }
 
@@ -92,11 +97,13 @@ export function EpisodeDiscussion({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ score, visitor_id: vid }),
       });
+      if (!res.ok) throw new Error("rate");
       if (res.ok) {
         const data = await res.json();
         setAverageScore(data.average_score);
         setTotalVotes(data.total_votes);
         setUserScore(score);
+        setRatingUnavailable(false);
         setRatingNotice(`تم تسجيل تقييمك (${score} من 5) بنجاح`);
         setTimeout(() => setRatingNotice(null), 3500);
       }
@@ -109,18 +116,20 @@ export function EpisodeDiscussion({
 
   async function loadComments() {
     setLoadingComments(true);
+    setCommentsError("");
     try {
       const vid = getVisitorId();
       const res = await fetch(
         `/api/comments/${mediaId}/${episodeNumber}?visitor_id=${encodeURIComponent(vid)}`,
         { cache: "no-store" }
       );
+      if (!res.ok) throw new Error("comments");
       if (res.ok) {
         const data = await res.json();
         setComments(data.items || []);
       }
     } catch {
-      // Graceful fallback
+      setCommentsError("تعذّر تحميل التعليقات الآن.");
     } finally {
       setLoadingComments(false);
     }
@@ -164,7 +173,7 @@ export function EpisodeDiscussion({
         setTimeout(() => setCommentSuccess(false), 3000);
       }
     } catch (err) {
-      setCommentError(err instanceof Error ? err.message : "فشل نشر التعليق");
+      setCommentError("تعذّر نشر التعليق. كلامك لسه موجود؛ جرّب مرة تانية.");
     } finally {
       setSubmittingComment(false);
     }
@@ -172,6 +181,7 @@ export function EpisodeDiscussion({
 
   async function handleLikeComment(commentId: number) {
     if (likedMap[commentId]) return;
+    setCommentError(null);
     setLikedMap((prev) => ({ ...prev, [commentId]: true }));
     setComments((prev) =>
       prev.map((c) =>
@@ -179,9 +189,12 @@ export function EpisodeDiscussion({
       )
     );
     try {
-      await fetch(`/api/comments/${commentId}/like`, { method: "POST" });
+      const response = await fetch(`/api/comments/${commentId}/like`, { method: "POST" });
+      if (!response.ok) throw new Error("like");
     } catch {
-      // Fail silently
+      setLikedMap(previous => ({...previous,[commentId]:false}));
+      setComments(previous=>previous.map(item=>item.id===commentId?{...item,likes_count:Math.max(0,item.likes_count-1)}:item));
+      setCommentError("تعذّر تسجيل الإعجاب. جرّب مرة تانية.");
     }
   }
 
@@ -203,262 +216,28 @@ export function EpisodeDiscussion({
     }
   };
 
-  return (
-    <section className="mt-8 rounded-2xl border border-cinema-border bg-cinema-card/90 p-5 sm:p-7 space-y-8 shadow-xl">
-      {/* 1. EPISODE RATING WIDGET */}
-      <div className="rounded-xl border border-cinema-border/60 bg-cinema-bg/60 p-4 sm:p-5">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-              <h3 className="font-bold text-white text-sm sm:text-base">
-                تقييم الحلقة {episodeNumber}
-              </h3>
-            </div>
-            <p className="mt-0.5 text-xs text-cinema-muted">
-              شارك رأيك في مستوى إنتاج وأحداث هذه الحلقة
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4">
-            {/* Average rating label */}
-            <div className="text-left">
-              <div className="flex items-baseline gap-1 text-amber-400 font-black text-xl">
-                <span>{averageScore > 0 ? averageScore.toFixed(1) : "-"}</span>
-                <span className="text-xs text-cinema-muted">/ 5</span>
-              </div>
-              <span className="text-[11px] text-cinema-muted">
-                {totalVotes} {totalVotes === 1 ? "تقييم" : "تقييمات"}
-              </span>
-            </div>
-
-            {/* Stars row */}
-            <div className="flex items-center gap-1 border-r border-cinema-border/60 pr-4">
-              {[1, 2, 3, 4, 5].map((star) => {
-                const isFilled =
-                  hoverScore >= star || (!hoverScore && (userScore || 0) >= star);
-                return (
-                  <button
-                    key={star}
-                    type="button"
-                    disabled={submittingRating}
-                    onMouseEnter={() => setHoverScore(star)}
-                    onMouseLeave={() => setHoverScore(0)}
-                    onClick={() => handleRate(star)}
-                    aria-label={`تقييم ${star} نجوم`}
-                    className="p-1 transition transform hover:scale-125 focus:outline-none"
-                  >
-                    <Star
-                      className={`h-5 w-5 sm:h-6 sm:w-6 transition ${
-                        isFilled
-                          ? "fill-amber-400 text-amber-400"
-                          : "text-cinema-muted/40 hover:text-amber-400"
-                      }`}
-                    />
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {userScore && (
-          <div className="mt-2.5 flex items-center justify-between text-xs text-cinema-muted border-t border-cinema-border/40 pt-2">
-            <span>
-              تقييمك المسجل لهذه الحلقة:{" "}
-              <strong className="text-amber-400">{userScore} نجوم</strong>
-            </span>
-            <span className="text-[11px] text-cinema-muted/80">
-              يمكنك النقر على النجوم لتغيير تقييمك في أي وقت
-            </span>
-          </div>
-        )}
-
-        {ratingNotice && (
-          <div className="mt-2 text-xs font-semibold text-emerald-400 animate-fadeIn">
-            {ratingNotice}
-          </div>
-        )}
+  return <section className="episode-community" aria-label={`التقييم والنقاش — الحلقة ${episodeNumber}`}>
+    <section className="episode-rating-card" aria-labelledby={`${formId}-rating`}>
+      <div className="episode-rating-heading"><span className="community-icon"><Star size={20}/></span><div><h2 id={`${formId}-rating`}>إيه رأيك في الحلقة {episodeNumber}؟</h2><p>تقييمك يساعد متابعين تانيين يختاروا حكايتهم.</p></div></div>
+      <div className="episode-rating-body"><div className="episode-rating-average" aria-live="polite">{ratingLoading?<span>بنحمّل التقييمات...</span>:ratingUnavailable?<span>التقييمات غير متاحة مؤقتًا</span>:totalVotes>0?<><strong><bdi>{averageScore.toFixed(1)}</bdi><small>من ٥</small></strong><span>{totalVotes.toLocaleString("ar-EG")} تقييم</span></>:<><strong className="rating-no-votes">لسه مفيش تقييم</strong><span>كن أول من يشارك رأيه</span></>}</div>
+        <fieldset className="episode-rating-picker" disabled={submittingRating}><legend>{userScore?`تقييمك: ${userScore} من ٥`:"اختَر تقييمك"}</legend><div className="episode-rating-stars" dir="ltr" onMouseLeave={()=>setHoverScore(0)}>{[1,2,3,4,5].map(score=><label key={score} className={(hoverScore||userScore||0)>=score?"is-filled":""} onMouseEnter={()=>setHoverScore(score)}><input type="radio" name={`${formId}-score`} value={score} checked={userScore===score} onChange={()=>handleRate(score)} aria-label={`${score} من 5 نجوم`}/><Star size={26} aria-hidden="true"/></label>)}</div>{submittingRating&&<span className="rating-saving" role="status">جارٍ الحفظ...</span>}</fieldset>
       </div>
-
-      {/* 2. REAL COMMENTS SECTION */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between border-b border-cinema-border pb-3">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="h-5 w-5 text-cinema-accent" />
-            <h3 className="font-bold text-white text-base">
-              نقاشات ومشاركات المتابعين
-            </h3>
-            <span className="rounded-full bg-cinema-bg px-2.5 py-0.5 text-xs text-cinema-muted font-mono">
-              {comments.length}
-            </span>
-          </div>
-          <span className="text-xs text-cinema-muted">
-            التعليقات فورية ومحفوظة
-          </span>
-        </div>
-
-        {/* Comment Input Form */}
-        <form onSubmit={handlePostComment} className="space-y-3">
-          {replyingTo && (
-            <div className="flex items-center justify-between rounded-lg border border-purple-500/30 bg-purple-500/10 px-3 py-1.5 text-xs text-purple-300">
-              <div className="flex items-center gap-1.5">
-                <CornerDownLeft className="h-3.5 w-3.5" />
-                <span>الرد على: <strong>{replyingTo.author_name}</strong></span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setReplyingTo(null)}
-                className="text-cinema-muted hover:text-white"
-              >
-                إلغاء الرد
-              </button>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
-            <div className="sm:col-span-1">
-              <div className="relative">
-                <User className="absolute right-3 top-2.5 h-4 w-4 text-cinema-muted" />
-                <input
-                  type="text"
-                  maxLength={40}
-                  value={authorName}
-                  onChange={(e) => setAuthorName(e.target.value)}
-                  placeholder="اسمك (متابع)"
-                  className="w-full rounded-xl border border-cinema-border bg-cinema-bg pr-9 pl-3 py-2 text-xs text-white placeholder-cinema-muted focus:outline-none focus:ring-1 focus:ring-cinema-accent"
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-3">
-              <input
-                type="text"
-                required
-                maxLength={1000}
-                value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
-                placeholder={
-                  replyingTo
-                    ? `اكتب ردك على ${replyingTo.author_name}...`
-                    : "اكتب رأيك أو تعليقك حول أحداث الحلقة..."
-                }
-                className="w-full rounded-xl border border-cinema-border bg-cinema-bg px-3.5 py-2 text-xs text-white placeholder-cinema-muted focus:outline-none focus:ring-1 focus:ring-cinema-accent"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-1">
-            <span className="text-[11px] text-cinema-muted">
-              شارك باحترام وبدون حرق لأحداث الحلقات القادمة.
-            </span>
-            <button
-              type="submit"
-              disabled={submittingComment || !commentContent.trim()}
-              className="inline-flex items-center gap-2 rounded-xl bg-cinema-accent px-4 py-2 text-xs font-bold text-white hover:brightness-110 transition disabled:opacity-50"
-            >
-              <Send className="h-3.5 w-3.5" />
-              <span>{submittingComment ? "جاري النشر..." : "نشر التعليق"}</span>
-            </button>
-          </div>
-
-          {commentSuccess && (
-            <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-semibold pt-1">
-              <CheckCircle2 className="h-4 w-4" />
-              <span>تم نشر تعليقك وحفظه بنجاح</span>
-            </div>
-          )}
-
-          {commentError && (
-            <div className="flex items-center gap-1.5 text-xs text-red-400 font-semibold pt-1">
-              <AlertCircle className="h-4 w-4" />
-              <span>{commentError}</span>
-            </div>
-          )}
-        </form>
-
-        {/* Comments Feed */}
-        <div className="space-y-3 pt-2">
-          {loadingComments ? (
-            <p className="py-6 text-center text-xs text-cinema-muted">
-              جاري تحميل التعليقات...
-            </p>
-          ) : comments.length > 0 ? (
-            comments.map((comment) => (
-              <div
-                key={comment.id}
-                className={`rounded-xl border p-4 transition space-y-2 ${
-                  comment.is_current_user
-                    ? "border-purple-500/30 bg-purple-500/5"
-                    : "border-cinema-border/60 bg-cinema-bg/40 hover:bg-cinema-bg/70"
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cinema-accent/20 text-cinema-accent text-xs font-bold">
-                      {comment.author_name.charAt(0).toUpperCase()}
-                    </div>
-                    <span className="font-bold text-white text-xs">
-                      {comment.author_name}
-                    </span>
-                    {comment.is_current_user && (
-                      <span className="rounded-md bg-cinema-accent/20 px-1.5 py-0.5 text-[10px] font-bold text-cinema-accent">
-                        أنت
-                      </span>
-                    )}
-                  </div>
-                  <span className="text-[11px] text-cinema-muted font-mono">
-                    {formatCommentDate(comment.created_at)}
-                  </span>
-                </div>
-
-                <p className="text-xs text-cinema-muted leading-relaxed whitespace-pre-wrap pr-9">
-                  {comment.content}
-                </p>
-
-                <div className="flex items-center justify-end gap-3 pt-1 border-t border-cinema-border/30 pr-9">
-                  <button
-                    type="button"
-                    onClick={() => handleLikeComment(comment.id)}
-                    className={`inline-flex items-center gap-1 text-[11px] transition ${
-                      likedMap[comment.id]
-                        ? "text-pink-400 font-bold"
-                        : "text-cinema-muted hover:text-pink-400"
-                    }`}
-                  >
-                    <Heart
-                      className={`h-3.5 w-3.5 ${
-                        likedMap[comment.id] ? "fill-pink-400" : ""
-                      }`}
-                    />
-                    <span>{comment.likes_count}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setReplyingTo(comment);
-                      setAuthorName((prev) => prev || "");
-                    }}
-                    className="inline-flex items-center gap-1 text-[11px] text-cinema-muted hover:text-white transition"
-                  >
-                    <CornerDownLeft className="h-3 w-3" />
-                    <span>رد</span>
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <div className="rounded-xl border border-dashed border-cinema-border/50 py-8 text-center space-y-1">
-              <MessageSquare className="mx-auto h-6 w-6 text-cinema-muted/40" />
-              <p className="text-xs font-bold text-white">لا توجد تعليقات بعد</p>
-              <p className="text-[11px] text-cinema-muted">
-                كن أول من يشارك برأيه حول أحداث الحلقة {episodeNumber} من {animeTitle}!
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+      {ratingNotice&&<p className={`community-notice ${ratingNotice.includes("تعذر")?"error":"success"}`} role="status">{ratingNotice}</p>}
     </section>
-  );
+    <section className="episode-comments-card" aria-labelledby={`${formId}-comments`}>
+      <div className="episode-comments-heading"><div><MessageSquare size={21}/><h2 id={`${formId}-comments`}>نتكلم عن الحلقة</h2>{!loadingComments&&<span className="community-count">{comments.length.toLocaleString("ar-EG")}</span>}</div><p>شارك رأيك من غير حرق للحلقات الجاية.</p></div>
+      <form className="episode-comment-form" onSubmit={handlePostComment}>
+        {replyingTo&&<div className="community-replying"><span><CornerDownLeft size={15}/>بترد على <bdi>{replyingTo.author_name}</bdi></span><button type="button" onClick={()=>setReplyingTo(null)}>إلغاء الرد</button></div>}
+        <label className="community-name" htmlFor={`${formId}-name`}><span>اسمك <small>اختياري</small></span><input id={`${formId}-name`} aria-label="اسمك اختياري" maxLength={40} value={authorName} onChange={event=>setAuthorName(event.target.value)} placeholder="متابع" autoComplete="nickname"/></label>
+        <label className="community-comment-label" htmlFor={`${formId}-content`}>{replyingTo?`ردك على ${replyingTo.author_name}`:"تعليقك"}<textarea id={`${formId}-content`} aria-label={replyingTo?`ردك على ${replyingTo.author_name}`:"تعليقك"} required maxLength={1000} value={commentContent} onChange={event=>{setCommentContent(event.target.value);setCommentSuccess(false);}} placeholder="إيه اللي عجبك في الحلقة؟" rows={4}/></label>
+        <div className="community-form-bottom"><span>{commentContent.length.toLocaleString("ar-EG")} / ١٬٠٠٠ حرف</span><button type="submit" className="community-submit" disabled={submittingComment||!commentContent.trim()}><Send size={17}/>{submittingComment?"جارٍ النشر...":replyingTo?"نشر الرد":"نشر التعليق"}</button></div>
+        {commentSuccess&&<p className="community-notice success" role="status"><CheckCircle2 size={15}/>تم نشر تعليقك.</p>}{commentError&&<p className="community-notice error" role="alert"><AlertCircle size={15}/>{commentError}</p>}
+      </form>
+      <div className="episode-comment-feed" aria-busy={loadingComments}>{loadingComments?<p className="community-empty" role="status">بنحمّل التعليقات...</p>:commentsError?<div className="community-empty"><AlertCircle size={24}/><p role="alert">{commentsError}</p><button type="button" onClick={loadComments}>إعادة المحاولة</button></div>:comments.length?comments.map(comment=><article className={`episode-comment ${comment.is_current_user?"is-own":""}`} key={comment.id}>
+        <header><span className="community-avatar" aria-hidden="true">{comment.author_name.charAt(0)}</span><div><strong><bdi>{comment.author_name}</bdi>{comment.is_current_user&&<small>أنت</small>}</strong><time dateTime={comment.created_at}>{formatCommentDate(comment.created_at)}</time></div></header>
+        {comment.parent_id&&<span className="comment-reply-context"><CornerDownLeft size={13}/>رد على تعليق سابق</span>}<p dir="auto">{comment.content}</p>
+        <div className="community-comment-actions"><button type="button" onClick={()=>handleLikeComment(comment.id)} aria-pressed={!!likedMap[comment.id]} aria-label={`إعجاب بتعليق ${comment.author_name}`}><Heart size={16} fill={likedMap[comment.id]?"currentColor":"none"}/>{comment.likes_count.toLocaleString("ar-EG")}</button><button type="button" onClick={()=>{setReplyingTo(comment);document.getElementById(`${formId}-content`)?.focus();}}><CornerDownLeft size={16}/>رد</button></div>
+      </article>):<div className="community-empty"><MessageSquare size={27}/><strong>ابدأ الحكاية بأول تعليق</strong><p>شارك رأيك في الحلقة {episodeNumber} من <bdi>{animeTitle}</bdi>.</p></div>}</div>
+    </section>
+  </section>;
 }

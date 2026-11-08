@@ -1,12 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
 import { MediaItem } from "@/lib/types";
+import { matchingBanner } from "@/lib/hero-slides";
 
 type ImageCandidate={image_url:string;source:"kitsu"|"anilist"};
 type HeroImageData=ImageCandidate & {anime_id:number;id_mal:number|null;stale:boolean;alternatives?:ImageCandidate[]};
 const cache=new Map<string,{image:HeroImageData;expires:number}>();
 const pending=new Map<string,Promise<HeroImageData>>();
-export function loadHeroImage(item:Pick<MediaItem,"id"|"id_mal">):Promise<HeroImageData> {
+export function loadHeroImage(item:Pick<MediaItem,"id"|"id_mal"|"banner_url">):Promise<HeroImageData> {
+  const banner=matchingBanner(item);
+  if (banner) return Promise.resolve({anime_id:item.id,id_mal:item.id_mal || null,image_url:banner,source:"anilist",stale:false});
   const key=`${item.id}:${item.id_mal || 0}`;
   const saved=cache.get(key);
   if (saved && saved.expires>Date.now()) return Promise.resolve(saved.image);
@@ -24,17 +27,17 @@ export function loadHeroImage(item:Pick<MediaItem,"id"|"id_mal">):Promise<HeroIm
 }
 
 export function HeroImage({item}:{item:MediaItem}) {
-  const [image,setImage]=useState<HeroImageData|null>(null),[failed,setFailed]=useState(false),[candidate,setCandidate]=useState(0);
+  const [image,setImage]=useState<HeroImageData|null>(null),[candidate,setCandidate]=useState(0);
   useEffect(() => {
     let current=true;
     let retry:ReturnType<typeof setTimeout>|undefined;
-    setImage(null);setFailed(false);setCandidate(0);
-    const load=() => loadHeroImage(item).then(result => {if (current) {setImage(result);setFailed(false);setCandidate(0);}}).catch(() => {if (current) {setFailed(true);retry=setTimeout(load,60000);}});
+    setImage(null);setCandidate(0);
+    const load=() => loadHeroImage(item).then(result => {if (current) {setImage(result);setCandidate(0);}}).catch(() => {if (current) retry=setTimeout(load,60000);});
     void load();
     return () => {current=false;if (retry) clearTimeout(retry);};
-  },[item.id,item.id_mal]);
-  const candidates=image ? [{image_url:image.image_url,source:image.source},...(image.alternatives || [])] : [];
-  const active=candidates[candidate];
-  if (!active || failed) return <div className={`hero-image-placeholder ${failed ? "unavailable" : "loading"}`} role="status"><span className={failed ? "hero-image-status" : "sr-only"}>{failed ? "تعذّر تحميل صورة الأنمي حاليًا" : "جارٍ تحميل صورة الأنمي"}</span></div>;
-  return <img key={active.image_url} src={active.image_url} alt={`الصورة الرسمية — ${item.title}`} data-image-source={active.source} data-anime-id={item.id} data-mal-id={image?.id_mal} decoding="async" fetchPriority="high" onError={() => {if (candidate+1<candidates.length) setCandidate(value => value+1);else setFailed(true);}}/>;
+  },[item.id,item.id_mal,item.banner_url]);
+  const artwork=image?.anime_id === item.id ? [image.image_url,...(image.alternatives || []).map(entry => entry.image_url)] : [];
+  const candidates=Array.from(new Set([matchingBanner(item),...artwork,item.poster_proxy_url,item.poster_url].filter((url):url is string => Boolean(url))));
+  const active=candidates[candidate] || "/placeholder-poster.svg";
+  return <img key={active} src={active} alt={`الصورة الرسمية — ${item.title}`} data-anime-id={item.id} data-mal-id={item.id_mal} decoding="async" fetchPriority="high" onError={() => {if (candidate<candidates.length) setCandidate(value => value+1);}}/>;
 }

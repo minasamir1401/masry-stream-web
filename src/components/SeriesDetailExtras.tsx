@@ -5,6 +5,7 @@ import { BookOpen, ChevronDown, Play } from "lucide-react";
 import { MediaItem } from "@/lib/types";
 import { readWatchHistory, WATCH_HISTORY_EVENT, WatchProgress } from "@/lib/watch-history";
 import { FavoriteButton } from "./FavoriteButton";
+import { StoryProvenance } from "./StoryProvenance";
 
 export function SeriesWatchActions({item,upcoming=false}:{item:MediaItem;upcoming?:boolean}) {
   const [resume,setResume]=useState<WatchProgress|null>(null);
@@ -12,8 +13,8 @@ export function SeriesWatchActions({item,upcoming=false}:{item:MediaItem;upcomin
   return <div className="anime-profile-actions">{upcoming ? <span className="anime-upcoming-action">لم يبدأ العرض بعد</span> : <Link prefetch={false} className="discovery-primary" href={`/watch/${item.id}?ep=${resume?.episode || 1}`}><Play size={18} fill="currentColor"/><span>{resume ? "أكمل المشاهدة" : "ابدأ المشاهدة"}{resume && <small>الحلقة {resume.episode}</small>}</span></Link>}<FavoriteButton item={item}/></div>;
 }
 
-export function SeriesSynopsis({description}:{description?:string}) {
+export function SeriesSynopsis({description,media}:{description?:string;media?:MediaItem}) {
   const [expanded,setExpanded]=useState(false);
   const text=description || "لسه مفيش وصف متاح للحكاية دي.";
-  return <section id="about" className="anime-story"><div className="anime-story-heading"><h2><BookOpen size={19}/>عن الحكاية</h2>{text.length>260 && <button aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "عرض أقل" : "اقرأ المزيد"}<ChevronDown size={15}/></button>}</div><p dir="auto" className={expanded ? "expanded" : ""}>{text}</p></section>;
+  return <section id="about" className="anime-story"><div className="anime-story-heading"><h2><BookOpen size={19}/>عن الحكاية</h2>{text.length>260 && <button aria-expanded={expanded} onClick={() => setExpanded(value => !value)}>{expanded ? "عرض أقل" : "اقرأ المزيد"}<ChevronDown size={15}/></button>}</div><p lang="ar" dir="rtl" className={expanded ? "expanded" : ""}>{text}</p>{media&&<StoryProvenance media={media}/>}</section>;
 }
