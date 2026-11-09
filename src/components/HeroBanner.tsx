@@ -55,7 +55,7 @@ export function HeroBanner({ items }: { items: MediaItem[] }) {
       <svg className="hero-screen-definitions" aria-hidden="true" width="0" height="0" focusable="false">
         <defs>
           <clipPath id={screenId} clipPathUnits="objectBoundingBox"><path d="M 0,0 Q .5,.22 1,0 L 1,1 Q .5,.78 0,1 Z" /></clipPath>
-          <clipPath id={`${screenId}-mobile`} clipPathUnits="objectBoundingBox"><path d="M 0,0 Q .5,.12 1,0 L 1,1 Q .5,.88 0,1 Z" /></clipPath>
+          <clipPath id={`${screenId}-mobile`} clipPathUnits="objectBoundingBox"><path d="M 0,0 H 1 V 1 Q .5,.88 0,1 Z" /></clipPath>
         </defs>
       </svg>
       <div className="hero-screen" aria-hidden="true">
@@ -63,6 +63,7 @@ export function HeroBanner({ items }: { items: MediaItem[] }) {
         <div className="discovery-hero-shade" />
         <div className="hero-screen-depth" />
         <svg className="hero-screen-edge" viewBox="0 0 1000 1000" preserveAspectRatio="none" focusable="false">
+          <path className="hero-screen-mobile-tint" d="M 0,0 H 1000 Q 500,120 0,0 Z" />
           <path className="hero-screen-edge-desktop" d="M 0,0 Q 500,220 1000,0 L 1000,1000 Q 500,780 0,1000 Z" />
           <path className="hero-screen-edge-mobile" d="M 0,0 Q 500,120 1000,0 L 1000,1000 Q 500,880 0,1000 Z" />
         </svg>

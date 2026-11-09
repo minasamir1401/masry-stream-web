@@ -741,16 +741,21 @@ html,body { background:var(--discovery-bg); }
 }
 .hero-screen-edge { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
 .hero-screen-edge path { fill:none; stroke:rgba(209,191,230,.28); stroke-width:1; vector-effect:non-scaling-stroke; }
-.hero-screen-edge-mobile { display:none; }
+.hero-screen-edge-mobile,.hero-screen-mobile-tint { display:none; }
 @media(max-width:760px) {
   .hero-curved .hero-screen {
-    inset:8px 8px 64px;
+    inset:0 8px 64px;
     clip-path:var(--hero-screen-mobile-clip);
     -webkit-clip-path:var(--hero-screen-mobile-clip);
     border-radius:8px;
   }
   .hero-screen-edge-desktop { display:none; }
   .hero-screen-edge-mobile { display:block; }
+  .hero-screen-edge .hero-screen-mobile-tint {
+    display:block;
+    fill:rgba(6,7,12,.24);
+    stroke:none;
+  }
 }
 
 
