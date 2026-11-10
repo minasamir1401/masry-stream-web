@@ -1,18 +1,19 @@
-import { jsonLd } from "@/lib/seo";
 import type { Metadata, Viewport } from "next";
 import { Suspense } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { InstallToastNotification } from "@/components/InstallToastNotification";
+import { APP_ICON_SIZES, appIconPath, BRAND_SOCIAL_IMAGE } from "@/lib/brand";
 import {
   SITE_URL,
   SITE_BRAND,
-  SITE_NAME_EN,
   DEFAULT_TITLE,
   DEFAULT_DESCRIPTION,
   CORE_KEYWORDS,
   buildRootGraphJsonLd,
+  jsonLd,
+  pageSocialMetadata,
 } from "@/lib/seo";
 import "./globals.css";
 import "./discovery.css";
@@ -39,22 +40,14 @@ export const metadata: Metadata = {
     title: SITE_BRAND,
   },
   icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "48x48 32x32 16x16", type: "image/x-icon" },
-      { url: "/icons/icon-48.png", sizes: "48x48", type: "image/png" },
-      { url: "/icons/icon-96.png", sizes: "96x96", type: "image/png" },
-      { url: "/icons/icon-144.png", sizes: "144x144", type: "image/png" },
-      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
-      { url: "/brand/anime-clover-mark.svg", type: "image/svg+xml" },
-    ],
+    icon: APP_ICON_SIZES.map(size => ({ url: appIconPath(size), sizes: `${size}x${size}`, type: "image/png" })),
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: appIconPath(180), sizes: "180x180", type: "image/png" },
     ],
     shortcut: "/favicon.ico",
   },
   authors: [{ name: SITE_BRAND, url: SITE_URL }],
-  creator: SITE_NAME_EN,
+  creator: SITE_BRAND,
   publisher: SITE_BRAND,
   generator: "Next.js",
   verification: {
@@ -63,39 +56,8 @@ export const metadata: Metadata = {
   keywords: CORE_KEYWORDS,
   alternates: {
     canonical: "/",
-    languages: {
-      "ar": "/",
-      "x-default": "/",
-    },
   },
-  openGraph: {
-    type: "website",
-    locale: "ar_AR",
-    url: SITE_URL,
-    siteName: SITE_BRAND,
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "انمي كلوفر AnimeClover - الموقع الرسمي لمشاهدة وتحميل الأنمي المترجم اون لاين",
-      },
-      {
-        url: "/preview_full.png",
-        width: 1200,
-        height: 630,
-        alt: SITE_BRAND,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
-    images: ["/og-image.png"],
-  },
+  ...pageSocialMetadata(DEFAULT_TITLE, DEFAULT_DESCRIPTION, "/"),
   robots: {
     index: true,
     follow: true,
@@ -120,8 +82,8 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" suppressHydrationWarning>
       <head>
-        <meta name="thumbnail" content={`${SITE_URL}/og-image.png`} />
-        <link rel="image_src" href={`${SITE_URL}/og-image.png`} />
+        <meta name="thumbnail" content={`${SITE_URL}${BRAND_SOCIAL_IMAGE.url}`} />
+        <link rel="image_src" href={`${SITE_URL}${BRAND_SOCIAL_IMAGE.url}`} />
         <link rel="preconnect" href="https://s4.anilist.co" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://cdn.myanimelist.net" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="//s4.anilist.co" />

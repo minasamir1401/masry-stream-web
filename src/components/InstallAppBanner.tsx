@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND_MARK, SITE_BRAND } from "@/lib/brand";
 import { useEffect, useState } from "react";
 import { Download, Sparkles, X } from "lucide-react";
 import { usePwaInstall } from "@/lib/usePwaInstall";
@@ -37,13 +38,13 @@ export function InstallAppBanner() {
 
   return (
     <>
-      <div className="install-banner-wrapper" role="region" aria-label="تثبيت تطبيق أنمي كلوفر">
+      <div className="install-banner-wrapper" role="region" aria-label={`تثبيت تطبيق ${SITE_BRAND}`}>
         <div className="install-banner-card">
           <div className="install-banner-side">
             <div className="install-banner-logo-box">
               <img
-                src="/brand/anime-clover-mark.svg"
-                alt="شعار أنمي كلوفر"
+                src={BRAND_MARK}
+                alt={`شعار ${SITE_BRAND}`}
                 width={54}
                 height={54}
                 className="install-banner-logo"
@@ -54,7 +55,7 @@ export function InstallAppBanner() {
                 <Sparkles size={13} />
                 <span>تطبيق خفيف وسريع</span>
               </div>
-              <h3 className="install-banner-title">تطبيق Anime Clover على جهازك</h3>
+              <h3 className="install-banner-title">تطبيق <bdi>{SITE_BRAND}</bdi> على جهازك</h3>
               <p className="install-banner-desc">
                 ثبّت التطبيق الآن للوصول المباشر ومشاهدة جميع مسلسلات وأفلام الأنمي بملء الشاشة بدون شريط المتصفح.
               </p>

@@ -4,7 +4,7 @@ import { mediaMetadata } from "@/lib/media-seo";
 import { mediaNames } from "@/lib/media-names";
 import { BilingualTitle } from "@/components/BilingualTitle";
 import { arabicSummary } from "@/lib/content";
-import { jsonLd } from "@/lib/seo";
+import { jsonLd, SITE_URL, SITE_BRAND } from "@/lib/seo";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -46,7 +46,6 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
   const related = (relatedResult?.items || []).filter(item => item.id !== movie.id);
 
   const posterSrc = movie.poster_proxy_url || movie.poster_url || "/placeholder-poster.svg";
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
 
   const jsonLdMovie = {
     "@context": "https://schema.org",
@@ -59,9 +58,9 @@ export default async function MovieDetailPage({ params }: MovieDetailPageProps) 
     "inLanguage": ["ar", "ja"],
     "publisher": {
       "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
-      "name": "انمي كلوفر AnimeClover",
-      "url": siteUrl,
+      "@id": `${SITE_URL}/#organization`,
+      "name": SITE_BRAND,
+      "url": SITE_URL,
     },
   };
 

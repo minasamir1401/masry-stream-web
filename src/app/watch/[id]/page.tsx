@@ -1,9 +1,10 @@
+import { BRAND_SOCIAL_IMAGE } from "@/lib/brand";
 import { mediaHref } from "@/lib/media-links";
 import { arabicSummary } from "@/lib/content";
 import { mediaMetadata } from "@/lib/media-seo";
 import { mediaNames } from "@/lib/media-names";
 import { BilingualTitle } from "@/components/BilingualTitle";
-import { jsonLd } from "@/lib/seo";
+import { jsonLd, SITE_URL, SITE_BRAND } from "@/lib/seo";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { fetchMediaById, fetchPopularSeries, fetchAnimeMovies } from "@/lib/api";
@@ -29,8 +30,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
     media.media_type === "SERIES" ? fetchPopularSeries(1, 7) : fetchAnimeMovies(1, 7),
   ]);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
-  const posterImg = media.banner_url || media.poster_url || `${siteUrl}/preview_full.png`;
+  const posterImg = media.banner_url || media.poster_url || `${SITE_URL}${BRAND_SOCIAL_IMAGE.url}`;
 
   // Schema: TVEpisode
   const jsonLdEpisode = {
@@ -42,7 +42,7 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
     "partOfSeries": media.media_type === "SERIES" ? {
       "@type": "TVSeries",
       "name": mediaNames(media).label,
-      "url": `${siteUrl}${mediaHref(media)}`,
+      "url": `${SITE_URL}${mediaHref(media)}`,
     } : undefined,
     "image": posterImg,
     "description": arabicSummary(media),
@@ -57,20 +57,20 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "انمي كلوفر الرئيسية",
-        "item": siteUrl,
+        "name": `${SITE_BRAND} الرئيسية`,
+        "item": SITE_URL,
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": mediaNames(media).label,
-        "item": `${siteUrl}${mediaHref(media)}`,
+        "item": `${SITE_URL}${mediaHref(media)}`,
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": `الحلقة ${episode}`,
-        "item": `${siteUrl}/watch/${media.id}?ep=${episode}`,
+        "item": `${SITE_URL}/watch/${media.id}?ep=${episode}`,
       },
     ],
   };

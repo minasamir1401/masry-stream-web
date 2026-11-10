@@ -1,14 +1,13 @@
-import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { fetchAiringWeek } from "@/lib/api";
 import { AiringSchedule } from "@/components/AiringSchedule";
-import { SITE_BRAND, buildBreadcrumbJsonLd } from "@/lib/seo";
+import { SITE_BRAND, buildBreadcrumbJsonLd, jsonLd, pageSocialMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-const PAGE_TITLE = "جدول مواعيد عرض الأنمي الأسبوعي | انمي كلوفر AnimeClover";
+const PAGE_TITLE = `جدول مواعيد عرض الأنمي الأسبوعي | ${SITE_BRAND}`;
 const PAGE_DESC =
-  "جدول مواعيد نزول حلقات مسلسلات الأنمي الأسبوعية المترجمة اون لاين ومواعيد البث المحدثة بتوقيت القاهرة والمنطقة العربية على موقع انمي كلوفر الرسمي (AnimeClover).";
+  `جدول مواعيد نزول حلقات مسلسلات الأنمي الأسبوعية المترجمة اون لاين ومواعيد البث المحدثة بتوقيت القاهرة والمنطقة العربية على موقع ${SITE_BRAND}.`;
 
 export const metadata: Metadata = {
   title: {
@@ -16,46 +15,24 @@ export const metadata: Metadata = {
   },
   description: PAGE_DESC,
   keywords: [
-    "انمي كلوفر",
-    "أنمي كلوفر",
+    SITE_BRAND,
     "جدول الأنمي",
     "جدول نزول الحلقات",
     "مواعيد عرض الأنمي",
     "انمي اليوم",
-    "جدول انمي كلوفر",
-    "AnimeClover",
-    "animeclover",
+    `جدول ${SITE_BRAND}`,
   ],
   alternates: {
     canonical: "/schedule",
   },
-  openGraph: {
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
-    url: "/schedule",
-    siteName: SITE_BRAND,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "جدول مواعيد عرض الأنمي - انمي كلوفر AnimeClover",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
-    images: ["/og-image.png"],
-  },
+  ...pageSocialMetadata(PAGE_TITLE, PAGE_DESC, "/schedule"),
 };
 
 export default async function SchedulePage({ searchParams }: { searchParams: { day?: string } }) {
   const day = searchParams.day && /^\d{4}-\d{2}-\d{2}$/.test(searchParams.day) ? searchParams.day : undefined;
   const week = await fetchAiringWeek(day).catch(() => null);
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: "انمي كلوفر الرئيسية", path: "/" },
+    { name: `${SITE_BRAND} الرئيسية`, path: "/" },
     { name: "جدول مواعيد الحلقات", path: "/schedule" },
   ]);
 

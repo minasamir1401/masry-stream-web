@@ -1,12 +1,11 @@
-import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckCircle2, Film, Sparkles, Users, Zap } from "lucide-react";
-import { SITE_URL, SITE_BRAND, buildBreadcrumbJsonLd } from "@/lib/seo";
+import { SITE_URL, SITE_BRAND, buildBreadcrumbJsonLd, jsonLd, pageSocialMetadata } from "@/lib/seo";
 
-const PAGE_TITLE = "من نحن - عن منصة انمي كلوفر الرسمية | انمي كلوفر AnimeClover";
+const PAGE_TITLE = `من نحن | ${SITE_BRAND}`;
 const PAGE_DESC =
-  "تعرف على منصة انمي كلوفر الرسمية (AnimeClover)، البوابة العربية المتخصصة في مشاهدة وتحميل مسلسلات وأفلام الأنمي المترجمة بأعلى جودة وتجربة سينمائية سريعة بدون إعلانات مزعجة.";
+  `تعرف على منصة ${SITE_BRAND}، البوابة العربية المتخصصة في مشاهدة وتحميل مسلسلات وأفلام الأنمي المترجمة بأعلى جودة وتجربة سينمائية سريعة بدون إعلانات مزعجة.`;
 
 export const metadata: Metadata = {
   title: {
@@ -16,25 +15,13 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/about",
   },
-  openGraph: {
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
-    url: "/about",
-    siteName: SITE_BRAND,
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "عن منصة انمي كلوفر AnimeClover" }],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
-    images: ["/og-image.png"],
-  },
+  ...pageSocialMetadata(PAGE_TITLE, PAGE_DESC, "/about"),
 };
 
 export default function AboutPage() {
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: "انمي كلوفر الرئيسية", path: "/" },
-    { name: "عن منصة انمي كلوفر", path: "/about" },
+    { name: `${SITE_BRAND} الرئيسية`, path: "/" },
+    { name: `عن منصة ${SITE_BRAND}`, path: "/about" },
   ]);
 
   const aboutPageJsonLd = {
@@ -62,13 +49,13 @@ export default function AboutPage() {
         <section className="text-center space-y-4">
           <div className="inline-flex items-center gap-2 rounded-full border border-cinema-border bg-cinema-card px-4 py-1.5 text-xs font-bold text-cinema-accent">
             <Sparkles className="h-4 w-4" />
-            <span>انمي كلوفر AnimeClover — بوابتك العربية لعالم الأنمي</span>
+            <span><bdi>{SITE_BRAND}</bdi> — بوابتك العربية لعالم الأنمي</span>
           </div>
           <h1 className="text-3xl font-black text-white sm:text-4xl md:text-5xl">
-            عن منصة انمي كلوفر (AnimeClover)
+            عن منصة <bdi>{SITE_BRAND}</bdi>
           </h1>
           <p className="mx-auto max-w-2xl text-base text-cinema-muted sm:text-lg">
-            منصة عربية متطورة مصممة خصيصاً لعشاق الأنمي، تقدم تجربة استكشاف ومشاهدة وتحميل فائقة السرعة مع واجهة سينمائية حديثة عبر النطاق الرسمي animeclover.click.
+            منصة عربية متطورة مصممة خصيصاً لعشاق الأنمي، تقدم تجربة استكشاف ومشاهدة وتحميل فائقة السرعة مع واجهة سينمائية حديثة.
           </p>
         </section>
 
@@ -105,10 +92,10 @@ export default function AboutPage() {
         </section>
 
         <section className="rounded-3xl border border-cinema-border bg-cinema-card/70 p-8 space-y-6">
-          <h2 className="text-2xl font-bold text-white">رؤية موقع انمي كلوفر ورسالته</h2>
+          <h2 className="text-2xl font-bold text-white">رؤية موقع <bdi>{SITE_BRAND}</bdi> ورسالته</h2>
           <div className="space-y-4 text-sm text-cinema-muted leading-relaxed">
             <p>
-              تأسست منصة <strong>انمي كلوفر (AnimeClover)</strong> بهدف الارتقاء بمحتوى الأنمي العربي من خلال توفير تجربة مستخدم نقية خالية من الفوضى والإعلانات المزعجة المنبثقة، والتركيز الكامل على سرعة المشاهدة وجودة الفيديو العالية.
+              تأسست منصة <strong><bdi>{SITE_BRAND}</bdi></strong> بهدف الارتقاء بمحتوى الأنمي العربي من خلال توفير تجربة مستخدم نقية خالية من الفوضى والإعلانات المزعجة المنبثقة، والتركيز الكامل على سرعة المشاهدة وجودة الفيديو العالية.
             </p>
             <p>
               نؤمن بأن المشاهد العربي يستحق واجهة حديثة تحفظ تقدمه تلقائياً، وتعمل بسلاسة على الهواتف الذكية وأجهزة الكمبيوتر والشاشات المنزلية، دون تعقيدات أو إجبار على التسجيل.
@@ -135,7 +122,7 @@ export default function AboutPage() {
         <section className="rounded-2xl border border-cinema-border bg-gradient-to-r from-purple-900/40 via-cinema-card to-pink-900/30 p-8 text-center space-y-4">
           <h2 className="text-xl font-bold text-white">هل تواجه مشكلة أو ترغب في اقتراح عمل جديد؟</h2>
           <p className="text-xs text-cinema-muted max-w-lg mx-auto">
-            فريق انمي كلوفر يتابع كافة الشكاوى والطلبات عبر صفحة البلاغات المخصصة لضمان أفضل تجربة لجميع الزوار.
+            فريق <bdi>{SITE_BRAND}</bdi> يتابع كافة الشكاوى والطلبات عبر صفحة البلاغات المخصصة لضمان أفضل تجربة لجميع الزوار.
           </p>
           <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
             <Link

@@ -1,4 +1,5 @@
 "use client";
+import { SITE_BRAND, SITE_BRAND_AR } from "@/lib/brand";
 import { mediaHref } from "@/lib/media-links";
 import { HomeDiscoveryGuide } from "./HomeDiscoveryGuide";
 import { BilingualTitle } from "./BilingualTitle";
@@ -35,9 +36,9 @@ function EpisodeCard({ item, eager }: { item: MediaItem; eager?: boolean }) {
         prefetch={false}
         className="discovery-episode-art"
         href={`/watch/${item.id}?ep=${ep}`}
-        aria-label={`شاهد انمي ${mediaNames(item).label} الحلقة ${ep} مترجمة على انمي كلوفر`}
+        aria-label={`شاهد انمي ${mediaNames(item).label} الحلقة ${ep} مترجمة على ${SITE_BRAND}`}
       >
-        <AnimeImage src={item.poster_url} alt={`انمي ${mediaNames(item).label} الحلقة ${ep} - انمي كلوفر`} eager={eager} />
+        <AnimeImage src={item.poster_url} alt={`انمي ${mediaNames(item).label} الحلقة ${ep} - ${SITE_BRAND}`} eager={eager} />
         <span className="discovery-episode-number">
           الحلقة {String(ep).padStart(2, "0")}
         </span>
@@ -70,10 +71,10 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
 
   return (
     <div className="home-shell discovery-home">
-      <header className="brand-top-banner" aria-label="تعريف منصة انمي كلوفر">
+      <header className="brand-top-banner" aria-label={`تعريف منصة ${SITE_BRAND}`}>
         <div className="brand-top-banner-inner">
           <h1 className="brand-primary-h1">
-            موقع انمي كلوفر <span>AnimeClover</span> — مشاهدة الأنمي المترجم اون لاين
+            موقع <span dir="ltr" lang="en">{SITE_BRAND}</span> ({SITE_BRAND_AR}) — مشاهدة الأنمي المترجم اون لاين
           </h1>
           <div className="brand-top-links">
             <Link href="/series">مكتبة الأنمي</Link>
@@ -90,7 +91,7 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
           <div className="discovery-section-heading">
             <h2 id="latest-heading">
               <CalendarDays size={23} />
-              أحدث حلقات الأنمي على انمي كلوفر
+              أحدث حلقات الأنمي على <bdi>{SITE_BRAND}</bdi>
             </h2>
             <div className="discovery-tabs" role="group" aria-label="تصفية الحلقات حسب التصنيف">
               {filters.map((filter) => (

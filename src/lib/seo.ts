@@ -1,37 +1,20 @@
+import { appIconPath, BRAND_SOCIAL_IMAGE, SITE_BRAND, SITE_BRAND_AR } from "./brand";
+import type { Metadata } from "next";
+
+export { SITE_BRAND } from "./brand";
+
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click").replace(/\/+$/, "");
+export const BRAND_ALTERNATE_NAMES = [SITE_BRAND_AR];
+export const ENGLISH_HOME_PATH = "/en";
 
-export const SITE_NAME_AR = "انمي كلوفر";
-export const SITE_NAME_EN = "AnimeClover";
-export const SITE_BRAND = "انمي كلوفر AnimeClover";
-
-export const DEFAULT_TITLE =
-  "انمي كلوفر AnimeClover | مشاهدة وتحميل الأنمي المترجم";
+export const DEFAULT_TITLE = `${SITE_BRAND} (${SITE_BRAND_AR}) | مشاهدة الأنمي المترجم`;
 
 export const DEFAULT_DESCRIPTION =
-  "شاهد مسلسلات وأفلام الأنمي المترجمة إلى العربية على انمي كلوفر AnimeClover. تصفح الحلقات الجديدة، وابحث عن أنميك المفضل، وتابع جدول العرض الأسبوعي.";
-
-export const BRAND_ALTERNATE_NAMES = [
-  "انمي كلوفر",
-  "أنمي كلوفر",
-  "موقع انمي كلوفر",
-  "منصة انمي كلوفر",
-  "كلوفر انمي",
-  "انمي كلوفر الرسمي",
-  "AnimeClover",
-  "Anime Clover",
-  "animeclover.click",
-];
+  `شاهد مسلسلات وأفلام الأنمي المترجمة للعربية على ${SITE_BRAND_AR} (${SITE_BRAND}). اكتشف أعمالًا جديدة، وتابع أحدث الحلقات وجدول مواعيد العرض الأسبوعي.`;
 
 export const CORE_KEYWORDS = [
-  "انمي كلوفر",
-  "أنمي كلوفر",
-  "موقع انمي كلوفر",
-  "منصة انمي كلوفر",
-  "كلوفر انمي",
-  "AnimeClover",
-  "Anime Clover",
-  "animeclover",
-  "animeclover.click",
+  SITE_BRAND,
+  ...BRAND_ALTERNATE_NAMES,
   "مشاهدة الأنمي المترجم اون لاين",
   "مشاهدة انمي مترجم عربي",
   "تحميل الأنمي المترجم",
@@ -46,6 +29,28 @@ const envSocials = (process.env.NEXT_PUBLIC_SOCIAL_LINKS || "")
   .split(",")
   .map((s) => s.trim())
   .filter(Boolean);
+
+export function homeAlternates(language: "ar" | "en"): Metadata["alternates"] {
+  const ar = `${SITE_URL}/`;
+  const en = `${SITE_URL}${ENGLISH_HOME_PATH}`;
+  return { canonical: language === "en" ? en : ar, languages: { ar, en, "x-default": ar } };
+}
+
+export function pageSocialMetadata(title: string, description: string, url: string, language: "ar" | "en" = "ar"): Pick<Metadata, "openGraph" | "twitter"> {
+  const english = language === "en";
+  return {
+    openGraph: {
+      type: "website",
+      locale: english ? "en_US" : "ar_EG",
+      siteName: SITE_BRAND,
+      title,
+      description,
+      url,
+      images: [english ? { ...BRAND_SOCIAL_IMAGE, alt: `The ${SITE_BRAND} anime platform logo` } : BRAND_SOCIAL_IMAGE],
+    },
+    twitter: { card: "summary_large_image", title, description, images: [BRAND_SOCIAL_IMAGE.url] },
+  };
+}
 
 export function getDailyIsoDate(): string {
   const now = new Date();
@@ -70,7 +75,6 @@ export function buildRootGraphJsonLd() {
         "@type": "Organization",
         "@id": orgId,
         "name": SITE_BRAND,
-        "legalName": SITE_NAME_EN,
         "alternateName": BRAND_ALTERNATE_NAMES,
         "url": SITE_URL,
         "slogan": "شاهد واكتشف الأنمي المترجم بالعربية",
@@ -78,17 +82,17 @@ export function buildRootGraphJsonLd() {
         "logo": {
           "@type": "ImageObject",
           "@id": `${SITE_URL}/#logo`,
-          "url": `${SITE_URL}/icons/icon-512.png`,
-          "contentUrl": `${SITE_URL}/icons/icon-512.png`,
+          "url": `${SITE_URL}${appIconPath(512)}`,
+          "contentUrl": `${SITE_URL}${appIconPath(512)}`,
           "width": 512,
           "height": 512,
           "caption": SITE_BRAND,
         },
         "image": {
           "@type": "ImageObject",
-          "url": `${SITE_URL}/og-image.png`,
-          "width": 1200,
-          "height": 630,
+          "url": `${SITE_URL}${BRAND_SOCIAL_IMAGE.url}`,
+          "width": BRAND_SOCIAL_IMAGE.width,
+          "height": BRAND_SOCIAL_IMAGE.height,
         },
         "contactPoint": {
           "@type": "ContactPoint",
@@ -114,7 +118,7 @@ export function buildRootGraphJsonLd() {
         "alternateName": BRAND_ALTERNATE_NAMES,
         "description": DEFAULT_DESCRIPTION,
         "publisher": { "@id": orgId },
-        "inLanguage": "ar",
+        "inLanguage": ["ar", "en"],
         "potentialAction": {
           "@type": "SearchAction",
           "target": {
@@ -128,7 +132,7 @@ export function buildRootGraphJsonLd() {
         "@type": "WebApplication",
         "@id": appId,
         "name": SITE_BRAND,
-        "alternateName": [SITE_NAME_AR, SITE_NAME_EN],
+        "alternateName": BRAND_ALTERNATE_NAMES,
         "url": SITE_URL,
         "applicationCategory": "EntertainmentApplication",
         "operatingSystem": "All",
@@ -144,12 +148,12 @@ export function buildRootGraphJsonLd() {
         "@type": "SiteNavigationElement",
         "@id": `${SITE_URL}/#navigation`,
         "name": [
-          "الرئيسية - انمي كلوفر",
+          `الرئيسية - ${SITE_BRAND}`,
           "مكتبة الأنمي المترجم",
           "أفلام الأنمي",
           "جدول مواعيد الحلقات",
           "البحث عن أنمي",
-          "عن منصة انمي كلوفر",
+          `عن منصة ${SITE_BRAND}`,
         ],
         "url": [
           `${SITE_URL}/`,

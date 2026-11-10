@@ -1,12 +1,11 @@
-import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Mail, MessageSquare, ShieldAlert } from "lucide-react";
-import { SITE_URL, SITE_BRAND, buildBreadcrumbJsonLd } from "@/lib/seo";
+import { SITE_URL, SITE_BRAND, buildBreadcrumbJsonLd, jsonLd, pageSocialMetadata } from "@/lib/seo";
 
-const PAGE_TITLE = "اتصل بنا - التواصل مع إدارة انمي كلوفر | انمي كلوفر AnimeClover";
+const PAGE_TITLE = `اتصل بنا | ${SITE_BRAND}`;
 const PAGE_DESC =
-  "تواصل مع فريق إدارة موقع انمي كلوفر الرسمي (AnimeClover) للاستفسارات، الشراكات، الإبلاغ عن المشاكل التقنية، أو طلبات الأنمي.";
+  `تواصل مع فريق إدارة موقع ${SITE_BRAND} للاستفسارات، الشراكات، الإبلاغ عن المشاكل التقنية، أو طلبات الأنمي.`;
 
 export const metadata: Metadata = {
   title: {
@@ -16,18 +15,12 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/contact",
   },
-  openGraph: {
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
-    url: "/contact",
-    siteName: SITE_BRAND,
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "اتصل بنا - انمي كلوفر AnimeClover" }],
-  },
+  ...pageSocialMetadata(PAGE_TITLE, PAGE_DESC, "/contact"),
 };
 
 export default function ContactPage() {
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: "انمي كلوفر الرئيسية", path: "/" },
+    { name: `${SITE_BRAND} الرئيسية`, path: "/" },
     { name: "اتصل بنا", path: "/contact" },
   ]);
 
@@ -59,10 +52,10 @@ export default function ContactPage() {
             <span>نسعد دائماً بالتواصل معكم</span>
           </div>
           <h1 className="text-3xl font-black text-white sm:text-4xl">
-            اتصل بفريق انمي كلوفر (AnimeClover)
+            اتصل بفريق <bdi>{SITE_BRAND}</bdi>
           </h1>
           <p className="mx-auto max-w-xl text-xs text-cinema-muted sm:text-sm">
-            فريق دعم منصة انمي كلوفر جاهز للرد على استفساراتكم ومساعدتكم في أي وقت
+            فريق دعم منصة <bdi>{SITE_BRAND}</bdi> جاهز للرد على استفساراتكم ومساعدتكم في أي وقت
           </p>
         </section>
 

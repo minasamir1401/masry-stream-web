@@ -1,18 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="600" height="900" viewBox="0 0 600 900">
   <defs>
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#11141C"/>
-      <stop offset="100%" stop-color="#08090C"/>
-    </linearGradient>
-    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7C3AED"/>
-      <stop offset="100%" stop-color="#3B82F6"/>
-    </linearGradient>
+    <radialGradient id="background" cy=".43" r=".65">
+      <stop stop-color="#2B1A44"/>
+      <stop offset="1" stop-color="#100B1B"/>
+    </radialGradient>
   </defs>
-  <rect width="600" height="900" fill="url(#bg)"/>
-  <circle cx="300" cy="400" r="120" fill="url(#accent)" opacity="0.15"/>
-  <polygon points="270,350 350,400 270,450" fill="#7C3AED"/>
-  <text x="300" y="540" font-family="'Cairo', sans-serif" font-size="32" font-weight="bold" fill="#FFFFFF" text-anchor="middle">ديزني بالمصري</text>
-  <text x="300" y="580" font-family="sans-serif" font-size="18" fill="#94A3B8" text-anchor="middle">MasryStream</text>
+  <rect width="600" height="900" fill="url(#background)"/>
+  <circle cx="300" cy="414" r="144" fill="none" stroke="#CB91F5" stroke-opacity=".2"/>
+  <g transform="translate(197 311) scale(2.15)"><defs>
+    <linearGradient id="violet" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#F0C9FF"/>
+      <stop offset=".48" stop-color="#B66AF8"/>
+      <stop offset="1" stop-color="#7336E8"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0" x2="1" y1="0" y2="1">
+      <stop stop-color="#D3FFE9"/>
+      <stop offset="1" stop-color="#69E5BD"/>
+    </linearGradient>
+    <path id="leaf" d="M44 42C31 43 15 38 10 26 7 18 11 10 19 9c6-1 11 2 15 7 8 1 13 7 13 14 0 5-1 9-3 12Z"/>
+    <path id="fold" d="M44 42C31 43 15 38 10 26c-1-3-1-6 0-9 7 10 20 18 34 25Z"/>
+  </defs>
+  <g fill="url(#violet)">
+    <use href="#leaf"/>
+    <use href="#leaf" transform="rotate(90 48 48)"/>
+    <use href="#leaf" transform="rotate(180 48 48)"/>
+    <use href="#leaf" transform="rotate(270 48 48)"/>
+  </g>
+  <g fill="#401B9F" opacity=".28">
+    <use href="#fold"/>
+    <use href="#fold" transform="rotate(90 48 48)"/>
+    <use href="#fold" transform="rotate(180 48 48)"/>
+    <use href="#fold" transform="rotate(270 48 48)"/>
+  </g>
+  <circle cx="48" cy="48" r="18" fill="#171027" stroke="#E6C1FF" stroke-width="2"/>
+  <path d="M44 40.8a1.7 1.7 0 0 1 2.6-1.4l11 7.2a1.7 1.7 0 0 1 0 2.8l-11 7.2a1.7 1.7 0 0 1-2.6-1.4Z" fill="url(#mint)"/>
+</g>
+  <text x="300" y="618" font-family="Arial, sans-serif" font-size="49" font-weight="700" fill="#F0DDFF" text-anchor="middle">cloverfilx</text>
 </svg>
-

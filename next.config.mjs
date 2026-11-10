@@ -20,6 +20,13 @@ const nextConfig = {
       { protocol: "http", hostname: "**" },
     ],
   },
+  async redirects() {
+    return [
+      { source: "/og-image.png", destination: "/brand/cloverfilx-social.png", permanent: true },
+      { source: "/preview_full.png", destination: "/brand/cloverfilx-social.png", permanent: true },
+      { source: "/apple-touch-icon.png", destination: "/icons/cloverfilx-180.png", permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

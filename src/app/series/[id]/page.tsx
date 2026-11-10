@@ -3,7 +3,7 @@ import { mediaMetadata } from "@/lib/media-seo";
 import { mediaNames } from "@/lib/media-names";
 import { BilingualTitle } from "@/components/BilingualTitle";
 import { arabicSummary } from "@/lib/content";
-import { jsonLd } from "@/lib/seo";
+import { jsonLd, SITE_URL, SITE_BRAND } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -58,7 +58,6 @@ export default async function Page({ params, searchParams }: PageProps) {
   const status = series.status ? statuses[series.status] : undefined;
   const recommendations = (recommended?.items || []).filter((item) => item.id !== series.id).slice(0, 6);
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click";
   const cleanDescription = arabicSummary(series).replace(/<[^>]*>?/gm, "").trim();
 
   // JSON-LD Schemas for search engines
@@ -74,9 +73,9 @@ export default async function Page({ params, searchParams }: PageProps) {
     "inLanguage": ["ja", "ar", "en"],
     "publisher": {
       "@type": "Organization",
-      "@id": `${siteUrl}/#organization`,
-      "name": "انمي كلوفر AnimeClover",
-      "url": siteUrl,
+      "@id": `${SITE_URL}/#organization`,
+      "name": SITE_BRAND,
+      "url": SITE_URL,
     },
   };
 
@@ -87,20 +86,20 @@ export default async function Page({ params, searchParams }: PageProps) {
       {
         "@type": "ListItem",
         "position": 1,
-        "name": "انمي كلوفر الرئيسية",
-        "item": siteUrl,
+        "name": `${SITE_BRAND} الرئيسية`,
+        "item": SITE_URL,
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "مكتبة الأنمي",
-        "item": `${siteUrl}/series`,
+        "item": `${SITE_URL}/series`,
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": mediaNames(series).label,
-        "item": `${siteUrl}${mediaHref(series)}`,
+        "item": `${SITE_URL}${mediaHref(series)}`,
       },
     ],
   };
@@ -167,7 +166,7 @@ export default async function Page({ params, searchParams }: PageProps) {
             </div>
             <p className="anime-profile-intro">
               {series.status === "NOT_YET_RELEASED"
-                ? "حكاية جديدة في الطريق. تابع مواعيد العرض وأضف العمل لقائمتك على Anime Clover."
+                ? `حكاية جديدة في الطريق. تابع مواعيد العرض وأضف العمل لقائمتك على ${SITE_BRAND}.`
                 : "تصفّح معلومات العمل والحلقات التي عُرضت، واختر الحلقة لمراجعة خيارات المشاهدة المتاحة."}
             </p>
             <div className="anime-profile-stats">
@@ -218,7 +217,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         {recommendations.length > 0 && (
           <section id="similar" className="anime-recommendations">
             <div className="discovery-section-heading">
-              <h2>حكايات تستحق المشاهدة على Anime Clover</h2>
+              <h2>حكايات تستحق المشاهدة على <bdi>{SITE_BRAND}</bdi></h2>
               <Link className="discovery-text-link" href="/series">
                 اكتشف أكتر
                 <ChevronLeft size={15} />

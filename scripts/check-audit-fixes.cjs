@@ -56,20 +56,43 @@ async function main() {
   assert.equal(events.filter(event => event.event_type === "watch_progress").reduce((sum, event) => sum + event.duration_seconds, 0), 17); checked++;
   cleanup();
 
-  const handlers = {}, requested = [];
+  const handlers = {}, requested = [], cachedAssets = [], deletedCaches = [];
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../public/sw.js"), "utf8"), {
-    self: { addEventListener: (name, fn) => handlers[name] = fn, location: { origin: "https://example.test" } }, URL,
-    caches: {}, fetch: () => { throw Error("Private request intercepted"); },
+    self: {
+      addEventListener: (name, fn) => handlers[name] = fn,
+      location: { origin: "https://example.test" },
+      skipWaiting() {},
+      clients: { claim() {} },
+    }, URL,
+    caches: {
+      open: async () => ({ addAll: async assets => cachedAssets.push(...assets) }),
+      keys: async () => ["anime-clover-static-v2", "cloverfilx-static-v1", "unrelated-cache"],
+      delete: async key => deletedCaches.push(key),
+    }, fetch: () => { throw Error("Private request intercepted"); },
   });
+  let cacheTask;
+  const cacheEvent = { waitUntil: task => { cacheTask = task; } };
+  handlers.install(cacheEvent);
+  await cacheTask;
+  assert.ok(cachedAssets.includes("/brand/cloverfilx-mark.svg")); checked++;
+  for (const asset of cachedAssets.filter(asset => asset !== "/manifest.webmanifest")) {
+    assert.ok(fs.existsSync(path.join(__dirname, "../public", asset))); checked++;
+  }
+  handlers.activate(cacheEvent);
+  await cacheTask;
+  assert.deepEqual(deletedCaches, ["anime-clover-static-v2"]); checked++;
   for (const url of ["/admin", "/api/admin/status", "/api/anime/1/stream/1", "/watch/1?ep=1", "/_next/static/app.js"]) {
     handlers.fetch({ request: { method: "GET", url: `https://example.test${url}` }, respondWith: () => requested.push(url) });
     checked++;
   }
   assert.equal(requested.length, 0);
   const mediaLinks = moduleFrom("src/lib/media-links.ts", {});
+  const brand = moduleFrom("src/lib/brand.ts", {});
+  const seo = moduleFrom("src/lib/seo.ts", { "./brand": brand });
   const metadata = moduleFrom("src/app/series/page.tsx", {
     "@/lib/media-links": mediaLinks,
-    "@/lib/seo": { SITE_URL: "https://example.test", SITE_BRAND: "Example" },
+    "@/lib/media-names": {},
+    "@/lib/seo": seo,
     "@/lib/api": {}, "@/components/CatalogBrowser": {},
     "react/jsx-runtime": { jsx: () => ({}), jsxs: () => ({}) },
   });
@@ -86,6 +109,9 @@ async function main() {
   assert.doesNotMatch(response.body, /lastmod/); checked++;
   const index = await sitemaps.sitemapIndex();
   assert.match(index.body, /sitemap-episodes.xml\?page=2/); checked++;
+  const staticSitemap = moduleFrom("src/app/sitemap-static.xml/route.ts", { "@/lib/seo": seo, "@/lib/sitemaps": sitemaps });
+  const staticResponse = await staticSitemap.GET();
+  assert.ok(staticResponse.body.includes(`<loc>${seo.SITE_URL}/en</loc>`)); checked++;
   assert.equal((await sitemaps.sitemap("episodes", { nextUrl: new URL("https://example.test/?page=3") })).status, 404); checked++;
   inventoryFails = true;
   assert.equal((await sitemaps.sitemapIndex()).status, 503); checked++;

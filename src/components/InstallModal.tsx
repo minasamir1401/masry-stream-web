@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND_MARK, SITE_BRAND } from "@/lib/brand";
 import { Download, Share2, PlusSquare, MoreVertical, X } from "lucide-react";
 
 interface InstallModalProps {
@@ -20,11 +21,11 @@ export function InstallModal({ isOpen, onClose, isIOS }: InstallModalProps) {
 
         <div className="install-modal-header">
           <div className="install-modal-logo-wrapper">
-            <img src="/brand/anime-clover-mark.svg" alt="Anime Clover" width={52} height={52} />
+            <img src={BRAND_MARK} alt={SITE_BRAND} width={52} height={52} />
           </div>
           <div>
-            <h3>تثبيت تطبيق أنمي كلوفر</h3>
-            <p>Anime Clover Application</p>
+            <h3>تثبيت تطبيق <bdi>{SITE_BRAND}</bdi></h3>
+            <p>منصة الأنمي المترجم</p>
           </div>
         </div>
 
@@ -90,7 +91,7 @@ export function InstallModal({ isOpen, onClose, isIOS }: InstallModalProps) {
                     <MoreVertical size={16} />
                     <span>أو من قائمة المتصفح</span>
                   </div>
-                  <p>افتح قائمة المتصفح (الثلاث نقاط) واختر "تثبيت Anime Clover" أو "إضافة إلى الشاشة الرئيسية".</p>
+                  <p>افتح قائمة المتصفح (الثلاث نقاط) واختر "تثبيت <bdi>{SITE_BRAND}</bdi>" أو "إضافة إلى الشاشة الرئيسية".</p>
                 </div>
               </div>
             </div>

@@ -1,33 +1,20 @@
 import type { Metadata } from "next";
 import { fetchCatalog, CatalogQuery } from "@/lib/api";
 import { CatalogBrowser } from "@/components/CatalogBrowser";
-import { SITE_BRAND } from "@/lib/seo";
+import { SITE_BRAND, pageSocialMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
+const PAGE_TITLE = `البحث في مكتبة الأنمي | ${SITE_BRAND}`;
+const PAGE_DESC = `ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية وتصفح الحلقات والمواسم على موقع ${SITE_BRAND}.`;
+
 export const metadata: Metadata = {
-  title: {
-    absolute: "البحث في مكتبة الأنمي | انمي كلوفر AnimeClover",
-  },
-  description:
-    "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية وتصفح الحلقات والمواسم على موقع انمي كلوفر الرسمي (AnimeClover).",
+  title: { absolute: PAGE_TITLE },
+  description: PAGE_DESC,
   alternates: {
     canonical: "/search",
   },
-  openGraph: {
-    title: "البحث في مكتبة الأنمي | انمي كلوفر AnimeClover",
-    description: "ابحث عن أي مسلسل أو فيلم أنمي باللغة العربية أو الإنجليزية على موقع انمي كلوفر AnimeClover.",
-    url: "/search",
-    siteName: SITE_BRAND,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "بحث عن أنمي - انمي كلوفر AnimeClover",
-      },
-    ],
-  },
+  ...pageSocialMetadata(PAGE_TITLE, PAGE_DESC, "/search"),
   robots: {
     index: false,
     follow: true,

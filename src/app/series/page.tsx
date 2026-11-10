@@ -1,15 +1,15 @@
 import { mediaHref } from "@/lib/media-links";
-import { jsonLd } from "@/lib/seo";
+import { mediaNames } from "@/lib/media-names";
 import type { Metadata } from "next";
 import { fetchCatalog, CatalogQuery } from "@/lib/api";
 import { CatalogBrowser } from "@/components/CatalogBrowser";
-import { SITE_URL, SITE_BRAND, buildBreadcrumbJsonLd } from "@/lib/seo";
+import { SITE_URL, SITE_BRAND, buildBreadcrumbJsonLd, jsonLd, pageSocialMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-const PAGE_TITLE = "مكتبة الأنمي - مسلسلات أنمي مترجمة اون لاين | انمي كلوفر AnimeClover";
+const PAGE_TITLE = `مكتبة الأنمي - مسلسلات أنمي مترجمة اون لاين | ${SITE_BRAND}`;
 const PAGE_DESC =
-  "تصفح مكتبة مسلسلات الأنمي الكاملة على موقع انمي كلوفر الرسمي (AnimeClover). شاهد وحمّل أحدث وأقوى مسلسلات الأنمي المترجمة اون لاين بجودة عالية Full HD وسيرفرات سريعة.";
+  `تصفح مكتبة مسلسلات الأنمي الكاملة على موقع ${SITE_BRAND}. شاهد وحمّل أحدث وأقوى مسلسلات الأنمي المترجمة اون لاين بجودة عالية Full HD وسيرفرات سريعة.`;
 
 const baseMetadata: Metadata = {
   title: {
@@ -17,40 +17,18 @@ const baseMetadata: Metadata = {
   },
   description: PAGE_DESC,
   keywords: [
-    "انمي كلوفر",
-    "أنمي كلوفر",
-    "مكتبة انمي كلوفر",
+    SITE_BRAND,
+    `مكتبة ${SITE_BRAND}`,
     "قائمة الأنمي",
     "مسلسلات أنمي مترجمة",
     "أنمي مترجم اون لاين",
     "مشاهدة انمي",
     "تحميل انمي",
-    "AnimeClover",
-    "animeclover",
   ],
   alternates: {
     canonical: "/series",
   },
-  openGraph: {
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
-    url: "/series",
-    siteName: SITE_BRAND,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "مكتبة مسلسلات الأنمي - انمي كلوفر AnimeClover",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: PAGE_TITLE,
-    description: PAGE_DESC,
-    images: ["/og-image.png"],
-  },
+  ...pageSocialMetadata(PAGE_TITLE, PAGE_DESC, "/series"),
 };
 
 export function generateMetadata({ searchParams }: { searchParams: CatalogQuery }): Metadata {
@@ -67,7 +45,7 @@ export default async function Page({ searchParams }: { searchParams: CatalogQuer
   const items = data?.items || [];
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
-    { name: "انمي كلوفر الرئيسية", path: "/" },
+    { name: `${SITE_BRAND} الرئيسية`, path: "/" },
     { name: "مكتبة مسلسلات الأنمي", path: "/series" },
   ]);
 
@@ -87,7 +65,7 @@ export default async function Page({ searchParams }: { searchParams: CatalogQuer
             "itemListElement": items.slice(0, 16).map((item, idx) => ({
               "@type": "ListItem",
               "position": idx + 1,
-              "name": item.title,
+              "name": mediaNames(item).label,
               "url": `${SITE_URL}${mediaHref(item)}`,
             })),
           },

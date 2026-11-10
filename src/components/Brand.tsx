@@ -1,24 +1,23 @@
 import Link from "next/link";
+import { BRAND_MARK, SITE_BRAND } from "@/lib/brand";
 
 export function Brand() {
   return (
     <Link
       href="/"
       className="site-brand clover-brand"
-      aria-label="انمي كلوفر AnimeClover - الصفحة الرئيسية"
-      title="موقع انمي كلوفر الرسمي AnimeClover"
+      aria-label={`${SITE_BRAND} - الصفحة الرئيسية`}
       dir="ltr"
     >
       <img
         className="clover-brand-symbol"
-        src="/brand/anime-clover-mark.svg"
+        src={BRAND_MARK}
         width={48}
         height={48}
-        alt="شعار موقع انمي كلوفر AnimeClover"
+        alt=""
       />
-      <span className="clover-brand-wordmark">
-        <span className="clover-brand-sub">انمي كلوفر · ANIME</span>
-        <strong>CLOVER</strong>
+      <span className="clover-brand-wordmark" lang="en">
+        <strong>{SITE_BRAND}</strong>
       </span>
     </Link>
   );

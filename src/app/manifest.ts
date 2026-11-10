@@ -1,11 +1,14 @@
 import { MetadataRoute } from "next";
+import { APP_ICON_SIZES, appIconPath, BRAND_MARK, SITE_BRAND } from "@/lib/brand";
+import { DEFAULT_DESCRIPTION } from "@/lib/seo";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "انمي كلوفر AnimeClover | الموقع الرسمي لمشاهدة وتحميل الأنمي المترجم",
-    short_name: "انمي كلوفر",
-    description:
-      "موقع انمي كلوفر الرسمي (AnimeClover) لمشاهدة وتحميل مسلسلات وأفلام وحلقات الأنمي المترجمة اون لاين بجودات متعددة مجاناً وبأعلى جودة.",
+    name: SITE_BRAND,
+    short_name: SITE_BRAND,
+    description: DEFAULT_DESCRIPTION,
+    lang: "ar",
+    dir: "rtl",
     start_url: "/",
     scope: "/",
     display: "standalone",
@@ -14,44 +17,20 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: "#A855F7",
     categories: ["entertainment", "video"],
     icons: [
-      {
-        src: "/icons/icon-48.png",
-        sizes: "48x48",
+      ...APP_ICON_SIZES.map(size => ({
+        src: appIconPath(size),
+        sizes: `${size}x${size}`,
         type: "image/png",
-        purpose: "any",
-      },
+        purpose: "any" as const,
+      })),
       {
-        src: "/icons/icon-96.png",
-        sizes: "96x96",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/icons/icon-144.png",
-        sizes: "144x144",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/icons/icon-192.png",
-        sizes: "192x192",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/icons/icon-512.png",
-        sizes: "512x512",
-        type: "image/png",
-        purpose: "any",
-      },
-      {
-        src: "/icons/icon-maskable-512.png",
+        src: "/icons/cloverfilx-maskable-512.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",
       },
       {
-        src: "/brand/anime-clover-mark.svg",
+        src: BRAND_MARK,
         sizes: "any",
         type: "image/svg+xml",
         purpose: "any",

@@ -1,6 +1,5 @@
 import { mediaHref } from "@/lib/media-links";
 import { mediaNames } from "@/lib/media-names";
-import { jsonLd } from "@/lib/seo";
 import type { Metadata } from "next";
 import { fetchHomepage, fetchAiringWeek, fetchPopularSeries } from "@/lib/api";
 import { HomeExperience } from "@/components/HomeExperience";
@@ -10,6 +9,9 @@ import {
   DEFAULT_TITLE,
   DEFAULT_DESCRIPTION,
   CORE_KEYWORDS,
+  homeAlternates,
+  jsonLd,
+  pageSocialMetadata,
 } from "@/lib/seo";
 
 export const revalidate = 60;
@@ -20,37 +22,8 @@ export const metadata: Metadata = {
   },
   description: DEFAULT_DESCRIPTION,
   keywords: CORE_KEYWORDS,
-  alternates: {
-    canonical: "/",
-  },
-  openGraph: {
-    type: "website",
-    locale: "ar_AR",
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
-    url: "/",
-    siteName: SITE_BRAND,
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "انمي كلوفر AnimeClover - الموقع الرسمي لمشاهدة وتحميل الأنمي المترجم اون لاين",
-      },
-      {
-        url: "/preview_full.png",
-        width: 1200,
-        height: 630,
-        alt: SITE_BRAND,
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: DEFAULT_TITLE,
-    description: DEFAULT_DESCRIPTION,
-    images: ["/og-image.png"],
-  },
+  alternates: homeAlternates("ar"),
+  ...pageSocialMetadata(DEFAULT_TITLE, DEFAULT_DESCRIPTION, "/"),
 };
 
 export default async function HomePage() {
@@ -89,7 +62,7 @@ export default async function HomePage() {
       ? {
           "mainEntity": {
             "@type": "ItemList",
-            "name": "أحدث وأشهر مسلسلات الأنمي على انمي كلوفر AnimeClover",
+            "name": `أحدث وأشهر مسلسلات الأنمي على ${SITE_BRAND}`,
             "itemListOrder": "https://schema.org/ItemListOrderDescending",
             "numberOfItems": listCandidates.length,
             "itemListElement": listCandidates.map((item, idx) => ({

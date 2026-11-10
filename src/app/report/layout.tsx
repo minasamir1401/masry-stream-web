@@ -1,21 +1,16 @@
 import type { Metadata } from "next";
-import { SITE_BRAND } from "@/lib/seo";
+import { SITE_BRAND, pageSocialMetadata } from "@/lib/seo";
+
+const PAGE_TITLE = `الشكاوى وطلبات الأنمي | ${SITE_BRAND}`;
+const PAGE_DESC = `مركز الشكاوى والبلاغات وطلبات إضافة الأنمي والحلقات في موقع ${SITE_BRAND}.`;
 
 export const metadata: Metadata = {
-  title: {
-    absolute: "الشكاوى وطلبات الأنمي | انمي كلوفر AnimeClover",
-  },
-  description:
-    "مركز الشكاوى والبلاغات وطلبات إضافة الأنمي والحلقات في موقع انمي كلوفر الرسمي (AnimeClover).",
+  title: { absolute: PAGE_TITLE },
+  description: PAGE_DESC,
   alternates: {
     canonical: "/report",
   },
-  openGraph: {
-    title: "الشكاوى وطلبات الأنمي | انمي كلوفر AnimeClover",
-    description: "أرسل شكوى فنية أو اطلب إضافة أنمي جديد على منصة انمي كلوفر AnimeClover.",
-    url: "/report",
-    siteName: SITE_BRAND,
-  },
+  ...pageSocialMetadata(PAGE_TITLE, PAGE_DESC, "/report"),
 };
 
 export default function ReportLayout({ children }: { children: React.ReactNode }) {

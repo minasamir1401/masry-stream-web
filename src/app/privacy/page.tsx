@@ -1,15 +1,18 @@
+import { SITE_BRAND, pageSocialMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Lock, Shield, Eye, Database, FileText, CheckCircle2 } from "lucide-react";
 
+const PAGE_TITLE = `سياسة الخصوصية | ${SITE_BRAND}`;
+const PAGE_DESC = `سياسة الخصوصية وحماية بيانات المستخدمين في منصة ${SITE_BRAND}، وكيفية التعامل مع ملفات تعريف الارتباط وسجلات المشاهدة.`;
+
 export const metadata: Metadata = {
-  title: {
-    absolute: "سياسة الخصوصية | انمي كلوفر AnimeClover",
-  },
-  description: "سياسة الخصوصية وحماية بيانات المستخدمين في منصة انمي كلوفر الرسمية (AnimeClover)، وكيفية التعامل مع ملفات تعريف الارتباط وسجلات المشاهدة.",
+  title: { absolute: PAGE_TITLE },
+  description: PAGE_DESC,
   alternates: {
     canonical: "/privacy",
   },
+  ...pageSocialMetadata(PAGE_TITLE, PAGE_DESC, "/privacy"),
 };
 
 export default function PrivacyPage() {
@@ -32,7 +35,7 @@ export default function PrivacyPage() {
       {/* Intro */}
       <div className="rounded-2xl border border-cinema-border bg-cinema-card p-6 text-sm text-cinema-muted leading-relaxed space-y-4">
         <p>
-          نحن في منصة <strong>أنمي كلوفر (AnimeClover)</strong> نحرص على حماية خصوصية زوارنا ومستخدمينا بأعلى معايير الأمان الرقمي. توضح هذه الوثيقة نوعية المعلومات التي نجمعها، وكيفية استخدامها لحفظ تفضيلاتك وتقديم أفضل تجربة مشاهدة ممكنة.
+          نحن في منصة <strong><bdi>{SITE_BRAND}</bdi></strong> نحرص على حماية خصوصية زوارنا ومستخدمينا بأعلى معايير الأمان الرقمي. توضح هذه الوثيقة نوعية المعلومات التي نجمعها، وكيفية استخدامها لحفظ تفضيلاتك وتقديم أفضل تجربة مشاهدة ممكنة.
         </p>
       </div>
 
@@ -44,7 +47,7 @@ export default function PrivacyPage() {
             <h2 className="text-lg font-bold">1. البيانات التي نقوم بجمعها</h2>
           </div>
           <p className="text-xs text-cinema-muted leading-relaxed">
-            لا تطلب منصة أنمي كلوفر إنشاء حساب إجباري أو تقديم بيانات شخصية حساسة للاستمتاع بالمشاهدة. البيانات المجمعة تقتصر على:
+            لا تطلب منصة <bdi>{SITE_BRAND}</bdi> إنشاء حساب إجباري أو تقديم بيانات شخصية حساسة للاستمتاع بالمشاهدة. البيانات المجمعة تقتصر على:
           </p>
           <ul className="space-y-2 text-xs text-cinema-muted list-disc list-inside pt-1">
             <li><strong>تفضيلات المشاهدة المحلية:</strong> قائمة الأعمال المفضلة، وسجل متابعة الحلقات وموضع التوقف في الفيديو، وتُحفظ محلياً داخل متصفحك (LocalStorage).</li>

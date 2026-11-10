@@ -1,15 +1,18 @@
+import { SITE_BRAND, pageSocialMetadata } from "@/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AlertTriangle, FileCheck, HelpCircle, Mail, Scale, ShieldAlert } from "lucide-react";
 
+const PAGE_TITLE = `الشروط والأحكام وحقوق الملكية DMCA | ${SITE_BRAND}`;
+const PAGE_DESC = `الشروط والأحكام وسياسة حقوق الملكية الفكرية DMCA وإخلاء المسؤولية القانونية لمنصة ${SITE_BRAND}.`;
+
 export const metadata: Metadata = {
-  title: {
-    absolute: "الشروط والأحكام وحقوق الملكية DMCA | انمي كلوفر AnimeClover",
-  },
-  description: "الشروط والأحكام وسياسة حقوق الملكية الفكرية DMCA وإخلاء المسؤولية القانونية لمنصة انمي كلوفر الرسمية (AnimeClover).",
+  title: { absolute: PAGE_TITLE },
+  description: PAGE_DESC,
   alternates: {
     canonical: "/terms",
   },
+  ...pageSocialMetadata(PAGE_TITLE, PAGE_DESC, "/terms"),
 };
 
 export default function TermsPage() {
@@ -36,7 +39,7 @@ export default function TermsPage() {
           <span>إخلاء المسؤولية وحقوق الطبع والنشر (DMCA Notice)</span>
         </div>
         <p className="text-xs text-amber-200/90 leading-relaxed">
-          منصة <strong>أنمي كلوفر (AnimeClover)</strong> هي فهرس ومحرك وسائط متطور لعرض وتنظيم روابط الأنمي المتاحة علناً على شبكة الإنترنت. المنصة لا تستضيف أي ملفات فيديو محمية بحقوق الطبع والنشر على خوادمها الخاصة بشكل مباشر، وجميع ملفات الوسائط والسيرفرات المعروضة مستضافة لدى أطراف ثالثة ومواقع مشاركة ملفات عامة غير تابعة لنا.
+          منصة <strong><bdi>{SITE_BRAND}</bdi></strong> هي فهرس ومحرك وسائط متطور لعرض وتنظيم روابط الأنمي المتاحة علناً على شبكة الإنترنت. المنصة لا تستضيف أي ملفات فيديو محمية بحقوق الطبع والنشر على خوادمها الخاصة بشكل مباشر، وجميع ملفات الوسائط والسيرفرات المعروضة مستضافة لدى أطراف ثالثة ومواقع مشاركة ملفات عامة غير تابعة لنا.
         </p>
       </div>
 
@@ -48,7 +51,7 @@ export default function TermsPage() {
             <h2 className="text-lg font-bold">1. شروط الاستخدام العامة</h2>
           </div>
           <p className="text-xs text-cinema-muted leading-relaxed">
-            باستخدامك لموقع أنمي كلوفر، فإنك توافق على الالتزام بالشروط والضوابط التالية:
+            باستخدامك لموقع <bdi>{SITE_BRAND}</bdi>، فإنك توافق على الالتزام بالشروط والضوابط التالية:
           </p>
           <ul className="space-y-2 text-xs text-cinema-muted list-disc list-inside pt-1">
             <li>الموقع مخصص للاستخدام الشخصي وغير التجاري.</li>
@@ -82,7 +85,7 @@ export default function TermsPage() {
             <h2 className="text-lg font-bold">3. حدود المسؤولية القانونية</h2>
           </div>
           <p className="text-xs text-cinema-muted leading-relaxed">
-            يتم توفير محتوى الموقع وميزاته "كما هي" دون أي ضمانات صريحة أو ضمنية. لا تتحمل منصة أنمي كلوفر أي مسؤولية عن محتوى أو سياسات الخصوصية لمواقع الأطراف الثالثة وسيرفرات الفيديو الخارجية التي يتم التوجيه إليها.
+            يتم توفير محتوى الموقع وميزاته "كما هي" دون أي ضمانات صريحة أو ضمنية. لا تتحمل منصة <bdi>{SITE_BRAND}</bdi> أي مسؤولية عن محتوى أو سياسات الخصوصية لمواقع الأطراف الثالثة وسيرفرات الفيديو الخارجية التي يتم التوجيه إليها.
           </p>
         </div>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { BRAND_MARK, SITE_BRAND } from "@/lib/brand";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Download, Bell, X } from "lucide-react";
@@ -74,7 +75,7 @@ export function InstallToastNotification() {
         className="pwa-toast-notification"
         role="alert"
         aria-live="polite"
-        aria-label="إشعار تثبيت تطبيق أنمي كلوفر"
+        aria-label={`إشعار تثبيت تطبيق ${SITE_BRAND}`}
       >
         <div className="pwa-toast-card">
           <button
@@ -89,8 +90,8 @@ export function InstallToastNotification() {
           <div className="pwa-toast-content">
             <div className="pwa-toast-logo-box">
               <img
-                src="/brand/anime-clover-mark.svg"
-                alt="شعار Anime Clover"
+                src={BRAND_MARK}
+                alt={`شعار ${SITE_BRAND}`}
                 width={44}
                 height={44}
                 className="pwa-toast-logo"
@@ -101,9 +102,9 @@ export function InstallToastNotification() {
             <div className="pwa-toast-details">
               <div className="pwa-toast-badge">
                 <Bell size={11} />
-                <span>إشعار من أنمي كلوفر</span>
+                <span>إشعار من <bdi>{SITE_BRAND}</bdi></span>
               </div>
-              <h4 className="pwa-toast-title">تطبيق Anime Clover جاهز للتثبيت</h4>
+              <h4 className="pwa-toast-title">تطبيق <bdi>{SITE_BRAND}</bdi> جاهز للتثبيت</h4>
               <p className="pwa-toast-text">
                 حمّل التطبيق على جهازك الآن لمشاهدة فورية بملء الشاشة، سرعة فائقة، وبدون متصفح.
               </p>
