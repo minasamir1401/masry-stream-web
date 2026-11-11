@@ -32,7 +32,9 @@ const baseMetadata: Metadata = {
 
 export function generateMetadata({ searchParams }: { searchParams: CatalogQuery }): Metadata {
   const page = /^[1-9]\d*$/.test(searchParams.page || "") ? Number(searchParams.page) : 1;
-  const filtered = Object.entries(searchParams).some(([key, value]) => value && key !== "page");
+  const filtered = Object.entries(searchParams).some(
+    ([key, value]) => value && key !== "page" && !(key === "format" && value === "MOVIE")
+  );
   const canonical = "/movies" + (page > 1 ? `?page=${page}` : "");
   return { ...baseMetadata, alternates: { canonical },
     openGraph: { ...baseMetadata.openGraph, url: canonical },

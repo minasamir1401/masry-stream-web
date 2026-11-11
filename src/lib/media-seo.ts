@@ -8,10 +8,14 @@ import { BRAND_ALTERNATE_NAMES, SITE_URL } from "./seo";
 
 export function mediaMetadata(media: MediaItem, kind: "series" | "movie" | "watch", episode?: number): Metadata {
   const names = mediaNames(media);
-  const suffix = kind === "watch" ? (media.media_type === "MOVIE" ? "مشاهدة الفيلم" : `الحلقة ${episode}`) : kind === "movie" ? "فيلم أنمي" : "الحلقات والمعلومات";
+  const episodeNumber = episode ?? 1;
+  const suffix = kind === "watch"
+    ? (media.media_type === "MOVIE" ? "مشاهدة الفيلم" : `مشاهدة الحلقة ${episodeNumber}`)
+    : kind === "movie" ? "فيلم أنمي" : "الحلقات والمعلومات";
   const title = `${names.label} — ${suffix} | ${SITE_BRAND}`;
-  const description = `${names.label} — ${suffix}. ${arabicSummary(media)}`.replace(/\s+/g," ").slice(0,260).replace(/\s+\S*$/,"");
-  const canonical = `${SITE_URL}${kind === "watch" ? watchHref(media.id, episode || 1) : mediaHref(media)}`;
+  const summary = `${names.label} — ${suffix}. ${arabicSummary(media)}`.replace(/\s+/g, " ").trim();
+  const description = summary.length > 260 ? summary.slice(0, 261).replace(/\s+\S*$/, "") : summary;
+  const canonical = `${SITE_URL}${kind === "watch" ? watchHref(media.id, episodeNumber) : mediaHref(media)}`;
   const artwork = media.banner_url || media.poster_url;
   const image = artwork ? { url: artwork, alt: names.label } : BRAND_SOCIAL_IMAGE;
   return {

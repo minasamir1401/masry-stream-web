@@ -24,7 +24,9 @@ async function main() {
       fetchEpisodeIndex: async () => { if (episodeOutage) throw Error("EPISODES_UNAVAILABLE"); return { episodes: [{ number: 1, state: "listed" }, { number: 2, state: "upcoming" }] }; },
     },
   });
-  assert.equal((await pages.loadWatch("1", "1")).episode, 1); checked++;
+  const watch = await pages.loadWatch("1", "1");
+  assert.equal(watch.episode, 1); checked++;
+  assert.equal(watch.episodeIndex.episodes[0].number, 1); checked++;
   for (const episode of ["0", "2", "999999", "1.5", "9007199254740992"]) { await assert.rejects(pages.loadWatch("1", episode), /NOT_FOUND/); checked++; }
   outage = true;
   await assert.rejects(pages.loadWatch("1", "1"), /TEMPORARY_FAILURE/); checked++;
@@ -89,16 +91,22 @@ async function main() {
   const mediaLinks = moduleFrom("src/lib/media-links.ts", {});
   const brand = moduleFrom("src/lib/brand.ts", {});
   const seo = moduleFrom("src/lib/seo.ts", { "./brand": brand });
-  const metadata = moduleFrom("src/app/series/page.tsx", {
+  const catalogImports = {
     "@/lib/media-links": mediaLinks,
     "@/lib/media-names": {},
     "@/lib/seo": seo,
     "@/lib/api": {}, "@/components/CatalogBrowser": {},
     "react/jsx-runtime": { jsx: () => ({}), jsxs: () => ({}) },
-  });
+  };
+  const metadata = moduleFrom("src/app/series/page.tsx", catalogImports);
   assert.equal(metadata.generateMetadata({ searchParams: { page: "2" } }).alternates.canonical, "/series?page=2"); checked++;
   assert.equal(metadata.generateMetadata({ searchParams: { page: "2", genre: "Action" } }).robots.index, false); checked++;
   assert.equal(metadata.generateMetadata({ searchParams: {} }).robots.index, true); checked++;
+  const movies = moduleFrom("src/app/movies/page.tsx", catalogImports);
+  const moviePage = movies.generateMetadata({ searchParams: { page: "2", format: "MOVIE" } });
+  assert.equal(moviePage.alternates.canonical, "/movies?page=2"); checked++;
+  assert.equal(moviePage.robots.index, true); checked++;
+  assert.equal(movies.generateMetadata({ searchParams: { genre: "Action", format: "MOVIE" } }).robots.index, false); checked++;
   class NextResponse { constructor(body, options = {}) { this.body = body; this.status = options.status || 200; this.headers = options.headers || {}; } }
   let inventoryFails = false;
   const sitemaps = moduleFrom("src/lib/sitemaps.ts", {

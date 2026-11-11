@@ -20,9 +20,9 @@ export const loadWatch = cache(async (id: string, rawEpisode: string) => {
   if (media.file_name) {
     const number = media.episode_number || 1;
     if (episode !== number) notFound();
-    return { media, episode };
+    return { media, episode, episodeIndex: null };
   }
   const index = await fetchEpisodeIndex(id);
   if (!index.episodes.some(entry => entry.number === episode && entry.state !== "upcoming")) notFound();
-  return { media, episode };
+  return { media, episode, episodeIndex: index };
 });

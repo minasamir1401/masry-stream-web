@@ -7,7 +7,7 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://animeclove
 export const BRAND_ALTERNATE_NAMES = [SITE_BRAND_AR, "CloverFlix", "كلوفر فيلكس"];
 export const ENGLISH_HOME_PATH = "/en";
 
-export const DEFAULT_TITLE = `${SITE_BRAND} (${SITE_BRAND_AR}) | مشاهدة الأنمي المترجم`;
+export const DEFAULT_TITLE = `مشاهدة أنمي مترجم | ${SITE_BRAND} (${SITE_BRAND_AR})`;
 
 export const DEFAULT_DESCRIPTION =
   `شاهد مسلسلات وأفلام الأنمي المترجمة للعربية على ${SITE_BRAND_AR} (${SITE_BRAND}). اكتشف أعمالًا جديدة، وتابع أحدث الحلقات وجدول مواعيد العرض الأسبوعي.`;

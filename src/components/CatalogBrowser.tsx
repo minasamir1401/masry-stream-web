@@ -28,10 +28,13 @@ export function CatalogBrowser({ data, filters, failed=false, title="اكتشف 
   const router=useRouter(), pathname=usePathname();
   const movies=pathname === "/movies";
   useEffect(() => setQuery(filters.q || ""),[filters.q]);
-  const base = movies ? {format:"MOVIE"} : {};
   function url(changes:CatalogQuery) {
     const params = new URLSearchParams();
-    for (const [key,value] of Object.entries({...filters,...changes,...base})) if (value) params.set(key,value);
+    for (const [key, value] of Object.entries({ ...filters, ...changes })) {
+      if (value && !(movies && key === "format") && !(key === "page" && value === "1")) {
+        params.set(key, value);
+      }
+    }
     return `${pathname}${params.size ? `?${params}` : ""}`;
   }
   function apply(changes:CatalogQuery) { startTransition(() => router.push(url({...changes,page:"1"}))); }

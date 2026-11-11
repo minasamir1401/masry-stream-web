@@ -3,11 +3,10 @@ import { mediaHref } from "@/lib/media-links";
 import { arabicSummary } from "@/lib/content";
 import { mediaMetadata } from "@/lib/media-seo";
 import { mediaNames } from "@/lib/media-names";
-import { BilingualTitle } from "@/components/BilingualTitle";
 import { jsonLd, SITE_URL, SITE_BRAND } from "@/lib/seo";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { fetchMediaById, fetchPopularSeries, fetchAnimeMovies } from "@/lib/api";
+import { fetchPopularSeries, fetchAnimeMovies } from "@/lib/api";
 import { WatchExperience } from "@/components/WatchExperience";
 import { loadWatch } from "@/lib/media-page";
 import "./watch.css";
@@ -25,7 +24,7 @@ export async function generateMetadata({ params, searchParams }: WatchPageProps)
 }
 
 export default async function WatchPage({ params, searchParams }: WatchPageProps) {
-  const { media, episode } = await loadWatch(params.id, searchParams?.ep || "1");
+  const { media, episode, episodeIndex } = await loadWatch(params.id, searchParams?.ep || "1");
   const [recommendations] = await Promise.allSettled([
     media.media_type === "SERIES" ? fetchPopularSeries(1, 7) : fetchAnimeMovies(1, 7),
   ]);
@@ -87,8 +86,10 @@ export default async function WatchPage({ params, searchParams }: WatchPageProps
       />
 
       <WatchExperience
+        key={media.id}
         media={media}
         episode={episode}
+        episodeIndex={episodeIndex}
         streamUrl={media.file_name ? `/api/stream/${media.id}` : undefined}
         recommendations={
           recommendations.status === "fulfilled"
