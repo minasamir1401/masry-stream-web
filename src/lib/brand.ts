@@ -1,5 +1,5 @@
 export const SITE_BRAND = "cloverfilx";
-export const SITE_BRAND_AR = "كلوفر فيلكس";
+export const SITE_BRAND_AR = "كلوفر فليكس";
 export const BRAND_MARK = "/brand/cloverfilx-mark.svg";
 export const BRAND_SOCIAL_IMAGE = {
   url: "/brand/cloverfilx-social.png",

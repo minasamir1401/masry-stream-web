@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export { SITE_BRAND } from "./brand";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://animeclover.click").replace(/\/+$/, "");
-export const BRAND_ALTERNATE_NAMES = [SITE_BRAND_AR];
+export const BRAND_ALTERNATE_NAMES = [SITE_BRAND_AR, "CloverFlix", "كلوفر فيلكس"];
 export const ENGLISH_HOME_PATH = "/en";
 
 export const DEFAULT_TITLE = `${SITE_BRAND} (${SITE_BRAND_AR}) | مشاهدة الأنمي المترجم`;

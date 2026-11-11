@@ -5,7 +5,7 @@ import { mediaHref } from "@/lib/media-links";
 import { mediaNames } from "@/lib/media-names";
 import { ENGLISH_HOME_PATH, SITE_BRAND, SITE_URL, homeAlternates, jsonLd, pageSocialMetadata } from "@/lib/seo";
 
-const TITLE = `Anime with Arabic Subtitles | ${SITE_BRAND}`;
+const TITLE = `${SITE_BRAND} | Anime with Arabic Subtitles`;
 const DESCRIPTION = `Discover anime series and movies with Arabic subtitles on ${SITE_BRAND}. Search by English or Arabic title, explore the catalog, and check the weekly episode schedule.`;
 
 export const revalidate = 120;

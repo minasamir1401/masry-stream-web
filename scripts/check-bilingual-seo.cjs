@@ -22,10 +22,12 @@ const media = { id: 16498, title: "Attack on Titan", title_ar: "هجوم الع�
 let checked = 0;
 const website = seo.buildRootGraphJsonLd()["@graph"].find(item => item["@type"] === "WebSite");
 assert.equal(website.name, "cloverfilx"); checked++;
+assert.ok(website.alternateName.includes("كلوفر فليكس")); checked++;
+assert.ok(website.alternateName.includes("CloverFlix")); checked++;
 assert.ok(website.alternateName.includes("كلوفر فيلكس")); checked++;
 for (const value of [seo.DEFAULT_TITLE, seo.DEFAULT_DESCRIPTION]) {
   assert.match(value, /cloverfilx/); checked++;
-  assert.match(value, /كلوفر فيلكس/); checked++;
+  assert.match(value, /كلوفر فليكس/); checked++;
 }
 const arabicHome = seo.homeAlternates("ar");
 const englishHome = load("src/app/en/page.tsx", {
@@ -40,7 +42,7 @@ assert.equal(englishHome.alternates.canonical, `${seo.SITE_URL}/en`); checked++;
 for (const language of ["ar", "en", "x-default"]) {
   assert.equal(englishHome.alternates.languages[language], arabicHome.languages[language]); checked++;
 }
-assert.match(englishHome.title.absolute, /Anime with Arabic Subtitles \| cloverfilx/); checked++;
+assert.equal(englishHome.title.absolute, "cloverfilx | Anime with Arabic Subtitles"); checked++;
 assert.match(englishHome.description, /Search by English or Arabic title/); checked++;
 assert.equal(englishHome.openGraph.locale, "en_US"); checked++;
 assert.equal(englishHome.twitter.title, englishHome.title.absolute); checked++;
