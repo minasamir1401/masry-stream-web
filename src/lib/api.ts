@@ -20,7 +20,7 @@ export async function fetchAnimeSuggestions(query: string, signal?: AbortSignal)
   return normalizeMediaPayload(await response.json());
 }
 export async function fetchHomepage(): Promise<HomepageData> {
-  const response = await fetch(`${getBaseUrl()}/api/anime/homepage`, { next: { revalidate: 120 } });
+  const response = await fetch(`${getBaseUrl()}/api/anime/homepage`, { cache: "no-store" });
   if (!response.ok) throw new Error("تعذّر تحميل الرئيسية");
   return normalizeMediaPayload(await response.json());
 }
@@ -35,7 +35,7 @@ export async function fetchCatalog(filters: CatalogQuery): Promise<PaginatedMedi
   for (const key of ["q", "page", "genre", "year", "season", "status", "format", "sort"]) {
     if (filters[key]) query.set(key, filters[key]!);
   }
-  const response = await fetch(`${getBaseUrl()}/api/anime/catalog?${query}`, { next: { revalidate: 60 } });
+  const response = await fetch(`${getBaseUrl()}/api/anime/catalog?${query}`, { cache: "no-store" });
   if (!response.ok) throw new Error("تعذّر تحميل الأنمي");
   return normalizeMediaPayload(await response.json());
 }

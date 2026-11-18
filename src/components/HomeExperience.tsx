@@ -7,7 +7,7 @@ import { mediaNames } from "@/lib/media-names";
 
 import { useState } from "react";
 import Link from "next/link";
-import { ArrowUpLeft, CalendarDays, ChevronLeft, Clock3, Flame, Play, Star } from "lucide-react";
+import { ArrowUpLeft, CalendarDays, ChevronLeft, Clock3, Flame } from "lucide-react";
 import { HomepageData } from "@/lib/api";
 import { AiringWeek, genreArabic } from "@/lib/schedule";
 import { MediaItem } from "@/lib/types";
@@ -26,40 +26,8 @@ const filters = [
   { label: "دراما", value: "Drama" },
 ];
 
-const detailsUrl = (item: MediaItem) => mediaHref(item);
-
 function EpisodeCard({ item, eager }: { item: MediaItem; eager?: boolean }) {
-  const ep = item.available_episode || 1;
-  return (
-    <article className="discovery-episode">
-      <Link
-        prefetch={false}
-        className="discovery-episode-art"
-        href={`/watch/${item.id}?ep=${ep}`}
-        aria-label={`شاهد انمي ${mediaNames(item).label} الحلقة ${ep} مترجمة على ${SITE_BRAND}`}
-      >
-        <AnimeImage src={item.poster_url} alt={`انمي ${mediaNames(item).label} الحلقة ${ep} - ${SITE_BRAND}`} eager={eager} />
-        <span className="discovery-episode-number">
-          الحلقة {String(ep).padStart(2, "0")}
-        </span>
-        <span className="discovery-play">
-          <Play size={24} fill="currentColor" />
-        </span>
-      </Link>
-      <div className="discovery-card-heading">
-        <Link prefetch={false} href={detailsUrl(item)} dir="auto"><BilingualTitle media={item}/></Link>
-        {item.average_score ? (
-          <span className="discovery-rating">
-            <Star size={13} fill="currentColor" />
-            {(item.average_score / 10).toFixed(1)}
-          </span>
-        ) : null}
-      </div>
-      <p className="discovery-card-meta">
-        {item.genres.slice(0, 2).map((entry) => genreArabic[entry.name] || entry.name).join(" · ")}
-      </p>
-    </article>
-  );
+  return <MediaCard item={item} priority={eager} episode={item.available_episode || 1} />;
 }
 
 export function HomeExperience({ data, week, failed = false }: { data: HomepageData; week: AiringWeek | null; failed?: boolean }) {
@@ -67,7 +35,7 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
   const visible = data.spotlight.filter((item) => !genre || item.genres.some((entry) => entry.name === genre));
   const today = week?.days.find((day) => day.date === week.today);
   const popular = data.popular.length ? data.popular : data.recommended;
-  const heroItems = selectHeroSlides(popular, data.featured);
+  const heroItems = selectHeroSlides(data.featured, popular);
 
   return (
     <div className="home-shell discovery-home">
@@ -116,9 +84,9 @@ export function HomeExperience({ data, week, failed = false }: { data: HomepageD
               </Link>
             </div>
           ) : visible.length ? (
-            <div className="discovery-episodes-grid" aria-label="أحدث حلقات الأنمي المعروضة">
-              {visible.slice(0, 16).map((item, index) => (
-                <EpisodeCard key={`${item.id}-${item.available_episode || index}`} item={item} eager={index < 4} />
+            <div className="discovery-episodes-grid library-grid compact" aria-label="أحدث حلقات الأنمي المعروضة">
+              {visible.slice(0, 18).map((item, index) => (
+                <EpisodeCard key={`${item.id}-${item.available_episode || index}`} item={item} eager={index < 6} />
               ))}
             </div>
           ) : (

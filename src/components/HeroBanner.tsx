@@ -70,7 +70,7 @@ export function HeroBanner({ items }: { items: MediaItem[] }) {
       </div>
       <div className="discovery-hero-copy" key={`copy-${item.id}`}>
         {item.is_available && <div className="hero-available"><span/><span>متاح الآن<span className="hero-available-detail">{item.available_episode ? `حتى الحلقة ${item.available_episode}` : "ابدأ المشاهدة"}</span></span></div>}
-        <span className="hero-weekly"><Zap size={15} fill="currentColor" />أشهر الأنميات<span className="hero-weekly-line"/>{item.total_episodes ? `${item.total_episodes} حلقة` : "اكتشف العمل"}</span>
+        <span className="hero-weekly"><Zap size={15} fill="currentColor" />{item.is_available || item.status === "RELEASING" ? "أحدث الإصدارات" : "أشهر الأنميات"}<span className="hero-weekly-line"/>{item.total_episodes ? `${item.total_episodes} حلقة` : "اكتشف العمل"}</span>
         <h2 className="hero-title" dir="auto" title={mediaNames(item).label}><BilingualTitle media={item}/></h2>
         {season && <h2 className="hero-season">الموسم {ordinals[season[1]] || season[1]}</h2>}
         <p className="hero-tagline">{item.status === "FINISHED" ? "عمل مكتمل — اكتشف القصة والحلقات." : item.status === "RELEASING" ? "يعرض الآن — تابع القصة والحلقات الجديدة." : "اكتشف القصة وتصفّح حلقات هذا العمل."}</p>

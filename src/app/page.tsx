@@ -14,7 +14,7 @@ import {
   pageSocialMetadata,
 } from "@/lib/seo";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: {
@@ -43,9 +43,9 @@ export default async function HomePage() {
       : data.popular;
 
   const listCandidates = [
-    ...popularItems,
     ...data.featured,
     ...data.spotlight,
+    ...popularItems,
   ].slice(0, 12);
 
   const homeCollectionJsonLd = {

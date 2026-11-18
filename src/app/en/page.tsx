@@ -8,7 +8,7 @@ import { ENGLISH_HOME_PATH, SITE_BRAND, SITE_URL, homeAlternates, jsonLd, pageSo
 const TITLE = `${SITE_BRAND} | Anime with Arabic Subtitles`;
 const DESCRIPTION = `Discover anime series and movies with Arabic subtitles on ${SITE_BRAND}. Search by English or Arabic title, explore the catalog, and check the weekly episode schedule.`;
 
-export const revalidate = 120;
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
