@@ -1,6 +1,6 @@
 "use client";
 
-import { BRAND_MARK, SITE_BRAND } from "@/lib/brand";
+import { SITE_BRAND } from "@/lib/brand";
 import { useState } from "react";
 import { Download } from "lucide-react";
 import { usePwaInstall } from "@/lib/usePwaInstall";
@@ -22,15 +22,13 @@ export function InstallNavButton() {
   return (
     <>
       <button
+        type="button"
         className="app-install-nav-btn"
         onClick={handleClick}
         aria-label="تثبيت التطبيق على جهازك"
         title={`تثبيت تطبيق ${SITE_BRAND}`}
       >
-        <span className="install-nav-icon-wrapper">
-          <img src={BRAND_MARK} alt="" width={16} height={16} />
-        </span>
-        <Download size={15} />
+        <Download size={16} strokeWidth={2} />
         <span className="install-nav-label">تثبيت التطبيق</span>
       </button>
 

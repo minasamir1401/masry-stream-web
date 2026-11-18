@@ -1,23 +1,6 @@
 /* Reference-led streaming UI. Original anime covers; generated schedule artwork only. */
 :root { --discovery-bg:#090a11; --discovery-accent:#b66aef; --discovery-muted:#9895aa; --library-line:#a783d51c; }
 html,body { background:var(--discovery-bg); }
-.app-header { position:relative; z-index:40; background:#090a12f5; border-bottom:1px solid #b98af51c; }
-.app-header-inner { max-width:1440px; min-height:72px; padding:0 40px; margin:auto; display:flex; align-items:center; gap:50px; }
-.app-header .site-brand { font-size:23px; gap:5px; letter-spacing:-.6px; }
-.app-header .site-brand svg { width:28px; height:31px; }
-.app-header .site-brand b,.app-footer .site-brand b { color:#bd7cf0; }
-.app-navigation { display:flex; align-items:stretch; gap:28px; white-space:nowrap; align-self:stretch; }
-.app-navigation a { display:flex; align-items:center; position:relative; padding:22px 0; color:#c0bbcc; font-size:12px; font-weight:650; transition:color .2s; }
-.app-navigation a.active,.app-navigation a:hover { color:#f9f5ff; }
-.app-navigation a.active:after { content:""; height:2px; position:absolute; bottom:12px; inset-inline:2px; border-radius:4px; background:#c97dff; box-shadow:0 0 9px #b74cea88; }
-.app-header-tools { display:flex; align-items:center; gap:18px; margin-inline-start:auto; }
-.app-search { display:flex; align-items:center; gap:11px; padding:9px 13px; width:230px; border:1px solid #c6ace02c; border-radius:9px; background:#202030; color:#d8d1e4; }
-.app-search:focus-within { border-color:#b671ec; }
-.app-search button { display:flex; flex-shrink:0; }
-.app-search input { min-width:0; width:100%; background:none; outline:none; color:#f6f1ff; font-size:11px; line-height:1.8; }
-.app-search input::placeholder { color:#aaa1b9; }
-.app-icon-link { width:25px; height:38px; display:grid; place-items:center; color:#eee9f8; flex-shrink:0; }
-.app-icon-link:hover,.app-icon-link.active { color:#c988fb; }
 .app-account { width:35px; height:35px; border:1px solid #a382cb55; border-radius:50%; }
 .discovery-home { padding:0; max-width:none; overflow:clip; }
 .discovery-hero { position:relative; isolation:isolate; min-height:475px; overflow:hidden; background:#0b0b15; }
@@ -207,12 +190,11 @@ html,body { background:var(--discovery-bg); }
 @keyframes cover-reveal { from { opacity:.4; } to { opacity:1; } }
 @media(min-width:1600px) { .discovery-hero,.discovery-hero-copy { min-height:525px; } }
 @media(max-width:1200px) {
-  .app-header-inner { padding-inline:30px; gap:32px; }.app-header .site-brand { font-size:20px; }.app-navigation { gap:24px; }.app-search { width:200px; }.app-header-tools { gap:15px; }
   .discovery-hero-copy { padding-right:38px; width:56%; }.hero-season { font-size:29px; }.hero-tagline { font-size:14px; }.discovery-hero-actions .secondary-action { padding-inline:19px; }.discovery-primary { padding-inline:24px; }
   .discovery-content { padding-inline:30px; }.site-main>.library-page { padding-inline:30px; }.library-intro { padding-inline:27px; }.library-cover-stack { width:270px; }.library-grid.compact { grid-template-columns:repeat(5,minmax(0,1fr)); }.library-sort-tabs { gap:23px; }.discovery-schedule { padding-inline:25px; }.schedule-promo-copy { margin-inline-start:125px; }.schedule-promo-copy h2 { font-size:23px; }.schedule-promo-copy p { font-size:11px; }.app-footer-inner { padding-inline:30px; }
 }
 @media(max-width:980px) {
-  .app-header-inner { gap:24px; }.app-header .site-brand { font-size:18px; }.app-navigation { gap:18px; }.app-navigation a { font-size:11px; }.app-search { width:165px; }.app-header-tools { gap:11px; }.app-account { display:none; }
+  .app-account { display:none; }
   .discovery-hero,.discovery-hero-copy { min-height:450px; }.discovery-hero h1 { font-size:40px; }.discovery-hero-copy { padding-right:32px; width:59%; }.hero-season { font-size:25px; }.hero-tagline { font-size:12px; }.discovery-hero-meta { font-size:11px; }.discovery-hero-actions { gap:10px; }.discovery-hero-actions .secondary-action { font-size:11px; padding-inline:16px; }.discovery-primary { font-size:12px; padding-inline:20px; }
   .discovery-section-heading h2 { font-size:21px; }.discovery-marquee-group .discovery-episode { width:250px; }.discovery-posters { grid-template-columns:repeat(3,minmax(0,1fr)); gap:24px 17px; }.resume-card-title strong { font-size:14px; }.resume-card { aspect-ratio:1.65; }.resume-card-title span:not(.resume-play) { font-size:9px; }.resume-play { width:28px; height:28px; }
   .library-grid.compact { grid-template-columns:repeat(4,minmax(0,1fr)); }.library-grid.comfortable { grid-template-columns:repeat(3,minmax(0,1fr)); }.library-intro h1 { font-size:33px; }.library-cover-stack { width:220px; }.library-cover-stack img { width:80px; height:126px; }.library-cover-stack img:nth-child(2) { width:95px; height:148px; }.library-filter-controls { gap:13px; }.library-more-filters { font-size:9px; padding-inline:11px; }.schedule-promo-copy { margin-inline-start:105px; }.schedule-promo-copy h2 { font-size:21px; }.schedule-promo-button { font-size:11px; padding-inline:16px; }.schedule-promo-button>svg { width:17px; }
@@ -401,24 +383,11 @@ html,body { background:var(--discovery-bg); }
   .cinematic-hero * { transition:none !important; }
 }
 
-/* Site shell and a larger artwork stage across all screen sizes. */
-.app-header { background:linear-gradient(100deg,#100c18f5,#090a12fa 60%); }
-.app-header-inner { max-width:1600px; min-height:84px; padding-inline:clamp(22px,3.4vw,55px); gap:clamp(25px,3.5vw,54px); }
-.app-header .site-brand { font-size:24px; gap:11px; letter-spacing:-.7px; }
+/* Larger artwork stage across all screen sizes. */
 .brand-mark { width:41px; height:41px; display:grid; place-items:center; border:1px solid #3ddca53d; background:linear-gradient(145deg,#16463880,#0b231c60); border-radius:12px; color:#4bdda8; box-shadow:0 0 25px #bd7cf00e; }
-.app-header .site-brand .brand-mark svg,.app-footer .site-brand .brand-mark svg { width:27px; height:27px; }
-.app-navigation { align-self:center; gap:7px; }
-.app-navigation a { align-items:center; gap:7px; padding:10px 13px; font-size:12px; border-radius:8px; color:#aaaaba; }
-.app-navigation a.active { color:#dfb9fb; background:#b66aef12; }
-.app-navigation a:hover { background:#ffffff04; }
-.app-navigation a.active:after { bottom:0; inset-inline:28%; background:#c784f4; box-shadow:0 0 10px #b66aef55; }
-.app-navigation a>svg { opacity:.75; }
-.app-header-tools { gap:12px; }
-.app-search { width:clamp(190px,19vw,270px); min-height:42px; border-radius:10px; border-color:#b8b8d01c; background:#ffffff05; padding:9px 12px; }
-.app-search:focus-within { border-color:#b671ec7a; background:#171020; }
-.app-icon-link { width:36px; height:36px; border:1px solid #d0c0e51c; border-radius:10px; color:#bdb9cb; }
-.app-icon-link:hover,.app-icon-link.active { color:#dfb4ff; border-color:#b671ec55; background:#a855f710; }
-.app-account { width:36px; height:36px; }.app-search-toggle { display:none; }
+.app-footer .site-brand .brand-mark svg { width:27px; height:27px; }
+.app-footer .site-brand b { color:#bd7cf0; }
+.app-account { width:36px; height:36px; }
 .app-footer .site-brand { gap:9px; font-size:23px; }.app-footer .brand-mark { width:36px; height:36px; border-radius:10px; }
 .cinematic-hero,.cinematic-hero .discovery-hero-copy { min-height:625px; }
 .cinematic-hero .discovery-hero-copy { width:51%; padding-top:60px; padding-bottom:105px; }
@@ -435,30 +404,14 @@ html,body { background:var(--discovery-bg); }
 .cinematic-hero .discovery-hero-pagination button.selected:after { width:30px; }
 @media(min-width:1600px) { .cinematic-hero,.cinematic-hero .discovery-hero-copy { min-height:690px; }.hero-poster { width:390px; } }
 @media(max-width:1200px) {
-  .app-header-inner { gap:22px; padding-inline:25px; }.app-header .site-brand { font-size:22px; gap:8px; }.brand-mark { width:37px; height:37px; }.app-navigation a { font-size:11px; padding-inline:10px; }.app-navigation { gap:3px; }.app-navigation a>svg { display:none; }.app-search { width:190px; }.app-header-tools { gap:9px; }
+  .brand-mark { width:37px; height:37px; }
   .cinematic-hero,.cinematic-hero .discovery-hero-copy { min-height:590px; }.hero-poster { width:285px; }.cinematic-hero .discovery-hero-copy { width:51%; padding-inline:34px; }.cinematic-hero .discovery-hero-copy>h1 { font-size:46px; }.cinematic-hero .hero-season { font-size:29px; }.hero-available { left:5%; bottom:91px; }
 }
 @media(max-width:1000px) {
-  .app-header-inner { flex-wrap:wrap; min-height:0; padding-top:16px; gap:0 22px; }.app-navigation { order:3; width:100%; justify-content:center; gap:25px; margin-top:11px; padding-bottom:9px; }.app-navigation a { font-size:12px; padding:10px 16px; }.app-navigation a>svg { display:block; }.app-header .site-brand { font-size:23px; }.app-search { width:225px; }.app-account { display:grid; }
+  .app-account { display:grid; }
   .cinematic-hero,.cinematic-hero .discovery-hero-copy { min-height:570px; }.hero-poster { width:260px; }.cinematic-hero .discovery-hero-copy { padding-inline:28px; }.cinematic-hero .discovery-hero-copy>h1 { font-size:40px; }.cinematic-hero .hero-season { font-size:27px; }.cinematic-hero .discovery-hero-actions { flex-wrap:wrap; gap:10px; }.hero-available { left:3%; bottom:83px; font-size:10px; }
 }
 @media(max-width:760px) {
-  .app-header { position:sticky; top:0; z-index:50; }
-  .app-header-inner { padding:10px 16px 6px; min-height:0; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:0; }
-  .app-header .clover-brand { gap:8px; }
-  .clover-brand-symbol { width:36px; height:36px; }
-  .clover-brand-wordmark>strong { font-size:20px; }
-  .app-header-tools { gap:8px; margin-inline-start:auto; }
-  .app-icon-link { width:32px; height:32px; border-radius:8px; }
-  .app-navigation { order:3; width:100%; margin-top:8px; padding:8px 0 6px; display:flex; align-items:center; justify-content:flex-start; gap:6px; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; flex-wrap:nowrap; border-top:1px solid #b66aef1f; }
-  .app-navigation::-webkit-scrollbar { display:none; }
-  .app-navigation a { flex-shrink:0; padding:6px 12px; font-size:11px; border-radius:8px; background:#ffffff08; border:1px solid #ffffff0f; gap:5px; color:#c4b8d6; }
-  .app-navigation a.active { background:#b66aef2b; border-color:#b66aef66; color:#f8f0ff; }
-  .app-navigation a.active:after { display:none; }
-  .app-search { display:none; }
-  .app-search-toggle { display:grid; }
-  .app-search.is-open { display:flex; position:absolute; z-index:60; top:calc(100% + 4px); inset-inline:14px; width:auto; padding:10px 14px; background:#140e21; border:1px solid #b671ec66; box-shadow:0 16px 36px #000d; border-radius:12px; }
-  .app-search.is-open input { font-size:12px; }
 
   .cinematic-hero { min-height:0; position:relative; overflow:hidden; padding-bottom:14px; }
   .cinematic-hero .discovery-hero-art { position:absolute; inset:0; width:100%; height:100%; opacity:.32; display:flex; }
@@ -494,16 +447,9 @@ html,body { background:var(--discovery-bg); }
   .cinematic-hero .hero-arrow-controls button { width:30px; height:30px; }
 }
 @media(max-width:480px) {
-  .app-header-inner { padding-inline:14px; }
-  .clover-brand-symbol { width:34px; height:34px; }
-  .clover-brand-wordmark>strong { font-size:18px; }
-  .app-navigation a { padding:5px 10px; font-size:10px; }
   .cinematic-hero .discovery-hero-actions { max-width:100%; }
 }
 @media(max-width:360px) {
-  .app-header-inner { padding-inline:10px; }
-  .app-header-tools { gap:5px; }
-  .app-icon-link { width:28px; height:28px; }
   .cinematic-hero .discovery-hero-copy>h1, .cinematic-hero .discovery-hero-copy>.hero-title { font-size:22px; }
   .cinematic-hero .discovery-hero-actions .discovery-primary { font-size:12px; padding-inline:12px; }
 }
@@ -523,27 +469,10 @@ html,body { background:var(--discovery-bg); }
   .discovery-seo-title { font-size:17px; }
 }
 
-/* Shared cloverfilx logo in the header and footer. */
-.app-header .clover-brand,.app-footer .clover-brand { gap:9px; letter-spacing:0; }
-.clover-brand-symbol { display:block; width:48px; height:48px; flex-shrink:0; filter:drop-shadow(0 3px 9px #9b4ddb24); transition:filter .2s; }
-.clover-brand:hover .clover-brand-symbol { filter:drop-shadow(0 3px 12px #bc78f94d); }
-.clover-brand-wordmark { font-family:Arial,sans-serif; }
-.clover-brand-wordmark>strong { display:block; color:#e6c6ff; background:linear-gradient(110deg,#faf4ff 5%,#ca91ff 90%); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; font-size:25px; font-weight:900; line-height:1; letter-spacing:-.7px; }
-.app-footer .clover-brand-symbol { width:43px; height:43px; }.app-footer .clover-brand-wordmark>strong { font-size:23px; }
-@media(max-width:1000px) { .clover-brand-symbol { width:46px; height:46px; }.clover-brand-wordmark>strong { font-size:24px; } }
-@media(max-width:480px) { .app-header .clover-brand-symbol { width:38px; height:38px; }.app-header .clover-brand-wordmark>strong { font-size:21px; }.app-header .clover-brand { gap:7px; } }
-@media(prefers-reduced-motion:reduce) { .clover-brand-symbol { transition:none; } }
-
-/* PWA App Installation Components (Navbar Button, Home Banner, Instructions Modal) */
-.app-install-nav-btn { display:inline-flex; align-items:center; gap:8px; background:linear-gradient(135deg,#231634,#171123); border:1px solid #9d5fe34a; color:#f0e5fa; padding:6px 13px; border-radius:9px; font-size:11px; font-weight:600; cursor:pointer; transition:border-color .2s,background .2s,box-shadow .2s; white-space:nowrap; }
-.app-install-nav-btn:hover { background:linear-gradient(135deg,#341d50,#221735); border-color:#c488fc; box-shadow:0 0 14px #a855f72e; color:#fff; }
-.install-nav-icon-wrapper { display:flex; align-items:center; justify-content:center; }
-.install-nav-icon-wrapper img { width:15px; height:15px; }
-
-@media(max-width:640px) {
-  .app-install-nav-btn { padding:6px 9px; }
-  .install-nav-label { display:none; }
-}
+/* Footer cloverfilx logo and install banner below. */
+.app-footer .clover-brand { display:inline-flex; align-items:center; gap:9px; letter-spacing:0; }
+.app-footer .clover-brand-symbol { width:42px; height:42px; }
+.app-footer .clover-brand-wordmark>strong { font-size:23px; }
 
 .install-banner-wrapper { margin-top:28px; margin-bottom:8px; width:100%; position:relative; }
 .install-banner-card { position:relative; overflow:hidden; background:radial-gradient(ellipse at 12% 50%,#3d1a5c 0%,#191225 65%,#0f0b18 100%); border:1px solid #9e5fe542; border-radius:16px; padding:20px 26px; display:flex; align-items:center; justify-content:space-between; gap:24px; box-shadow:0 12px 32px #00000075,0 0 24px #993bf218; transition:border-color .25s; }
@@ -824,4 +753,298 @@ html,body { background:var(--discovery-bg); }
 .hero-immersive .hero-title .bilingual-title.has-ar .anime-name-en{font-size:.48em;font-style:italic;font-weight:750;line-height:1.4;color:#d6c3e8}
 .search-suggestion .bilingual-title.has-ar .anime-name-ar{font-size:14px;line-height:1.65}
 .search-suggestion .bilingual-title.has-ar .anime-name-en{font-size:11px;line-height:1.4}
-@media(max-width:760px){.app-search.is-open{position:absolute}.search-suggestions{width:100%;max-height:calc(100dvh - 210px);border-radius:12px;top:calc(100% + 6px)}.search-suggestion{gap:10px}.app-search.is-open input{font-size:16px}}
+
+/* Unified responsive header, navigation, tools, and mobile search bar. */
+.app-header {
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(9,10,18,.86);
+  backdrop-filter:blur(18px) saturate(1.35);
+  -webkit-backdrop-filter:blur(18px) saturate(1.35);
+  border-bottom:1px solid rgba(185,138,245,.16);
+  box-shadow:0 8px 30px rgba(0,0,0,.32);
+}
+.app-header-inner {
+  max-width:1560px;
+  min-height:74px;
+  margin:0 auto;
+  padding-inline:clamp(18px,3vw,48px);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:clamp(16px,2.4vw,36px);
+  position:relative;
+}
+.app-header .clover-brand {
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  letter-spacing:0;
+  flex-shrink:0;
+}
+.clover-brand-symbol {
+  display:block;
+  width:38px;
+  height:38px;
+  flex-shrink:0;
+  filter:drop-shadow(0 3px 9px #9b4ddb24);
+  transition:filter .2s,transform .2s;
+}
+.clover-brand:hover .clover-brand-symbol {
+  filter:drop-shadow(0 3px 12px #bc78f94d);
+  transform:scale(1.03);
+}
+.clover-brand-wordmark {
+  font-family:Arial,sans-serif;
+}
+.clover-brand-wordmark>strong {
+  display:block;
+  color:#e6c6ff;
+  background:linear-gradient(110deg,#faf4ff 5%,#ca91ff 90%);
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  font-size:22px;
+  font-weight:900;
+  line-height:1;
+  letter-spacing:-.6px;
+}
+.app-navigation {
+  display:flex;
+  align-items:center;
+  gap:4px;
+  white-space:nowrap;
+  flex-shrink:0;
+}
+.app-navigation a {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  min-height:40px;
+  padding:0 13px;
+  border-radius:10px;
+  border:1px solid transparent;
+  color:#bab4c9;
+  font-size:13px;
+  font-weight:600;
+  position:relative;
+  transition:color .2s,background .2s,border-color .2s;
+}
+.app-navigation a:hover {
+  color:#f9f5ff;
+  background:rgba(255,255,255,.05);
+}
+.app-navigation a.active {
+  color:#f1ddff;
+  background:rgba(182,106,239,.14);
+  border-color:rgba(196,136,252,.28);
+}
+.app-navigation a.active:after {
+  content:"";
+  position:absolute;
+  bottom:2px;
+  inset-inline:24%;
+  height:2px;
+  border-radius:4px;
+  background:#c784f4;
+  box-shadow:0 0 8px #b66aef88;
+}
+.app-navigation a>svg {
+  opacity:.82;
+  flex-shrink:0;
+}
+.app-header-tools {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-inline-start:auto;
+  flex-shrink:0;
+}
+.app-install-nav-btn {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  height:40px;
+  padding:0 14px;
+  border-radius:10px;
+  border:1px solid rgba(157,95,227,.34);
+  background:linear-gradient(135deg,rgba(46,24,70,.72),rgba(23,17,35,.9));
+  color:#f0e5fa;
+  font-size:12px;
+  font-weight:600;
+  cursor:pointer;
+  white-space:nowrap;
+  flex-shrink:0;
+  transition:border-color .2s,background .2s,box-shadow .2s,color .2s;
+}
+.app-install-nav-btn:hover {
+  background:linear-gradient(135deg,rgba(64,33,98,.9),rgba(34,23,53,.95));
+  border-color:#c488fc;
+  box-shadow:0 0 16px rgba(168,85,247,.22);
+  color:#fff;
+}
+.app-icon-link {
+  width:40px;
+  height:40px;
+  display:grid;
+  place-items:center;
+  border-radius:10px;
+  border:1px solid rgba(208,192,229,.14);
+  background:rgba(255,255,255,.035);
+  color:#c7c0d6;
+  flex-shrink:0;
+  transition:color .2s,border-color .2s,background .2s;
+}
+.app-icon-link:hover,.app-icon-link.active {
+  color:#e3bfff;
+  border-color:rgba(182,113,236,.42);
+  background:rgba(168,85,247,.12);
+}
+.app-search-toggle {
+  display:none;
+}
+.app-search {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  width:clamp(205px,20vw,275px);
+  height:40px;
+  padding:0 12px;
+  border:1px solid rgba(186,152,229,.18);
+  border-radius:10px;
+  background:rgba(255,255,255,.045);
+  color:#d8d1e4;
+  transition:border-color .2s,background .2s,box-shadow .2s;
+}
+.app-search:focus-within {
+  border-color:rgba(182,113,236,.7);
+  background:#161022;
+  box-shadow:0 0 0 3px rgba(182,113,236,.14);
+}
+.app-search button {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-shrink:0;
+  color:#b7abcc;
+}
+.app-search input {
+  min-width:0;
+  width:100%;
+  background:none;
+  outline:none;
+  border:0;
+  color:#f6f1ff;
+  font-size:12px;
+  line-height:1.5;
+}
+.app-search input::placeholder {
+  color:#9f95b3;
+}
+@media(prefers-reduced-motion:reduce) {
+  .clover-brand-symbol,.app-navigation a,.app-install-nav-btn,.app-icon-link,.app-search { transition:none; }
+}
+@media(max-width:1200px) {
+  .app-header-inner { padding-inline:22px; gap:16px; }
+  .app-navigation a { padding:0 10px; font-size:12px; gap:5px; }
+  .app-search { width:195px; }
+  .app-install-nav-btn { width:40px; padding:0; }
+  .install-nav-label { display:none; }
+}
+@media(max-width:1024px) {
+  .app-header-inner {
+    flex-wrap:wrap;
+    min-height:0;
+    padding:10px 20px 0;
+    gap:0 16px;
+  }
+  .app-header .clover-brand-symbol { width:36px; height:36px; }
+  .clover-brand-wordmark>strong { font-size:21px; }
+  .app-search { width:230px; height:38px; }
+  .app-install-nav-btn,.app-icon-link { width:38px; height:38px; }
+  .app-navigation {
+    order:3;
+    width:100%;
+    justify-content:center;
+    gap:8px;
+    padding:8px 0 10px;
+    margin-top:8px;
+    border-top:1px solid rgba(185,138,245,.12);
+  }
+  .app-navigation a { min-height:36px; padding:0 14px; font-size:12.5px; gap:6px; }
+}
+@media(max-width:768px) {
+  .app-header-inner { padding:9px 14px 0; gap:0; }
+  .app-header .clover-brand { gap:7px; }
+  .app-header .clover-brand-symbol { width:34px; height:34px; }
+  .app-header .clover-brand-wordmark>strong { font-size:19px; }
+  .app-header-tools { gap:7px; }
+  .app-install-nav-btn,.app-icon-link { width:36px; height:36px; border-radius:9px; }
+  .app-search-toggle { display:grid; }
+  .app-search { display:none; }
+  .app-search.is-open {
+    display:flex;
+    position:absolute;
+    z-index:60;
+    top:calc(100% + 6px);
+    inset-inline:12px;
+    width:auto;
+    height:46px;
+    padding:0 14px;
+    background:#140e22;
+    border:1px solid rgba(182,113,236,.55);
+    border-radius:12px;
+    box-shadow:0 18px 44px rgba(0,0,0,.85);
+  }
+  .app-search.is-open input { font-size:16px; }
+  .search-suggestions {
+    width:100%;
+    max-width:100%;
+    max-height:calc(100dvh - 150px);
+    border-radius:12px;
+    top:calc(100% + 6px);
+    inset-inline:0;
+  }
+  .search-suggestion { gap:10px; }
+  .app-navigation {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:6px;
+    padding:7px 0 9px;
+    margin-top:8px;
+  }
+  .app-navigation a {
+    width:100%;
+    min-width:0;
+    min-height:36px;
+    padding:0 6px;
+    font-size:11px;
+    gap:4px;
+    border-radius:9px;
+    background:rgba(255,255,255,.035);
+    border:1px solid rgba(255,255,255,.06);
+    color:#cbc0de;
+  }
+  .app-navigation a.active {
+    background:rgba(182,106,239,.18);
+    border-color:rgba(196,136,252,.42);
+    color:#f8f0ff;
+  }
+  .app-navigation a.active:after { display:none; }
+}
+@media(max-width:540px) {
+  .app-navigation a { min-height:34px; padding:0 4px; font-size:10.5px; }
+  .app-navigation a>svg { display:none; }
+}
+@media(max-width:360px) {
+  .app-header-inner { padding:8px 10px 0; }
+  .app-header .clover-brand-symbol { width:30px; height:30px; }
+  .app-header .clover-brand-wordmark>strong { font-size:17.5px; }
+  .app-header-tools { gap:5px; }
+  .app-install-nav-btn,.app-icon-link { width:34px; height:34px; }
+  .app-navigation { gap:4px; }
+  .app-navigation a { font-size:10px; }
+}

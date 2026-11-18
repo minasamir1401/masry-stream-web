@@ -43,7 +43,11 @@ export function SiteSearch({ expanded, onClose }: { expanded: boolean; onClose: 
   const visible = open && !!term;
   return <form id="site-search" className={`app-search ${expanded ? "is-open" : ""}`} role="search"
     onSubmit={event => { event.preventDefault(); if (visible && active >= 0 && items[active]) { router.push(mediaHref(items[active])); close(); } else searchAll(); }}
-    onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) close(); }}
+    onBlur={event => {
+      const next = event.relatedTarget as Element | null;
+      if (next?.closest?.(".app-search-toggle")) return;
+      if (!event.currentTarget.contains(next)) close();
+    }}
     onKeyDown={event => {
       if (event.key === "Escape") { event.preventDefault(); close(); if (expanded) (document.querySelector(".app-search-toggle") as HTMLButtonElement | null)?.focus(); }
       if ((event.key === "ArrowDown" || event.key === "ArrowUp") && items.length) {
@@ -51,7 +55,7 @@ export function SiteSearch({ expanded, onClose }: { expanded: boolean; onClose: 
       }
     }}>
     <button type="submit" aria-label="بحث"><Search size={18}/></button>
-    <input ref={input} type="search" role="combobox" aria-label="ابحث عن أنمي بالعربي أو الإنجليزي" placeholder="اسم الأنمي بالعربي أو الإنجليزي..." autoComplete="off" spellCheck={false}
+    <input ref={input} type="search" role="combobox" aria-label="ابحث عن أنمي بالعربي أو الإنجليزي" placeholder="ابحث عن أنمي..." autoComplete="off" spellCheck={false}
       aria-autocomplete="list" aria-expanded={visible} aria-controls={visible ? listId : undefined} aria-activedescendant={visible && active >= 0 ? `${listId}-${active}` : undefined}
       value={query} onFocus={() => setOpen(true)} onChange={event => { setQuery(event.target.value); setOpen(true); setActive(-1); }}/>
     {query && <button className="search-clear" type="button" aria-label="مسح البحث" onClick={() => {setQuery(""); setItems([]); setActive(-1); input.current?.focus();}}><X size={15}/></button>}
