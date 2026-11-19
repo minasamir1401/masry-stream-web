@@ -312,22 +312,27 @@ export function VideoPlayer({ streamUrl, title, posterUrl, embedUrl, servers: in
         xhr.withCredentials = true;
       },
     });
+    let networkRetries = 0;
+    let mediaRetries = 0;
+    hls.on(Hls.Events.FRAG_LOADED, () => {
+      networkRetries = 0;
+    });
     hls.on(Hls.Events.ERROR, (_, data) => {
-      if (data.fatal) {
-        switch (data.type) {
-          case Hls.ErrorTypes.NETWORK_ERROR:
-            hls.startLoad();
-            break;
-          case Hls.ErrorTypes.MEDIA_ERROR:
-            hls.recoverMediaError();
-            break;
-          default:
-            if (!advanceServer()) {
-              setHasError(true);
-              setIsBuffering(false);
-            }
-            break;
-        }
+      if (!data.fatal) return;
+      if (data.type === Hls.ErrorTypes.NETWORK_ERROR && networkRetries < 2) {
+        networkRetries += 1;
+        hls.startLoad();
+        return;
+      }
+      if (data.type === Hls.ErrorTypes.MEDIA_ERROR && mediaRetries < 2) {
+        mediaRetries += 1;
+        hls.recoverMediaError();
+        return;
+      }
+      hls.destroy();
+      if (!advanceServer()) {
+        setHasError(true);
+        setIsBuffering(false);
       }
     });
     hls.on(Hls.Events.MANIFEST_PARSED, () => {
